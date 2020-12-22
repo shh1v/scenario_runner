@@ -13,11 +13,18 @@
 ### :rocket: New Features
 * Added a sensor barrier for the agents to ensure that the simulation waits for them to render their data.
 * Added an option to produce a machine-readable JSON version of the scenario report.
-* Added a static obstacle evasion OpenSCENARIO scenario
-* Added support for OSC Routing options
-* Added support for OSC SynchronizeAction
-* Added support to place OSC controller implementation alongside the OSC scenario
 * Updated *GameTime.restart()* at *srunner/scenariomanager/timer.py* to also reset the frame number
+* OpenSCENARIO Support:
+  * Added a static obstacle evasion OpenSCENARIO scenario
+  * Added support for OSC Routing options
+  * Added support for OSC SynchronizeAction
+  * Added support to place OSC controller implementation alongside the OSC scenario
+  * Extended SimpleVehicleController
+  * Added controller using CARLA's autopilot (in replacement for ActivateControllerAction)
+  * Updated ActivateControllerAction to its specified behavior according to OSC 1.0
+  * Added support for storyboards with multiple stories
+  * Added support for ObjectControllers. Note that the controller has to be implemented in Python,
+    or be one of the provided controllers.
 ### :bug: Bug Fixes
 * Fixed metrics-manager.py failing to run with port argument
 * Fixed exception when using OSC scenarios without EnvironmentAction inside Storyboard-Init

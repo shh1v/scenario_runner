@@ -197,7 +197,7 @@ contains of submodules, which are not listed, the support status applies to all 
 <td><code>ActivateControllerAction</code></td>
 <td>&#10060;</td>
 <td>&#9989;</td>
-<td>Can be used to activate/deactive the CARLA autopilot.</td>
+<td></td>
 <tr>
 <td><code>ControllerAction</code></td>
 <td>&#9989;</td>
