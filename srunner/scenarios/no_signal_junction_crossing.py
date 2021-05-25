@@ -68,7 +68,7 @@ class NoSignalJunctionCrossing(BasicScenario):
         first_vehicle_transform = carla.Transform(
             carla.Location(config.other_actors[0].transform.location.x,
                            config.other_actors[0].transform.location.y,
-                           config.other_actors[0].transform.location.z - 500),
+                           config.other_actors[0].transform.location.z),
             config.other_actors[0].transform.rotation)
         first_vehicle = CarlaDataProvider.request_new_actor(config.other_actors[0].model, first_vehicle_transform)
         first_vehicle.set_simulate_physics(enabled=False)

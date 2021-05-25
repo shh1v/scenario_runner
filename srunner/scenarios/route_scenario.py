@@ -33,12 +33,18 @@ from srunner.tools.route_manipulation import interpolate_trajectory
 from srunner.tools.py_trees_port import oneshot_behavior
 
 from srunner.scenarios.control_loss import ControlLoss
-from srunner.scenarios.follow_leading_vehicle import FollowLeadingVehicle
-from srunner.scenarios.object_crash_vehicle import DynamicObjectCrossing
+from srunner.scenarios.follow_leading_vehicle import FollowLeadingVehicle, FollowLeadingVehicleWithObstacle
+from srunner.scenarios.object_crash_vehicle import DynamicObjectCrossingSpawnaround, DynamicObjectCrossing, \
+    DynamicObjectCrossingNoBlocker
 from srunner.scenarios.object_crash_intersection import VehicleTurningRoute
 from srunner.scenarios.other_leading_vehicle import OtherLeadingVehicle
 from srunner.scenarios.maneuver_opposite_direction import ManeuverOppositeDirection
 from srunner.scenarios.junction_crossing_route import SignalJunctionCrossingRoute, NoSignalJunctionCrossingRoute
+from srunner.scenarios.opposite_vehicle_taking_priority import OppositeVehicleRunningRedLight
+from srunner.scenarios.signalized_junction_left_turn import SignalizedJunctionLeftTurn
+from srunner.scenarios.signalized_junction_right_turn import SignalizedJunctionRightTurn
+from srunner.scenarios.change_lane import ChangeLane
+from srunner.scenarios.cut_in import CutIn
 
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTest,
                                                                      InRouteTest,
@@ -48,7 +54,7 @@ from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTe
                                                                      RunningStopTest,
                                                                      ActorSpeedAboveThresholdTest)
 
-SECONDS_GIVEN_PER_METERS = 0.4
+SECONDS_GIVEN_PER_METERS = 1
 
 NUMBER_CLASS_TRANSLATION = {
     "Scenario1": ControlLoss,
@@ -57,10 +63,14 @@ NUMBER_CLASS_TRANSLATION = {
     "Scenario4": VehicleTurningRoute,
     "Scenario5": OtherLeadingVehicle,
     "Scenario6": ManeuverOppositeDirection,
-    "Scenario7": SignalJunctionCrossingRoute,
-    "Scenario8": SignalJunctionCrossingRoute,
-    "Scenario9": SignalJunctionCrossingRoute,
-    "Scenario10": NoSignalJunctionCrossingRoute
+    "Scenario7": OppositeVehicleRunningRedLight,
+    "Scenario8": SignalizedJunctionLeftTurn,
+    "Scenario9": SignalizedJunctionRightTurn,
+    "Scenario10": NoSignalJunctionCrossingRoute,
+    "Scenario11": DynamicObjectCrossingSpawnaround,
+    "Scenario12": DynamicObjectCrossingNoBlocker,
+    "Scenario13": CutIn,
+    "Scenario14": ChangeLane
 }
 
 
@@ -170,6 +180,7 @@ class RouteScenario(BasicScenario):
                                             terminate_on_failure=False,
                                             criteria_enable=criteria_enable)
 
+# this is relevant
     def _update_route(self, world, config, debug_mode):
         """
         Update the input route, i.e. refine waypoint list, and extract possible scenario locations
@@ -190,6 +201,7 @@ class RouteScenario(BasicScenario):
         self.route = route
         CarlaDataProvider.set_ego_vehicle_route(convert_transform_to_location(self.route))
 
+        # if config.agent is not None:
         config.agent.set_global_plan(gps_route, self.route)
 
         # Sample the scenarios to be used for this route instance.
@@ -358,6 +370,8 @@ class RouteScenario(BasicScenario):
 
         return scenario_instance_vec
 
+# this may no longer be being used - individual scenarios now have logic to spawn
+# other actors
     def _get_actors_instances(self, list_of_antagonist_actors):
         """
         Get the full list of actor instances.
@@ -388,6 +402,7 @@ class RouteScenario(BasicScenario):
 
     # pylint: enable=no-self-use
 
+    # this replaces and implements BackgroundActivity
     def _initialize_actors(self, config):
         """
         Set other_actors to the superset of all scenario actors
@@ -396,15 +411,14 @@ class RouteScenario(BasicScenario):
         # Create the background activity of the route
         town_amount = {
             'Town01': 120,
-            'Town02': 100,
+            'Town02': 0,
             'Town03': 120,
             'Town04': 200,
-            'Town05': 120,
-            'Town06': 150,
-            'Town07': 110,
-            'Town08': 180,
-            'Town09': 300,
-            'Town10': 120,
+            'Town05': 0,
+            'Town06': 50,
+            'Town07': 10,
+            'Town10': 0,
+            'Town10HD': 40
         }
 
         amount = town_amount[config.town] if config.town in town_amount else 0
@@ -504,7 +518,7 @@ class RouteScenario(BasicScenario):
         criteria.append(outsidelane_criterion)
         criteria.append(red_light_criterion)
         criteria.append(stop_criterion)
-        criteria.append(blocked_criterion)
+        # criteria.append(blocked_criterion)
 
         return criteria
 

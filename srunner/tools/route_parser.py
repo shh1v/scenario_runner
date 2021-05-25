@@ -94,7 +94,9 @@ class RouteParser(object):
         else:
             weather = carla.WeatherParameters()
             for weather_attrib in route.iter("weather"):
-
+                if 'preset' in weather_attrib.attrib:
+                    weather = carla.WeatherParameters(weather_attrib.attrib['preset'])
+                    break
                 if 'cloudiness' in weather_attrib.attrib:
                     weather.cloudiness = float(weather_attrib.attrib['cloudiness'])
                 if 'precipitation' in weather_attrib.attrib:

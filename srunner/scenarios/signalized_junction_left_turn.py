@@ -79,16 +79,19 @@ class SignalizedJunctionLeftTurn(BasicScenario):
         first_vehicle_transform = carla.Transform(
             carla.Location(config.other_actors[0].transform.location.x,
                            config.other_actors[0].transform.location.y,
-                           config.other_actors[0].transform.location.z - 500),
+                           config.other_actors[0].transform.location.z),  # - 500),
             config.other_actors[0].transform.rotation)
         first_vehicle = CarlaDataProvider.request_new_actor(config.other_actors[0].model, self._other_actor_transform)
         first_vehicle.set_transform(first_vehicle_transform)
         first_vehicle.set_simulate_physics(enabled=False)
         self.other_actors.append(first_vehicle)
+        print(True)
+        return
 
     def _create_behavior(self):
         """
-        Hero vehicle is turning left in an urban area,
+        Hero vehicle is turning left in a+
+        n urban area,
         at a signalized intersection, while other actor coming straight
         .The hero actor may turn left either before other actor
         passes intersection or later, without any collision.
@@ -110,7 +113,7 @@ class SignalizedJunctionLeftTurn(BasicScenario):
         # adding flow of actors
         actor_source = ActorSource(
             ['vehicle.tesla.model3', 'vehicle.audi.tt'],
-            self._other_actor_transform, 15, self._blackboard_queue_name)
+            self._other_actor_transform, 0, self._blackboard_queue_name)
         # destroying flow of actors
         actor_sink = ActorSink(plan[-1][0].transform.location, 10)
         # follow waypoints untill next intersection

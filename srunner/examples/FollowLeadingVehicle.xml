@@ -5,7 +5,7 @@
         <weather cloudiness="0" precipitation="0" precipitation_deposits="0" wind_intensity="0" sun_azimuth_angle="0" sun_altitude_angle="75" />
     </scenario>
     <scenario name="FollowLeadingVehicleWithObstacle_1" type="FollowLeadingVehicleWithObstacle" town="Town01">
-        <ego_vehicle x="107" y="133.5" z="0.5" yaw="0" model="vehicle.lincoln.mkz2017" />
+        <ego_vehicle x="104" y="133.5" z="1.5" yaw="0" model="vehicle.lincoln.mkz2017" />
     </scenario>
     <scenario name="FollowLeadingVehicle_2" type="FollowLeadingVehicle" town="Town01">
         <ego_vehicle x="105" y="199.1" z="0.5" yaw="0" model="vehicle.lincoln.mkz2017" />

@@ -100,6 +100,10 @@ class OppositeVehicleRunningRedLight(BasicScenario):
         """
         Custom initialization
         """
+        # difference here seems to be that a new actor is not created
+        # rather, the first existing other_actor is assigned first_vehicle status
+        # contrast with follow_leading_vehicle which spawns a vehicle
+        # or object_crash_vehicle which spawns a blocker and a bicycle
         self._other_actor_transform = config.other_actors[0].transform
         first_vehicle_transform = carla.Transform(
             carla.Location(config.other_actors[0].transform.location.x,

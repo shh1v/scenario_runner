@@ -47,11 +47,11 @@ class OtherLeadingVehicle(BasicScenario):
         """
         self._world = world
         self._map = CarlaDataProvider.get_map()
-        self._first_vehicle_location = 35
+        self._first_vehicle_location = 25
         self._second_vehicle_location = self._first_vehicle_location + 1
-        self._ego_vehicle_drive_distance = self._first_vehicle_location * 4
-        self._first_vehicle_speed = 55
-        self._second_vehicle_speed = 45
+        self._ego_vehicle_drive_distance = self._first_vehicle_location * 6
+        self._first_vehicle_speed = 5
+        self._second_vehicle_speed = 10
         self._reference_waypoint = self._map.get_waypoint(config.trigger_points[0].location)
         self._other_actor_max_brake = 1.0
         self._first_actor_transform = None
@@ -107,7 +107,7 @@ class OtherLeadingVehicle(BasicScenario):
         keep_velocity = py_trees.composites.Parallel("Trigger condition for deceleration",
                                                      policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
         keep_velocity.add_child(WaypointFollower(self.other_actors[0], self._first_vehicle_speed, avoid_collision=True))
-        keep_velocity.add_child(InTriggerDistanceToVehicle(self.other_actors[0], self.ego_vehicles[0], 55))
+        keep_velocity.add_child(InTriggerDistanceToVehicle(self.other_actors[0], self.ego_vehicles[0], self._first_vehicle_speed))
 
         # Decelerating actor sequence behavior
         decelerate = self._first_vehicle_speed / 3.2
