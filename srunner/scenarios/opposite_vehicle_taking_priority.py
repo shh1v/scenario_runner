@@ -68,7 +68,7 @@ class OppositeVehicleRunningRedLight(BasicScenario):
         self._other_actor_transform = None
 
         # Timeout of scenario in seconds
-        self.timeout = timeout
+        self.timeout = 10  # timeout
 
         super(OppositeVehicleRunningRedLight, self).__init__("OppositeVehicleRunningRedLight",
                                                              ego_vehicles,

@@ -113,7 +113,7 @@ class SignalizedJunctionLeftTurn(BasicScenario):
         # adding flow of actors
         actor_source = ActorSource(
             ['vehicle.tesla.model3', 'vehicle.audi.tt'],
-            self._other_actor_transform, 0, self._blackboard_queue_name)
+            self._other_actor_transform, 5, self._blackboard_queue_name, actor_limit=3)
         # destroying flow of actors
         actor_sink = ActorSink(plan[-1][0].transform.location, 10)
         # follow waypoints untill next intersection

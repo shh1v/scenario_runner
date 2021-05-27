@@ -71,7 +71,7 @@ class NoSignalJunctionCrossing(BasicScenario):
                            config.other_actors[0].transform.location.z),
             config.other_actors[0].transform.rotation)
         first_vehicle = CarlaDataProvider.request_new_actor(config.other_actors[0].model, first_vehicle_transform)
-        first_vehicle.set_simulate_physics(enabled=False)
+        first_vehicle.set_simulate_physics(enabled=True)
         self.other_actors.append(first_vehicle)
 
     def _create_behavior(self):
@@ -89,12 +89,12 @@ class NoSignalJunctionCrossing(BasicScenario):
         # Creating leaf nodes
         start_other_trigger = InTriggerRegion(
             self.ego_vehicles[0],
-            -80, -70,
-            -75, -60)
+            -100, -50,
+            -160, -114)
 
         sync_arrival = SyncArrival(
             self.other_actors[0], self.ego_vehicles[0],
-            carla.Location(x=-74.63, y=-136.34))
+            carla.Location(x=-74, y=-143.5))
 
         pass_through_trigger = InTriggerRegion(
             self.ego_vehicles[0],
@@ -130,7 +130,7 @@ class NoSignalJunctionCrossing(BasicScenario):
 
         # Building tree
         root.add_child(scenario_sequence)
-        scenario_sequence.add_child(ActorTransformSetter(self.other_actors[0], self._other_actor_transform))
+        # scenario_sequence.add_child(ActorTransformSetter(self.other_actors[0], self._other_actor_transform))
         scenario_sequence.add_child(start_other_trigger)
         scenario_sequence.add_child(sync_arrival_parallel)
         scenario_sequence.add_child(keep_velocity_other_parallel)

@@ -40,6 +40,7 @@ from srunner.scenarios.object_crash_intersection import VehicleTurningRoute
 from srunner.scenarios.other_leading_vehicle import OtherLeadingVehicle
 from srunner.scenarios.maneuver_opposite_direction import ManeuverOppositeDirection
 from srunner.scenarios.junction_crossing_route import SignalJunctionCrossingRoute, NoSignalJunctionCrossingRoute
+from srunner.scenarios.no_signal_junction_crossing import NoSignalJunctionCrossing
 from srunner.scenarios.opposite_vehicle_taking_priority import OppositeVehicleRunningRedLight
 from srunner.scenarios.signalized_junction_left_turn import SignalizedJunctionLeftTurn
 from srunner.scenarios.signalized_junction_right_turn import SignalizedJunctionRightTurn
@@ -66,7 +67,7 @@ NUMBER_CLASS_TRANSLATION = {
     "Scenario7": OppositeVehicleRunningRedLight,
     "Scenario8": SignalizedJunctionLeftTurn,
     "Scenario9": SignalizedJunctionRightTurn,
-    "Scenario10": NoSignalJunctionCrossingRoute,
+    "Scenario10": NoSignalJunctionCrossing,
     "Scenario11": DynamicObjectCrossingSpawnaround,
     "Scenario12": DynamicObjectCrossingNoBlocker,
     "Scenario13": CutIn,
@@ -412,7 +413,7 @@ class RouteScenario(BasicScenario):
         town_amount = {
             'Town01': 120,
             'Town02': 0,
-            'Town03': 120,
+            'Town03': 0,
             'Town04': 200,
             'Town05': 0,
             'Town06': 50,

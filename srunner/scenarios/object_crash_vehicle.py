@@ -225,7 +225,7 @@ class DynamicObjectCrossing(BasicScenario):
         """
         # static object transform
         # todo how make the carla prop persist after the walker crosses?
-        shift = 0.75
+        shift = 0.6
         x_ego = self._reference_waypoint.transform.location.x
         y_ego = self._reference_waypoint.transform.location.y
         x_cycle = transform.location.x
@@ -820,15 +820,13 @@ class DynamicObjectCrossingNoBlocker(BasicScenario):
         """
         Custom initialization
         """
-        # import ipdb; ipdb.set_trace()
-
         # cyclist transform
         _start_distance = 8
         # We start by getting a waypoint in the closest sidewalk.
         waypoint = self._reference_waypoint
-        # replacing to cross junction and turn along route using start_distance
-        waypoint = generate_target_waypoint_in_route(waypoint, self._ego_route)
-        waypoint = waypoint.next(_start_distance)[0]
+        # # replacing to cross junction and turn along route using start_distance
+        # waypoint = generate_target_waypoint_in_route(waypoint, self._ego_route)
+        # waypoint = waypoint.next(_start_distance)[0]
 
         while True:
             wp_next = waypoint.get_right_lane()
@@ -850,7 +848,6 @@ class DynamicObjectCrossingNoBlocker(BasicScenario):
             try:
                 self.transform, orientation_yaw = self._calculate_base_transform(_start_distance, waypoint)
                 first_vehicle = self._spawn_adversary(self.transform, orientation_yaw)
-
                 # blocker = self._spawn_blocker(self.transform, orientation_yaw)
                 break
             except RuntimeError as r:
@@ -865,13 +862,13 @@ class DynamicObjectCrossingNoBlocker(BasicScenario):
         disp_transform = carla.Transform(
             carla.Location(self.transform.location.x,
                            self.transform.location.y,
-                           self.transform.location.z - 500),
+                           self.transform.location.z),
             self.transform.rotation)
 
         # prop_disp_transform = carla.Transform(
         #     carla.Location(self.transform2.location.x,
         #                    self.transform2.location.y,
-        #                    self.transform2.location.z - 500),
+        #                    self.transform2.location.z),
         #     self.transform2.rotation)
 
         first_vehicle.set_transform(disp_transform)
@@ -927,8 +924,8 @@ class DynamicObjectCrossingNoBlocker(BasicScenario):
                                          name="ego vehicle passed prop")
         actor_remove = ActorDestroy(self.other_actors[0],
                                     name="Destroying walker")
-        static_remove = ActorDestroy(self.other_actors[1],
-                                     name="Destroying Prop")
+        # static_remove = ActorDestroy(self.other_actors[1],
+        #                              name="Destroying Prop")
         end_condition = DriveDistance(self.ego_vehicles[0],
                                       self._ego_vehicle_distance_driven,
                                       name="End condition ego drive distance")
@@ -946,8 +943,8 @@ class DynamicObjectCrossingNoBlocker(BasicScenario):
         root.add_child(scenario_sequence)
         scenario_sequence.add_child(ActorTransformSetter(self.other_actors[0], self.transform,
                                                          name='TransformSetterTS3walker', physics=False))
-        scenario_sequence.add_child(ActorTransformSetter(self.other_actors[1], self.transform2,
-                                                         name='TransformSetterTS3coca', physics=False))
+        # scenario_sequence.add_child(ActorTransformSetter(self.other_actors[1], self.transform2,
+        #                                                  name='TransformSetterTS3coca', physics=False))
         scenario_sequence.add_child(HandBrakeVehicle(self.other_actors[0], True))
         scenario_sequence.add_child(start_condition)
         scenario_sequence.add_child(HandBrakeVehicle(self.other_actors[0], False))
@@ -955,7 +952,7 @@ class DynamicObjectCrossingNoBlocker(BasicScenario):
         scenario_sequence.add_child(keep_velocity_other)
         scenario_sequence.add_child(actor_stop_crossed_lane)
         scenario_sequence.add_child(actor_remove)
-        scenario_sequence.add_child(static_remove)
+        # scenario_sequence.add_child(static_remove)
         scenario_sequence.add_child(end_condition)
 
         keep_velocity.add_child(actor_velocity)
