@@ -1,14 +1,15 @@
-python scenario_runner.py --route C:\EGLC\scenario_runner-0.9.10\srunner\data\routes_debug.xml C:\EGLC\scenario_runner-0.9.10\srunner\data\all_towns_traffic_scenarios1_3_4.json 0 --agent C:\EGLC\scenario_runner-0.9.10\srunner\autoagents\npc_agent.py
+python scenario_runner.py --route C:\EGLC\scenario_runner\srunner\data\routes_debug.xml C:\EGLC\scenario_runner\srunner\data\all_towns_traffic_scenarios1_3_4.json 0 --agent C:\EGLC\scenario_runner\srunner\autoagents\npc_agent.py
 
 # Town 05
-python scenario_runner.py --route C:\EGLC\scenario_runner-0.9.10\srunner\data\routes_custom.xml C:\EGLC\scenario_runner-0.9.10\srunner\data\town05_scenarios.json 50 --agent C:\EGLC\scenario_runner-0.9.10\srunner\autoagents\npc_agent.py --output --debug --reloadWorld
-python scenario_runner.py --route C:\EGLC\scenario_runner-0.9.10\srunner\data\routes_custom.xml C:\EGLC\scenario_runner-0.9.10\srunner\data\town05_scenarios.json 51 --agent C:\EGLC\scenario_runner-0.9.10\srunner\autoagents\npc_agent.py --output --debug --reloadWorld
+python scenario_runner.py --route C:\EGLC\scenario_runner\srunner\data\routes_custom.xml C:\EGLC\scenario_runner\srunner\data\town05_scenarios.json 50 --agent C:\EGLC\scenario_runner\srunner\autoagents\npc_agent.py --output --debug --reloadWorld
+python scenario_runner.py --route C:\EGLC\scenario_runner\srunner\data\routes_custom.xml C:\EGLC\scenario_runner\srunner\data\town05_scenarios.json 51 --agent C:\EGLC\scenario_runner\srunner\autoagents\npc_agent.py --output --debug --reloadWorld
+
 
 # Town 03
-python scenario_runner.py --route C:\EGLC\scenario_runner-0.9.10\srunner\data\routes_custom.xml C:\EGLC\scenario_runner-0.9.10\srunner\data\town03_scenarios.json 30 --agent C:\EGLC\scenario_runner-0.9.10\srunner\autoagents\npc_agent.py --output --debug --reloadWorld
-python scenario_runner.py --route C:\EGLC\scenario_runner-0.9.10\srunner\data\routes_custom.xml C:\EGLC\scenario_runner-0.9.10\srunner\data\town03_scenarios.json 31 --agent C:\EGLC\scenario_runner-0.9.10\srunner\autoagents\npc_agent.py --output --debug --reloadWorld
+python scenario_runner.py --route C:\EGLC\scenario_runner\srunner\data\routes_custom.xml C:\EGLC\scenario_runner\srunner\data\town03_scenarios.json 30 --agent C:\EGLC\scenario_runner\srunner\autoagents\npc_agent.py --output --debug --reloadWorld
+python scenario_runner.py --route C:\EGLC\scenario_runner\srunner\data\routes_custom.xml C:\EGLC\scenario_runner\srunner\data\town03_scenarios.json 31 --agent C:\EGLC\scenario_runner\srunner\autoagents\npc_agent.py --output --debug --reloadWorld
 
 # Town 10HD
-python scenario_runner.py --route C:\EGLC\scenario_runner-0.9.10\srunner\data\routes_custom.xml C:\EGLC\scenario_runner-0.9.10\srunner\data\town10_scenarios.json 101 --agent C:\EGLC\scenario_runner-0.9.10\srunner\autoagents\npc_agent.py --output --debug --timeout 100
+python scenario_runner.py --route C:\EGLC\scenario_runner\srunner\data\routes_custom.xml C:\EGLC\scenario_runner\srunner\data\town10_scenarios.json 101 --agent C:\EGLC\scenario_runner\srunner\autoagents\npc_agent.py --output --debug --timeout 100
 
 

@@ -370,11 +370,36 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         relevant_traffic_light = None
         distance_to_relevant_traffic_light = float("inf")
 
+        # print("last waypoint", list_of_waypoints[-1].transform.location.__str__())
+
         for traffic_light in CarlaDataProvider._traffic_light_map:
             if hasattr(traffic_light, 'trigger_volume'):
                 tl_t = CarlaDataProvider._traffic_light_map[traffic_light]
                 transformed_tv = tl_t.transform(traffic_light.trigger_volume.location)
                 distance = carla.Location(transformed_tv).distance(list_of_waypoints[-1].transform.location)
+
+                if distance < distance_to_relevant_traffic_light:
+                    relevant_traffic_light = traffic_light
+                    distance_to_relevant_traffic_light = distance
+
+        return relevant_traffic_light
+
+
+    @staticmethod
+    def get_next_traffic_light_by_location(query_location):
+        """
+        returns the next relevant traffic light for the provided location
+        """
+        relevant_traffic_light = None
+        distance_to_relevant_traffic_light = float("inf")
+
+        # print("input location", query_location.__str__())
+
+        for traffic_light in CarlaDataProvider._traffic_light_map:
+            if hasattr(traffic_light, 'trigger_volume'):
+                tl_t = CarlaDataProvider._traffic_light_map[traffic_light]
+                transformed_tv = tl_t.transform(traffic_light.trigger_volume.location)
+                distance = carla.Location(transformed_tv).distance(query_location)
 
                 if distance < distance_to_relevant_traffic_light:
                     relevant_traffic_light = traffic_light

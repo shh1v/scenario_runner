@@ -77,7 +77,9 @@ class OppositeVehicleRunningRedLight(BasicScenario):
                                                              debug_mode,
                                                              criteria_enable=criteria_enable)
 
+        start_location = config.trigger_points[0].location
         self._traffic_light = CarlaDataProvider.get_next_traffic_light(self.ego_vehicles[0], False)
+        self._traffic_light = CarlaDataProvider.get_next_traffic_light_by_location(start_location)
 
         if self._traffic_light is None:
             print("No traffic light for the given location of the ego vehicle found")
@@ -85,6 +87,8 @@ class OppositeVehicleRunningRedLight(BasicScenario):
 
         self._traffic_light.set_state(carla.TrafficLightState.Green)
         self._traffic_light.set_green_time(self.timeout)
+        # self._traffic_light.set_state(carla.TrafficLightState.Red)
+        # self._traffic_light.set_red_time(self.timeout)
 
         # other vehicle's traffic light
         traffic_light_other = CarlaDataProvider.get_next_traffic_light(self.other_actors[0], False)
@@ -95,6 +99,15 @@ class OppositeVehicleRunningRedLight(BasicScenario):
 
         traffic_light_other.set_state(carla.TrafficLightState.Red)
         traffic_light_other.set_red_time(self.timeout)
+
+        # print('ego light', self._traffic_light.get_location().__str__())
+        # print('ego position curr', self.ego_vehicles[0].get_location().__str__())
+        # print('ego position scenario start', self.ego_vehicles[0].get_location().__str__())
+        # print('other light', traffic_light_other.get_location().__str__())
+        # print('other position', self.other_actors[0].get_location().__str__())
+        # sys.exit(-1)
+
+        # traffic_light_other.set_red_time(self.timeout)
 
     def _initialize_actors(self, config):
         """
