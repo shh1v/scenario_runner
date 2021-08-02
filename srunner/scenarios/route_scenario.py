@@ -64,7 +64,10 @@ NUMBER_CLASS_TRANSLATION = {
     "Scenario4": VehicleTurningRoute,
     "Scenario5": OtherLeadingVehicle,
     "Scenario6": ManeuverOppositeDirection,
-    "Scenario7": OppositeVehicleRunningRedLight,
+    # "Scenario7": OppositeVehicleRunningRedLight,
+    # "Scenario8": SignalizedJunctionLeftTurn,
+    # "Scenario9": SignalizedJunctionRightTurn,
+    "Scenario7": SignalJunctionCrossingRoute,
     "Scenario8": SignalizedJunctionLeftTurn,
     "Scenario9": SignalizedJunctionRightTurn,
     "Scenario10": NoSignalJunctionCrossing,
@@ -344,7 +347,6 @@ class RouteScenario(BasicScenario):
             scenario_configuration.other_actors = list_of_actor_conf_instances
             scenario_configuration.trigger_points = [egoactor_trigger_position]
             scenario_configuration.subtype = definition['scenario_type']
-            sys.exit(-1)
             scenario_configuration.ego_vehicles = [ActorConfigurationData('vehicle.lincoln.mkz2017',
                                                                           ego_vehicle.get_transform(),
                                                                           'hero')]
@@ -499,7 +501,7 @@ class RouteScenario(BasicScenario):
         route_criterion = InRouteTest(self.ego_vehicles[0],
                                       route=route,
                                       offroad_max=30,
-                                      terminate_on_failure=True)
+                                      terminate_on_failure=False)
 
         completion_criterion = RouteCompletionTest(self.ego_vehicles[0], route=route)
 

@@ -207,7 +207,7 @@ class DynamicObjectCrossing(BasicScenario):
 
         if self._adversary_type is False:
             self._walker_yaw = orientation_yaw
-            self._other_actor_target_velocity = 3 + (0.4 * self._num_lane_changes)
+            self._other_actor_target_velocity = 6 + (0.4 * self._num_lane_changes)
             walker = CarlaDataProvider.request_new_actor('walker.*', transform)
             adversary = walker
         else:
@@ -241,7 +241,10 @@ class DynamicObjectCrossing(BasicScenario):
                                           carla.Rotation(yaw=orientation_yaw + 90))  # face in road direction
 
         # static = CarlaDataProvider.request_new_actor('static.prop.vendingmachine', self.transform2)
-        static = CarlaDataProvider.request_new_actor('vehicle.carlamotors.carlacola', self.transform2)
+        import numpy as np
+        blocker_candidates = ['vehicle.carlamotors.carlacola', 'vehicle.tesla.cybertruck', 'vehicle.volkswagen.t2']
+        blocker_vehicle = np.random.choice(blocker_candidates)
+        static = CarlaDataProvider.request_new_actor(blocker_vehicle, self.transform2)
 
         # static.set_simulate_physics(enabled=False)
 

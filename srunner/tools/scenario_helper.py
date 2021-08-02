@@ -124,7 +124,12 @@ def get_crossing_point(actor):
 
     @return point of crossing
     """
-    wp_cross = CarlaDataProvider.get_map().get_waypoint(actor.get_location())
+    wp_cross = None
+
+    if isinstance(actor, carla.Actor):
+        wp_cross = CarlaDataProvider.get_map().get_waypoint(actor.get_location())
+    elif isinstance(actor, carla.Waypoint):
+        wp_cross = actor
 
     while not wp_cross.is_intersection:
         wp_cross = wp_cross.next(2)[0]

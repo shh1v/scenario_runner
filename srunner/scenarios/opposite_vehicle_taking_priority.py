@@ -78,7 +78,8 @@ class OppositeVehicleRunningRedLight(BasicScenario):
                                                              criteria_enable=criteria_enable)
 
         start_location = config.trigger_points[0].location
-        self._traffic_light = CarlaDataProvider.get_next_traffic_light(self.ego_vehicles[0], False)
+        # this happens at the start of the thing -- useless
+        # self._traffic_light = CarlaDataProvider.get_next_traffic_light(self.ego_vehicles[0], False)
         self._traffic_light = CarlaDataProvider.get_next_traffic_light_by_location(start_location)
 
         if self._traffic_light is None:

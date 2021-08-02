@@ -8,6 +8,7 @@ python scenario_runner.py --route C:\EGLC\scenario_runner\srunner\data\routes_cu
 # Town 03
 python scenario_runner.py --route C:\EGLC\scenario_runner\srunner\data\routes_custom.xml C:\EGLC\scenario_runner\srunner\data\town03_scenarios.json 30 --agent C:\EGLC\scenario_runner\srunner\autoagents\npc_agent.py --output --debug --reloadWorld
 python scenario_runner.py --route C:\EGLC\scenario_runner\srunner\data\routes_custom.xml C:\EGLC\scenario_runner\srunner\data\town03_scenarios.json 31 --agent C:\EGLC\scenario_runner\srunner\autoagents\npc_agent.py --output --debug --reloadWorld
+python scenario_runner.py --route C:\EGLC\scenario_runner\srunner\data\routes_custom.xml C:\EGLC\scenario_runner\srunner\data\town03_scenarios.json 32 --agent C:\EGLC\scenario_runner\srunner\autoagents\npc_agent.py --output --debug --reloadWorld
 
 # Town 10HD
 python scenario_runner.py --route C:\EGLC\scenario_runner\srunner\data\routes_custom.xml C:\EGLC\scenario_runner\srunner\data\town10_scenarios.json 101 --agent C:\EGLC\scenario_runner\srunner\autoagents\npc_agent.py --output --debug --timeout 100
