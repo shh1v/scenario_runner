@@ -2336,6 +2336,127 @@ class TrafficLightStateSetter(AtomicBehavior):
         return new_status
 
 
+class TrafficJunctionSetterWithTime(AtomicBehavior):
+
+    """
+    This class contains an atomic behavior to set the state of a given traffic light
+    to the given TrafficLightState for a given amt of time
+
+    Args:
+        actor (carla.TrafficLight): ID of the traffic light that shall be changed
+        state (carla.TrafficLightState): New target state
+        duration  (carla.TrafficLightState): New target state duration
+
+    The behavior terminates after trying to set the new state
+    """
+
+    def __init__(self, actor, state, duration=5, name="TrafficLightStateWithTimeSetter"):
+        """
+        Init
+        """
+        super(TrafficJunctionSetterWithTime, self).__init__(name)
+
+        self._actor = actor if "traffic_light" in actor.type_id else None
+        self.annotations = CarlaDataProvider.annotate_trafficlight_in_group(self._actor)
+        self._state = state
+        self._duration = duration
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+
+        RED = carla.TrafficLightState.Red
+        YELLOW = carla.TrafficLightState.Yellow
+        GREEN = carla.TrafficLightState.Green
+        self.ego_junction_state = {'ego': state, 'ref': state, 'left': RED, 'right': RED, 'opposite': RED}
+
+    def update(self):
+        """
+        Change the state of the traffic light
+        """
+        if self._actor is None:
+            return py_trees.common.Status.FAILURE
+
+        new_status = py_trees.common.Status.RUNNING
+        if self._actor.is_alive:
+            # self._actor.set_state(self._state)
+            # if self._state == carla.TrafficLightState.Green:
+            #     self._actor.set_green_time(self._duration)
+            # elif self._state == carla.TrafficLightState.Red:
+            #     self._actor.set_red_time(self._duration)
+            # elif self._state == carla.TrafficLightState.Yellow:
+            #     self._actor.set_yellow_time(self._duration)
+
+            prev_state = CarlaDataProvider.update_light_states(
+                                            self._actor,
+                                            self.annotations,
+                                            self.ego_junction_state,
+                                            freeze=True,
+                                            timeout=self._duration)
+
+            new_status = py_trees.common.Status.SUCCESS
+
+        else:
+            # For some reason the actor is gone...
+            new_status = py_trees.common.Status.FAILURE
+
+        return new_status
+
+
+class TrafficLightStateSetterWithTime(AtomicBehavior):
+
+    """
+    This class contains an atomic behavior to set the state of a given traffic light
+    to the given TrafficLightState for a given amt of time
+
+    Args:
+        actor (carla.TrafficLight): ID of the traffic light that shall be changed
+        state (carla.TrafficLightState): New target state
+        duration  (carla.TrafficLightState): New target state duration
+
+    The behavior terminates after trying to set the new state
+    """
+
+    def __init__(self, actor, state, duration=5, name="TrafficLightStateWithTimeSetter"):
+        """
+        Init
+        """
+        super(TrafficLightStateSetterWithTime, self).__init__(name)
+
+        self._actor = actor if "traffic_light" in actor.type_id else None
+        self.annotations = CarlaDataProvider.annotate_trafficlight_in_group(self._actor)
+        self._state = state
+        self._duration = duration
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+
+        RED = carla.TrafficLightState.Red
+        YELLOW = carla.TrafficLightState.Yellow
+        GREEN = carla.TrafficLightState.Green
+        self.ego_light_state = {'ego': self._state, 'ref': GREEN, 'left': RED, 'right': RED, 'opposite': RED}
+
+    def update(self):
+        """
+        Change the state of the traffic light
+        """
+        if self._actor is None:
+            return py_trees.common.Status.FAILURE
+
+        new_status = py_trees.common.Status.RUNNING
+        if self._actor.is_alive:
+            self._actor.set_state(self._state)
+            if self._state == carla.TrafficLightState.Green:
+                self._actor.set_green_time(self._duration)
+            elif self._state == carla.TrafficLightState.Red:
+                self._actor.set_red_time(self._duration)
+            elif self._state == carla.TrafficLightState.Yellow:
+                self._actor.set_yellow_time(self._duration)
+
+            new_status = py_trees.common.Status.SUCCESS
+
+        else:
+            # For some reason the actor is gone...
+            new_status = py_trees.common.Status.FAILURE
+
+        return new_status
+
+
 class ActorSource(AtomicBehavior):
 
     """
@@ -2373,7 +2494,8 @@ class ActorSource(AtomicBehavior):
             world_actors = self._world.get_actors()
             spawn_point_blocked = False
             if (self._last_blocking_actor and
-                    self._spawn_point.location.distance(self._last_blocking_actor.get_location()) < self._threshold):
+                    self._spawn_point.location.distance(self._last_blocking_actor.get_location()) <
+                     self._threshold):
                 spawn_point_blocked = True
 
             if not spawn_point_blocked:

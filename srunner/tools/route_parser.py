@@ -45,6 +45,28 @@ class RouteParser(object):
         return final_dict  # the file has a current maps name that is an one element vec
 
     @staticmethod
+    def parse_direction_signs_file(signs_filename, single_route=None):
+        """
+        Return the annotations of where to place which signs to give human users
+        directions when driving in the simulator.
+        :param signs_filename: the filename for the sign placement data file
+        :return:
+        """
+        with open(signs_filename, 'r') as f:
+            signs_dict = json.loads(f.read())
+        
+        routes_dict = signs_dict['available_routes'][0]
+
+        for route_name in routes_dict.keys():
+            
+            route_num = route_name.strip("Route")
+            if int(route_num) == int(single_route):
+                return routes_dict[route_name]
+
+        return None
+
+
+    @staticmethod
     def parse_routes_file(route_filename, scenario_file, single_route=None):
         """
         Returns a list of route elements.
@@ -66,6 +88,7 @@ class RouteParser(object):
             new_config.name = "RouteScenario_{}".format(route_id)
             new_config.weather = RouteParser.parse_weather(route)
             new_config.scenario_file = scenario_file
+            new_config.scenario_number = single_route
 
             waypoint_list = []  # the list of waypoints that can be found on this route
             for waypoint in route.iter('waypoint'):
@@ -74,6 +97,12 @@ class RouteParser(object):
                                                     z=float(waypoint.attrib['z'])))
 
             new_config.trajectory = waypoint_list
+
+            if 'bgseed' in route.attrib:
+                new_config.bgseed = int(route.attrib['bgseed'])
+
+            if 'town_amount' in route.attrib:
+                new_config.town_amount = int(route.attrib['town_amount'])
 
             list_route_descriptions.append(new_config)
 
@@ -94,7 +123,9 @@ class RouteParser(object):
         else:
             weather = carla.WeatherParameters()
             for weather_attrib in route.iter("weather"):
-
+                if 'preset' in weather_attrib.attrib:
+                    weather = getattr(carla.WeatherParameters, weather_attrib.attrib['preset'])
+                    break
                 if 'cloudiness' in weather_attrib.attrib:
                     weather.cloudiness = float(weather_attrib.attrib['cloudiness'])
                 if 'precipitation' in weather_attrib.attrib:
@@ -147,6 +178,19 @@ class RouteParser(object):
         waypoint['y'] = float(waypoint['y'])
         waypoint['z'] = float(waypoint['z'])
         waypoint['yaw'] = float(waypoint['yaw'])
+
+    @staticmethod
+    def convert_dict2transform(waypoint):
+        """
+        Convert waypoint values to Carla.transform
+        """
+        transform = carla.Transform()
+        transform.location.x = float(waypoint['x'])
+        transform.location.y = float(waypoint['y'])
+        transform.location.z = float(waypoint['z'])
+        transform.rotation.yaw = float(waypoint['yaw'])
+        return transform
+
 
     @staticmethod
     def match_world_location_to_route(world_location, route_description):

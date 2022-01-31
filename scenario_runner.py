@@ -131,6 +131,7 @@ class ScenarioRunner(object):
         Terminate scenario ticking when receiving a signal interrupt
         """
         self._shutdown_requested = True
+        print("Exiting...")
         if self.manager:
             self.manager.stop_scenario()
 

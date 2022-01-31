@@ -1,0 +1,357 @@
+<?xml version="1.0"?>
+<routes>
+
+<!--	Town 1 routes -->
+	<route id="11" town="Town01" bgseed="99" town_amount="40">
+		<weather
+			cloudiness="70"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="0"
+			sun_altitude_angle="15"
+		/>
+		<waypoint x="123.36" y="23.1" z="0.0" pitch="360.0" roll="0.0" yaw="0"/>
+		<waypoint x="311.86" y="23.1" z="0.0" pitch="360.0" roll="0.0" yaw="0"/>
+		<waypoint x="334.86" y="38.2" z="0.0" pitch="360.0" roll="0.0" yaw="90"/>
+		<waypoint x="251.2" y="55.5" z="0.0" pitch="360.0" roll="0.0" yaw="180"/> 
+		<waypoint x="109.2" y="55.5" z="0.0" pitch="360.0" roll="0.0" yaw="180"/> 
+		<waypoint x="88.2" y="114.0" z="0.0" pitch="360.0" roll="0.0" yaw="90"/> 
+		<waypoint x="88.2" y="177.0" z="0.0" pitch="360.0" roll="0.0" yaw="90"/> 
+		<waypoint x="242.4" y="198.0" z="0.0" pitch="360.0" roll="0.0" yaw="0"/> 
+	</route>
+
+	<route id="20" town="Town02">
+		<waypoint x="-3.6973562240600586" y="179.0623321533203" z="0.0" pitch="0.0" roll="0.0" yaw="-90.06791687011719" />
+		<waypoint x="-3.74371337890625" y="139.95481872558594" z="0.0" pitch="0.0" roll="0.0" yaw="-90.06791687011719" />
+		<waypoint x="11.363693237304688" y="109.63178253173828" z="0.0" pitch="360.0" roll="0.0" yaw="0.0161895751953125" />
+		<waypoint x="94.48065185546875" y="109.6552963256836" z="0.0" pitch="360.0" roll="0.0" yaw="0.0162200927734375" />
+		<waypoint x="141.0159149169922" y="109.66847229003906" z="0.0" pitch="360.0" roll="0.0" yaw="0.016265869140625" />
+		<waypoint x="157.96469116210938" y="109.67328643798828" z="0.0" pitch="360.0" roll="0.0" yaw="0.016265869140625" />
+		<waypoint x="178.3649444580078" y="109.6790771484375" z="0.0" pitch="360.0" roll="0.0" yaw="0.016265869140625" />
+		<waypoint x="189.5306854248047" y="122.14183807373047" z="0.0" pitch="360.0" roll="0.0" yaw="89.9903564453125" />
+		<waypoint x="189.5395965576172" y="175.0299835205078" z="0.0" pitch="360.0" roll="0.0" yaw="89.99028778076172" />
+		<waypoint x="189.1422882080078" y="186.0888214111328" z="0.0" pitch="360.0" roll="0.0" yaw="117.22735595703125" />
+		<waypoint x="150.44764709472656" y="188.11343383789062" z="0.0" pitch="360.0" roll="0.0" yaw="179.95350646972656" />
+		<waypoint x="122.00720977783203" y="188.1365203857422" z="0.0" pitch="360.0" roll="0.0" yaw="179.95350646972656" />
+		<waypoint x="60.52153015136719" y="188.1864013671875" z="0.0" pitch="360.0" roll="0.0" yaw="179.95350646972656" />
+		<waypoint x="41.70449447631836" y="202.53211975097656" z="0.0" pitch="360.0" roll="0.0" yaw="90.02497863769531" />
+		<waypoint x="41.695037841796875" y="224.2197723388672" z="0.0" pitch="360.0" roll="0.0" yaw="90.02497863769531" />
+		<waypoint x="58.090850830078125" y="240.9201202392578" z="0.0" pitch="360.0" roll="0.0" yaw="0.1973114013671875" />
+		<waypoint x="85.47953033447266" y="241.01443481445312" z="0.0" pitch="360.0" roll="0.0" yaw="0.1973114013671875" />
+		<waypoint x="120.41314697265625" y="241.13473510742188" z="0.0" pitch="360.0" roll="0.0" yaw="0.1973114013671875" />
+		<waypoint x="148.17320251464844" y="241.23033142089844" z="0.0" pitch="360.0" roll="0.0" yaw="0.1973114013671875" />
+		<waypoint x="177.82032775878906" y="241.33242797851562" z="0.0" pitch="360.0" roll="0.0" yaw="0.1973114013671875" />
+		<waypoint x="189.55259704589844" y="251.75140380859375" z="0.0" pitch="360.0" roll="0.0" yaw="89.99021911621094" />
+		<waypoint x="189.55908203125" y="289.68310546875" z="0.0" pitch="360.0" roll="0.0" yaw="89.99021911621094" />
+		<waypoint x="175.65786743164062" y="303.0173645019531" z="0.0" pitch="360.0" roll="0.0" yaw="180.0260009765625" />
+		<waypoint x="155.39031982421875" y="303.0081787109375" z="0.0" pitch="360.0" roll="0.0" yaw="180.0260009765625" />
+		<waypoint x="111.81758880615234" y="302.9884338378906" z="0.0" pitch="360.0" roll="0.0" yaw="180.02587890625" />
+		<waypoint x="58.329769134521484" y="302.9642639160156" z="0.0" pitch="360.0" roll="0.0" yaw="180.02587890625" />
+		<waypoint x="33.31934356689453" y="302.9530029296875" z="0.0" pitch="360.0" roll="0.0" yaw="180.0257568359375" />
+		<waypoint x="4.922668933868408" y="302.94024658203125" z="0.0" pitch="360.0" roll="0.0" yaw="180.0257568359375" />
+		<waypoint x="-3.566227436065674" y="289.6850891113281" z="0.0" pitch="0.0" roll="0.0" yaw="-90.06791687011719" />
+		<waypoint x="-3.6064677238464355" y="255.73770141601562" z="0.0" pitch="0.0" roll="0.0" yaw="-90.06791687011719" />
+		<waypoint x="-3.665682315826416" y="205.7830352783203" z="0.0" pitch="0.0" roll="0.0" yaw="-90.06791687011719" />
+	</route>
+	<route id="21" town="Town02" bgseed="99" town_amount="30">
+		<waypoint x="107.4" y="30.6" z="0.2" pitch="0.0" roll="0.0" yaw="0" />
+		<waypoint x="132.2" y="212.4" z="0.2" pitch="0.0" roll="0.0" yaw="90" />
+	</route>
+
+<!--Town 05 routes-->
+	<route id="50" town="Town05" bgseed="99" town_amount="35">
+		<weather
+				cloudiness="50"
+				precipitation="0"
+				precipitation_deposits="35"
+				wind_intensity="0"
+				sun_azimuth_angle="0"
+				sun_altitude_angle="15"
+		/>
+		<!--		<waypoint x="35.06596755981445" y="115.37467193603516" z="1.52587890625e-05" pitch="0.0" roll="0.0" yaw="-89.97711181640625" />-->
+		<!--		<waypoint x="35.08445358276367" y="69.111328125" z="0" pitch="0.0" roll="0.0" yaw="270" />-->
+		<!--		<waypoint x="35.103919982910156" y="20.389137268066406" z="0" pitch="360.0" roll="0.0" yaw="270" />-->
+		<!--		<waypoint x="56.130428314208984" y="2.268553218841553" z="0.0" pitch="360.0" roll="0.0" yaw="0.2502593994140625" />-->
+		<!--		<waypoint x="81.40506744384766" y="2.268952941894531" z="0.0" pitch="360.0" roll="0.0" yaw="0.2502593994140625" />-->
+		<!--		<waypoint x="104.15872955322266" y="-13.633543014526367" z="0.0" pitch="360.0" roll="0.0" yaw="270" />-->
+		<!--	 	<waypoint x="106.92533874511719" y="-15.19858570098877" z="0.0" pitch="360.0" roll="0.0" yaw="270" />-->
+		<waypoint x="51.35871124267578" y="-94.6038818359375" z="0.0" pitch="360.0" roll="0.0" yaw="180" />
+		<waypoint x="-5.35871124267578" y="-95.038818359375" z="0.0" pitch="360.0" roll="0.0" yaw="180" />
+		<waypoint x="-33.234676361083984" y="-95.27685546875" z="0.0" pitch="360.0" roll="0.0" yaw="180" />
+		<waypoint x="-108.816" y="-95.066" z="0.0" pitch="360.0" roll="0.0" yaw="179.954"/>
+		<waypoint x="-120.2346" y="-105.01" z="0.0" pitch="360.0" roll="0.0" yaw="270" />
+		<waypoint x="-52.50429916381836" y="-75.96627044677734" z="0.0" pitch="360.0" roll="0.0" yaw="180" />
+		<!--Go forward and around-->
+		<!--		<waypoint x="129.66746520996094" y="2.088993549346924" z="0.0" pitch="360.0" roll="0.0" yaw="0" />-->
+		<!--		<waypoint x="155.7490997314453" y="-12.958685874938965" z="0.0" pitch="360.0" roll="0.0" yaw="270" />-->
+		<!--		<waypoint x="155.7490997314453" y="-12.958685874938965" z="0.0" pitch="360.0" roll="0.0" yaw="270" />-->
+		<!--		<waypoint x="55.73407745361328" y="-149.53053283691406" z="0.0" pitch="360.0" roll="0.0" yaw="0000" />-->
+
+		<!--		<waypoint x="96.0704345703125" y="26.71501922607422" z="0.0" pitch="360.0" roll="0.0" yaw="90.69916534423828" />-->
+		<!--		<waypoint x="71.27369689941406" y="81.76386260986328" z="0.0" pitch="360.0" roll="0.0" yaw="157.0408172607422" />-->
+		<!--		Reverse roue is below 		-->
+		<!--		<waypoint x="71.27369689941406" y="81.76386260986328" z="0.0" pitch="360.0" roll="0.0" yaw="220.0408172607422" />-->
+		<!--		<waypoint x="95.85332489013672" y="44.50555419921875" z="0.0" pitch="360.0" roll="0.0" yaw="270.69916534423828" />-->
+		<!--		<waypoint x="96.0704345703125" y="26.71501922607422" z="0.0" pitch="360.0" roll="0.0" yaw="270.69916534423828" />-->
+		<!--		<waypoint x="81.40506744384766" y="5.418952941894531" z="0.0" pitch="360.0" roll="0.0" yaw="180.2502593994140625" />-->
+		<!--		<waypoint x="56.130428314208984" y="5.308553218841553" z="0.0" pitch="360.0" roll="0.0" yaw="180.2502593994140625" />-->
+		<!--		<waypoint x="35.103919982910156" y="20.389137268066406" z="1.52587890625e-05" pitch="360.0" roll="0.0" yaw="90.02288818359375" />-->
+		<!--		<waypoint x="35.08445358276367" y="69.111328125" z="1.52587890625e-05" pitch="0.0" roll="0.0" yaw="90.97711181640625" />-->
+	</route>
+
+<!--	Turn right and around -->
+	<route id="51" town="Town05">
+		<!--<waypoint x="6.47" y="2.52" z="0.0" pitch="360.0" roll="0.0" yaw="0.3"/>-->
+		<waypoint x="34.81" y="-17.19" z="0.0" pitch="360.0" roll="0.0" yaw="-88.7"/>
+		<waypoint x="38.857" y="-68.875" z="0" pitch="0.0" roll="0.0" yaw="270" />
+		<!--<waypoint x="38.857" y="-169.875" z="0" pitch="0.0" roll="0.0" yaw="270" />-->
+		<waypoint x="96.09" y="-17.65" z="0.0" pitch="360.0" roll="0.0" yaw="92.0"/>
+		<waypoint x="46.47" y="-2.50" z="0.0" pitch="360.0" roll="0.0" yaw="-179.4"/>
+	</route>
+<!--	Highway route on ramp -->
+	<!-- to test turn right:<waypoint x="43.49" y="-83.72" z="0.0" pitch="360.0" roll="0.0" yaw="1.0"/>-->
+
+<!--	We need a highway  merging scenario for sure -->
+	<route id="52" town="Town05">
+<!--		<waypoint x="6.47" y="2.52" z="0.0" pitch="360.0" roll="0.0" yaw="0.3"/>-->
+<!--		turn left -->
+		<waypoint x="34.81" y="-17.19" z="0.0" pitch="360.0" roll="0.0" yaw="-88.7"/>
+<!--		<waypoint x="34.857" y="-68.875" z="0" pitch="0.0" roll="0.0" yaw="270" />-->
+<!--		<waypoint x="38.857" y="-169.875" z="0" pitch="0.0" roll="0.0" yaw="270" />-->
+		<waypoint x="59.805" y="-186.264" z="0" pitch="0.0" roll="0.0" yaw="0" />
+		<waypoint x="189.124" y="-41.731" z="0" pitch="360.0" roll="0.0" yaw="90" />
+		<waypoint x="189.497" y="52.107" z="0" pitch="360.0" roll="0.0" yaw="90" />
+		<waypoint x="49.471" y="187.858" z="0.0" pitch="360.0" roll="0.0" yaw="179.720"/>
+	</route>
+
+	<!--	Highway route 2 -->
+	<route id="53" town="Town05">
+		<weather
+			cloudiness="70"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="0"
+			sun_altitude_angle="15"
+		/>
+		<!-- merge onto highway	-->
+		<waypoint x="24.13" y="119.85" z="0.0" pitch="360.0" roll="0.0" yaw="89.5"/>
+		<waypoint x="24.21" y="176.32" z="0.0" pitch="360.0" roll="0.0" yaw="90"/>
+		<!-- highway begins-->
+		<waypoint x="8.15" y="187.21" z="0.0" pitch="360.0" roll="0.0" yaw="177.8"/>
+		<waypoint x="-102.07" y="187.16" z="0.0" pitch="360.0" roll="0.0" yaw="178.1"/>
+		<!--	Next two are for goin in and around the city 	-->
+<!--		<waypoint x="-225.51" y="9.01" z="0.0" pitch="360.0" roll="0.0" yaw="-94.7"/>-->
+<!--		<waypoint x="15.01" y="-186.28" z="0.0" pitch="360.0" roll="0.0" yaw="-0.9"/>-->
+		<!-- in the city now	-->
+		<waypoint x="26.67" y="-105.62" z="0.0" pitch="360.0" roll="0.0" yaw="89.3"/>
+		<!-- right before parking lot -->
+		<waypoint x="24.92" y="-39.49" z="0.0" pitch="360.0" roll="0.0" yaw="85.3"/>
+		<!-- park here -->
+		<waypoint x="8.89" y="-29.86" z="0.0" pitch="360.0" roll="0.0" yaw="179.2"/>
+	</route>
+
+	<!--	In city route 1 -->
+	<route id="54" town="Town05" bgseed="99" town_amount="50">
+		<weather
+			cloudiness="70"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="0"
+			sun_altitude_angle="15"
+		/>
+		<waypoint x="35.19" y="56.92" z="0.0" pitch="360.0" roll="0.0" yaw="-88.4"/>
+		<waypoint x="-32.52" y="-1.02" z="0.0" pitch="360.0" roll="0.0" yaw="179.7"/>
+		<waypoint x="-47.75" y="-46.78" z="0.0" pitch="360.0" roll="0.0" yaw="-90.5"/>
+		<waypoint x="-102.85" y="-142.17" z="0.0" pitch="360.0" roll="0.0" yaw="-178.4"/>
+		<waypoint x="-195.31" y="-105.96" z="0.0" pitch="360.0" roll="0.0" yaw="89.5"/>
+		<waypoint x="-272.52" y="-33.20" z="0.0" pitch="360.0" roll="0.0" yaw="92.4"/>
+		<waypoint x="-207.39" y="91.74" z="0.0" pitch="360.0" roll="0.0" yaw="-2.0"/>
+		<waypoint x="-119.68" y="117.62" z="0.0" pitch="360.0" roll="0.0" yaw="-87.4"/>
+		<waypoint x="-65.77" y="91.90" z="0.0" pitch="360.0" roll="0.0" yaw="0.3"/>
+	</route>
+
+	<!-- Highway loop around route -->
+	<route id="55" town="Town05" bgseed="99" town_amount="50">
+		<weather
+			cloudiness="70"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="0"
+			sun_altitude_angle="15"
+		/>
+		<waypoint x="98.99" y="135.81" z="0.03" pitch="360.0" roll="0.0" yaw="165.6"/>
+		<waypoint x="25.1" y="151.5" z="0.0" pitch="360.0" roll="0.0" yaw="90.6"/>
+		<waypoint x="-8.77" y="187.7" z="0.2" pitch="360.0" roll="0.0" yaw="180"/>
+		<waypoint x="-22.98" y="89.5" z="9.90" pitch="360.0" roll="0.0" yaw="270"/>
+		<waypoint x="0.1" y="-18.65" z="0.30" pitch="360.0" roll="0.0" yaw="0"/>
+		<waypoint x="24.5" y="-37.1" z="0.30" pitch="360.0" roll="0.0" yaw="90"/>
+	</route>
+
+
+<!--	Town 03 routes -->
+	<route id="31" town="Town03">
+		<weather
+				cloudiness="0"
+				precipitation="0"
+				precipitation_deposits="0"
+				wind_intensity="0"
+				sun_azimuth_angle="0"
+				sun_altitude_angle="45"
+		/>
+		<waypoint x="64.60" y="7.50" z="0.0" pitch="360.0" roll="0.0" yaw="2.5"/>
+		<waypoint x="218.84" y="9.40" z="0.0" pitch="360.0" roll="0.0" yaw="-0.0"/>
+		<waypoint x="230.42" y="39.09" z="0.0" pitch="360.0" roll="0.0" yaw="94.2"/>
+		<waypoint x="185.75" y="59.07" z="0.0" pitch="360.0" roll="0.0" yaw="-175.0"/>
+		<!--grove st roundabout-->
+		<waypoint x="146.16" y="64.37" z="0.0" pitch="360.0" roll="0.0" yaw="-2.2"/>
+		<waypoint x="101.53" y="129.36" z="0.0" pitch="360.0" roll="0.0" yaw="179.5"/>
+		<waypoint x="14.76" y="130.44" z="0.0" pitch="360.0" roll="0.0" yaw="175.5"/>
+		<waypoint x="1.12" y="43.64" z="0.0" pitch="360.0" roll="0.0" yaw="-91.4"/>
+		<waypoint x="9.88" y="-123.49" z="0.0" pitch="360.0" roll="0.0" yaw="-89.1"/>
+		<waypoint x="71.19" y="-133.00" z="0.0" pitch="360.0" roll="0.0" yaw="3.9"/>
+		<waypoint x="86.11" y="-181.65" z="0.0" pitch="360.0" roll="0.0" yaw="-86.2"/>
+		<waypoint x="140.36" y="-193.80" z="0.0" pitch="360.0" roll="0.0" yaw="2.0"/>
+		<!-- tunnels-->
+		<waypoint x="180.63" y="-197.42" z="0.0" pitch="360.0" roll="0.0" yaw="-1.2"/>
+		<waypoint x="235.65" y="-21.38" z="0.0" pitch="360.0" roll="0.0" yaw="91.5"/>
+	</route>
+<!--  	Town 04 routes -->
+	<route id="40" town="Town04">
+		<waypoint x="284.4" y="16.4" z="2.5" pitch="360.0" roll="0.0" yaw="179.720"/>
+		<waypoint x="141.55" y="-170.35" z="0.0" pitch="360.0" roll="0.0" yaw="0.0"/>
+	</route>
+<!--	Town 6 route -->
+	<route id="60" town="Town06">
+<!--		default start-->
+		<waypoint x="-23.95" y="-15.65" z="0.0" pitch="360.0" roll="0.0" yaw="0.0"/>
+		<waypoint x="272.11" y="42.48" z="0.0" pitch="360.0" roll="0.0" yaw="5.6"/>
+		<waypoint x="515.16" y="21.82" z="0.0" pitch="360.0" roll="0.0" yaw="296.5"/>
+	</route>
+
+<!--	Town 7 farm route -->
+
+	<route id="70" town="Town07">
+<!--		bus stop-->
+	<waypoint x="-6.03" y="-93.05" z="0.0" pitch="360.0" roll="0.0" yaw="88.1"/>
+	<waypoint x="-23.60" y="-64.54" z="0.0" pitch="360.0" roll="0.0" yaw="178.9"/>
+	<waypoint x="-59.61" y="-1.41" z="0.0" pitch="360.0" roll="0.0" yaw="0"/>
+<!--	stop sign-->
+	<waypoint x="-99.64" y="-18.70" z="0.0" pitch="360.0" roll="0.0" yaw="-89.6"/>
+	<waypoint x="-141.74" y="-36.16" z="0.0" pitch="360.0" roll="0.0" yaw="177.4"/>
+	</route>
+
+<!--	Town 10 HD routes -->
+	<route id="101" town="Town10HD">
+		<waypoint x="-100.82" y="96.97" z="0.0" pitch="360.0" roll="0.0" yaw="-104.1"/>
+		<waypoint x="-107.32" y="46.04" z="0.0" pitch="360.0" roll="0.0" yaw="-90"/>
+		<waypoint x="-88.41" y="27.58" z="0.0" pitch="360.0" roll="0.0" yaw="0"/>
+		<waypoint x="82.04" y="24.96" z="0.0" pitch="360.0" roll="0.0" yaw="0"/>
+		<waypoint x="106.41" y="-3.90" z="0.0" pitch="360.0" roll="0.0" yaw="-90"/>
+		<waypoint x="33.054" y="-70.773" z="0.0" pitch="360.0" roll="0.0" yaw="-180"/>
+		<waypoint x="-24.622" y="-64.174" z="0.0" pitch="360.0" roll="0.0" yaw="-180"/>
+		<waypoint x="-48.71" y="-1.93" z="0.0" pitch="360.0" roll="0.0" yaw="90.0"/>
+	</route>
+
+	<route id="32" town="Town03" town_amount="150">
+		<weather
+			cloudiness="90"
+			precipitation="0"
+			precipitation_deposits="15"
+			wind_intensity="0"
+			sun_azimuth_angle="0"
+			sun_altitude_angle="5"
+		/>
+		<waypoint x="-33.79" y="176.37" z="0.0" pitch="360.0" roll="0.0" yaw="152.5"/>
+		<waypoint x="-74.90" y="147.43" z="0.0" pitch="360.0" roll="0.0" yaw="-89.9"/>
+		<waypoint x="-74.04" y="15.79" z="0.0" pitch="360.0" roll="0.0" yaw="-88.9"/>
+		<waypoint x="-47.87" y="0.76" z="0.0" pitch="360.0" roll="0.0" yaw="5.7"/>
+		<waypoint x="215.17" y="10.18" z="0.0" pitch="360.0" roll="0.0" yaw="1.1"/>
+		<waypoint x="207.31" y="58.32" z="0.0" pitch="360.0" roll="0.0" yaw="-176.8"/>
+		<waypoint x="88.99" y="68.02" z="0.0" pitch="360.0" roll="0.0" yaw="-32.4"/>
+		<waypoint x="166.55" y="98.92" z="0.0" pitch="360.0" roll="0.0" yaw="103.5"/>
+		<waypoint x="-63.18" y="131.42" z="0.0" pitch="360.0" roll="0.0" yaw="-171.1"/>
+	</route>
+
+	<route id="33" town="Town03">
+		<weather
+			preset="CloudySunset"
+			cloudiness="70"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="0"
+			sun_altitude_angle="0"
+		/>
+		<waypoint x="3.70" y="-49.73" z="0.0" pitch="360.0" roll="0.0" yaw="-84.5"/>
+		<waypoint x="-63.47" y="-139.74" z="0.0" pitch="360.0" roll="0.0" yaw="-179.6"/>
+		<waypoint x="-16.13" y="-196.11" z="0.0" pitch="360.0" roll="0.0" yaw="2.5"/>
+		<waypoint x="235.56" y="-21.05" z="0.0" pitch="360.0" roll="0.0" yaw="92.7"/>
+	</route>
+
+	<route id="34" town="Town03" bgseed="99" town_amount="50">
+		<weather
+			preset="CloudySunset"
+			cloudiness="70"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="0"
+			sun_altitude_angle="5"
+		/>
+		<waypoint x="56.13" y="-194.11" z="0.0" pitch="360.0" roll="0.0" yaw="2.5"/>
+		<waypoint x="55.67" y="-196.58" z="0.0" pitch="360.0" roll="0.0" yaw="1.2"/>
+		<waypoint x="235.56" y="-21.05" z="0.0" pitch="360.0" roll="0.0" yaw="92.7"/>
+	</route>
+
+
+<!--	Town 03 routes -->
+	<route id="31" town="Town03">
+		<weather
+			preset="CloudySunset"
+			cloudiness="70"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="0"
+			sun_altitude_angle="5"
+		/>
+		<waypoint x="64.60" y="7.50" z="0.0" pitch="360.0" roll="0.0" yaw="2.5"/>
+		<waypoint x="218.84" y="9.40" z="0.0" pitch="360.0" roll="0.0" yaw="-0.0"/>
+		<waypoint x="230.42" y="39.09" z="0.0" pitch="360.0" roll="0.0" yaw="94.2"/>
+		<waypoint x="185.75" y="59.07" z="0.0" pitch="360.0" roll="0.0" yaw="-175.0"/>
+		<!--grove st roundabout-->
+		<waypoint x="146.16" y="64.37" z="0.0" pitch="360.0" roll="0.0" yaw="-2.2"/>
+		<waypoint x="101.53" y="129.36" z="0.0" pitch="360.0" roll="0.0" yaw="179.5"/>
+		<waypoint x="14.76" y="130.44" z="0.0" pitch="360.0" roll="0.0" yaw="175.5"/>
+		<waypoint x="1.12" y="43.64" z="0.0" pitch="360.0" roll="0.0" yaw="-91.4"/>
+		<waypoint x="9.88" y="-123.49" z="0.0" pitch="360.0" roll="0.0" yaw="-89.1"/>
+		<waypoint x="71.19" y="-133.00" z="0.0" pitch="360.0" roll="0.0" yaw="3.9"/>
+		<waypoint x="86.11" y="-181.65" z="0.0" pitch="360.0" roll="0.0" yaw="-86.2"/>
+		<waypoint x="140.36" y="-193.80" z="0.0" pitch="360.0" roll="0.0" yaw="2.0"/>
+		<!-- tunnels-->
+		<waypoint x="180.63" y="-197.42" z="0.0" pitch="360.0" roll="0.0" yaw="-1.2"/>
+		<waypoint x="235.65" y="-21.38" z="0.0" pitch="360.0" roll="0.0" yaw="91.5"/>
+	</route>
+
+
+<!-- Participant familiarization route -->
+	<route id="30" town="Town03">
+		<weather
+			cloudiness="90"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="0"
+			sun_altitude_angle="0"
+		/>
+		<waypoint x="64.60" y="7.50" z="0.0" pitch="360.0" roll="0.0" yaw="2.5"/>
+		<waypoint x="64.60" y="7.50" z="0.0" pitch="360.0" roll="0.0" yaw="2.5"/>
+	</route>
+
+
+
+</routes>

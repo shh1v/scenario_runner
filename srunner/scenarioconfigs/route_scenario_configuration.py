@@ -48,3 +48,6 @@ class RouteScenarioConfiguration(ScenarioConfiguration):
 
     trajectory = None
     scenario_file = None
+    bgseed = None
+    town_amount = None
+    scenario_number = None

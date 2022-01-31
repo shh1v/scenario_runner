@@ -33,12 +33,19 @@ from srunner.tools.route_manipulation import interpolate_trajectory
 from srunner.tools.py_trees_port import oneshot_behavior
 
 from srunner.scenarios.control_loss import ControlLoss
-from srunner.scenarios.follow_leading_vehicle import FollowLeadingVehicle
-from srunner.scenarios.object_crash_vehicle import DynamicObjectCrossing
+from srunner.scenarios.follow_leading_vehicle import FollowLeadingVehicle, FollowLeadingVehicleWithObstacle
+from srunner.scenarios.object_crash_vehicle import DynamicObjectCrossingSpawnaround, DynamicObjectCrossing, \
+    DynamicObjectCrossingNoBlocker
 from srunner.scenarios.object_crash_intersection import VehicleTurningRoute
 from srunner.scenarios.other_leading_vehicle import OtherLeadingVehicle
 from srunner.scenarios.maneuver_opposite_direction import ManeuverOppositeDirection
 from srunner.scenarios.junction_crossing_route import SignalJunctionCrossingRoute, NoSignalJunctionCrossingRoute
+from srunner.scenarios.no_signal_junction_crossing import NoSignalJunctionCrossing
+from srunner.scenarios.opposite_vehicle_taking_priority import OppositeVehicleRunningRedLight
+from srunner.scenarios.signalized_junction_left_turn import SignalizedJunctionLeftTurn
+from srunner.scenarios.signalized_junction_right_turn import SignalizedJunctionRightTurn, SignalizedJunctionRightTurn_original
+from srunner.scenarios.change_lane import ChangeLane
+from srunner.scenarios.cut_in import CutIn
 
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTest,
                                                                      InRouteTest,
@@ -51,7 +58,7 @@ from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTe
 # DReyeVR utils
 from DReyeVR_utils import find_ego_vehicle
 
-SECONDS_GIVEN_PER_METERS = 0.4
+SECONDS_GIVEN_PER_METERS = 1
 
 NUMBER_CLASS_TRANSLATION = {
     "Scenario1": ControlLoss,
@@ -60,10 +67,16 @@ NUMBER_CLASS_TRANSLATION = {
     "Scenario4": VehicleTurningRoute,
     "Scenario5": OtherLeadingVehicle,
     "Scenario6": ManeuverOppositeDirection,
+    # "Scenario7": OppositeVehicleRunningRedLight,
     "Scenario7": SignalJunctionCrossingRoute,
-    "Scenario8": SignalJunctionCrossingRoute,
-    "Scenario9": SignalJunctionCrossingRoute,
-    "Scenario10": NoSignalJunctionCrossingRoute
+    "Scenario8": SignalizedJunctionLeftTurn,
+    # "Scenario9": SignalizedJunctionRightTurn_original,
+    "Scenario9": SignalizedJunctionRightTurn,
+    "Scenario10": NoSignalJunctionCrossing,
+    "Scenario11": DynamicObjectCrossingSpawnaround,
+    "Scenario12": DynamicObjectCrossingNoBlocker,
+    "Scenario13": CutIn,
+    "Scenario14": ChangeLane
 }
 
 
@@ -136,6 +149,38 @@ def compare_scenarios(scenario_choice, existent_scenario):
                 return True
 
     return False
+
+def get_3pt_angle(wp, wm, wn):
+    '''
+    :carla.Location wp:
+    :carla.Location wm:
+    :carla.Location wn:
+    :return: angle subtended at wm by wp and wn
+    '''
+    import numpy as np
+
+    vec_p = wp - wm
+    vec_p = np.array([vec_p.x, vec_p.y])
+    uvec_p = vec_p/np.linalg.norm(vec_p)
+
+    vec_n = wn - wm
+    vec_n = np.array([vec_n.x, vec_n.y])
+    uvec_n = vec_n / np.linalg.norm(vec_n)
+
+    # costheta = np.dot(uvec_p, uvec_n)
+    ytan = np.linalg.norm(uvec_n - uvec_p)
+    xtan = np.linalg.norm(uvec_n + uvec_p)
+
+    try:
+        # angle_bn_3pts = 2 * np.arctan2(ytan, xtan)
+        angle_bn_3pts = 2 * np.arctan(ytan/xtan)
+    except ValueError:
+        print(vec_p, vec_n)
+        print(uvec_p, uvec_n)
+        # import sys; sys.exit(-1)
+
+    angle_bn_3pts = abs(angle_bn_3pts)
+    return angle_bn_3pts
 
 
 class RouteScenario(BasicScenario):
@@ -247,10 +292,12 @@ class RouteScenario(BasicScenario):
         return int(SECONDS_GIVEN_PER_METERS * route_length)
 
     # pylint: disable=no-self-use
-    def _draw_waypoints(self, world, waypoints, vertical_shift, persistency=-1):
+    def _draw_all_waypoints(self, world, waypoints, vertical_shift, persistency=-1):
         """
         Draw a list of waypoints at a certain height given in vertical_shift.
         """
+        # TODO: change so only turns are shown
+        # Remove all Straight lines?
         for w in waypoints:
             wp = w[0].location + carla.Location(z=vertical_shift)
 
@@ -267,13 +314,69 @@ class RouteScenario(BasicScenario):
                 color = carla.Color(128, 128, 128)
             else:  # LANEFOLLOW
                 color = carla.Color(0, 255, 0)  # Green
-                size = 0.1
+                size = 0.1  # hide markers when lane following
 
             world.debug.draw_point(wp, size=size, color=color, life_time=persistency)
 
-        world.debug.draw_point(waypoints[0][0].location + carla.Location(z=vertical_shift), size=0.2,
+        # draw start and end in RED and BLUE
+        world.debug.draw_point(waypoints[0][0].location + carla.Location(z=vertical_shift), size=size,
                                color=carla.Color(0, 0, 255), life_time=persistency)
-        world.debug.draw_point(waypoints[-1][0].location + carla.Location(z=vertical_shift), size=0.2,
+        world.debug.draw_point(waypoints[-1][0].location + carla.Location(z=vertical_shift), size=size,
+                               color=carla.Color(255, 0, 0), life_time=persistency)
+        return
+
+    def _draw_waypoints(self, world, waypoints, vertical_shift, persistency=-1):
+        """
+        Draw a list of waypoints at a certain height given in vertical_shift.
+        """
+        # changed so only turns are shown
+        # hide all straight lines/lane follows
+        route_curvecalc_skip = 3
+        draw_skip = 1
+        route_suppress_angle_limit = 1
+        size_visible = 0.05
+        size = size_visible
+        color = carla.Color(0, 0, 0)  # Green
+
+        for i, w in enumerate(waypoints[route_curvecalc_skip + 1:-(route_curvecalc_skip + 1):draw_skip]):
+            i = route_curvecalc_skip + 1 + i*draw_skip  # enumerate is not v smart
+            wm = waypoints[i][0].location + carla.Location(z=vertical_shift)
+            size = size_visible
+            if waypoints[i][1] == RoadOption.LEFT:  # Yellow
+                color = carla.Color(255, 255, 0)
+            elif waypoints[i][1] == RoadOption.RIGHT:  # Cyan
+                color = carla.Color(0, 255, 255)
+            elif waypoints[i][1] == RoadOption.CHANGELANELEFT:  # Orange
+                color = carla.Color(255, 64, 0)
+            elif waypoints[i][1] == RoadOption.CHANGELANERIGHT:  # Dark Cyan
+                color = carla.Color(0, 64, 255)
+            else:  # LANEFOLLOW
+                color = carla.Color(0, 255, 0)  # Green
+                wp = waypoints[i - route_curvecalc_skip - 1][0].location + carla.Location(z=vertical_shift)
+                wn = waypoints[i + route_curvecalc_skip + 1][0].location + carla.Location(z=vertical_shift)
+                angle = get_3pt_angle(wp, wm, wn)
+                angle_deg = (180 / math.pi) * angle
+
+                if (angle < route_suppress_angle_limit) or\
+                        (angle_deg > (180-route_suppress_angle_limit)):
+                    size = 0.0  # no need to draw this segment
+                    color = carla.Color(255, 0, 0)
+                else:
+                    size = size_visible
+                    color = carla.Color(0, 255, 0)  # Green
+
+            color = carla.Color(0, 0, 0)
+            world.debug.draw_point(wm, size=size, color=color, life_time=persistency)
+            # arrow_pts = [wm, waypoints[i + 1][0].location + carla.Location(z=vertical_shift)]
+            # world.debug.draw_arrow(points=arrow_pts, thickness=0.1, arrow_size=0.1,
+            #                        color=color, life_time=persistency)
+            # world.debug.draw_arrow(begin=arrow_pts[0], end=arrow_pts[1], thickness=0.1, arrow_size=0.1,
+            #                        color=color, life_time=persistency)
+
+        # draw start and end in RED and BLUE
+        world.debug.draw_point(waypoints[0][0].location + carla.Location(z=vertical_shift), size=size,
+                               color=carla.Color(0, 0, 255), life_time=persistency)
+        world.debug.draw_point(waypoints[-1][0].location + carla.Location(z=vertical_shift), size=size,
                                color=carla.Color(255, 0, 0), life_time=persistency)
 
     def _scenario_sampling(self, potential_scenarios_definitions, random_seed=0):
@@ -323,13 +426,15 @@ class RouteScenario(BasicScenario):
         scenario_instance_vec = []
 
         if debug_mode:
-            for scenario in scenario_definitions:
-                loc = carla.Location(scenario['trigger_position']['x'],
-                                     scenario['trigger_position']['y'],
-                                     scenario['trigger_position']['z']) + carla.Location(z=2.0)
-                world.debug.draw_point(loc, size=0.3, color=carla.Color(255, 0, 0), life_time=100000)
-                world.debug.draw_string(loc, str(scenario['name']), draw_shadow=False,
-                                        color=carla.Color(0, 0, 255), life_time=100000, persistent_lines=True)
+            # TODO commenting for now to not give away scenarios
+            # for scenario in scenario_definitions:
+            #     loc = carla.Location(scenario['trigger_position']['x'],
+            #                          scenario['trigger_position']['y'],
+            #                          scenario['trigger_position']['z']) + carla.Location(z=2.0)
+            #     world.debug.draw_point(loc, size=0.3, color=carla.Color(255, 0, 0), life_time=100000)
+            #     world.debug.draw_string(loc, str(scenario['name']), draw_shadow=False,
+            #                             color=carla.Color(0, 0, 255), life_time=100000, persistent_lines=True)
+            pass
 
         for scenario_number, definition in enumerate(scenario_definitions):
             # Get the class possibilities for this scenario number
@@ -374,6 +479,8 @@ class RouteScenario(BasicScenario):
 
         return scenario_instance_vec
 
+# this may no longer be being used - individual scenarios now have logic to spawn
+# other actors
     def _get_actors_instances(self, list_of_antagonist_actors):
         """
         Get the full list of actor instances.
@@ -404,6 +511,7 @@ class RouteScenario(BasicScenario):
 
     # pylint: enable=no-self-use
 
+    # this replaces and implements BackgroundActivity
     def _initialize_actors(self, config):
         """
         Set other_actors to the superset of all scenario actors
@@ -412,17 +520,19 @@ class RouteScenario(BasicScenario):
         # Create the background activity of the route
         town_amount = {
             'Town01': 120,
-            'Town02': 100,
-            'Town03': 120,
-            'Town04': 200,
-            'Town05': 120,
-            'Town06': 150,
-            'Town07': 110,
-            'Town08': 180,
-            'Town09': 300,
-            'Town10': 120,
+            'Town02': 0,
+            'Town03': 10,
+            'Town04': 50,
+            'Town05': 0,
+            'Town06': 50,
+            'Town07': 20,
+            'Town10': 0,
+            'Town10HD': 40
         }
 
+        if config.town_amount is not None:
+            amount = int(config.town_amount)
+        else:
         amount = town_amount[config.town] if config.town in town_amount else 0
 
         new_actors = CarlaDataProvider.request_new_batch_actors('vehicle.*',
@@ -452,7 +562,7 @@ class RouteScenario(BasicScenario):
         """
         Basic behavior do nothing, i.e. Idle
         """
-        scenario_trigger_distance = 1.5  # Max trigger distance between route and scenario
+        scenario_trigger_distance = 25  # Max trigger distance between route and scenario
 
         behavior = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
@@ -505,7 +615,7 @@ class RouteScenario(BasicScenario):
         route_criterion = InRouteTest(self.ego_vehicles[0],
                                       route=route,
                                       offroad_max=30,
-                                      terminate_on_failure=True)
+                                      terminate_on_failure=False)
 
         completion_criterion = RouteCompletionTest(self.ego_vehicles[0], route=route)
 
@@ -522,11 +632,11 @@ class RouteScenario(BasicScenario):
 
         criteria.append(completion_criterion)
         criteria.append(collision_criterion)
-        criteria.append(route_criterion)
+        # criteria.append(route_criterion)
         criteria.append(outsidelane_criterion)
         criteria.append(red_light_criterion)
         criteria.append(stop_criterion)
-        criteria.append(blocked_criterion)
+        # criteria.append(blocked_criterion)
 
         return criteria
 

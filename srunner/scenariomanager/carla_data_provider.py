@@ -61,7 +61,7 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
     _blueprint_library = None
     _ego_vehicle_route = None
     _traffic_manager_port = 8000
-    _random_seed = 2000
+    _random_seed = 1000  # default random seed 2000
     _rng = random.RandomState(_random_seed)
 
     @staticmethod
@@ -172,6 +172,22 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         # This may cause exception loops in py_trees
         print('{}.get_transform: {} not found!' .format(__name__, actor))
         return None
+
+    @staticmethod
+    def set_rng_seed(random_seed):
+        """
+        Set the CarlaDataProvider RNG seed.
+        Used to sample non-ego actors and background traffic
+        """
+        CarlaDataProvider._random_seed = random_seed
+        CarlaDataProvider._rng = random.RandomState(CarlaDataProvider._random_seed)
+
+    @staticmethod
+    def get_rng_seed(seed):
+        """
+        Get the CarlaDataProvider RNG seed
+        """
+        return CarlaDataProvider._random_seed
 
     @staticmethod
     def set_client(client):
@@ -390,6 +406,28 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
                 tl_t = CarlaDataProvider._traffic_light_map[traffic_light]
                 transformed_tv = tl_t.transform(traffic_light.trigger_volume.location)
                 distance = carla.Location(transformed_tv).distance(list_of_waypoints[-1].transform.location)
+
+                if distance < distance_to_relevant_traffic_light:
+                    relevant_traffic_light = traffic_light
+                    distance_to_relevant_traffic_light = distance
+
+        return relevant_traffic_light
+
+    @staticmethod
+    def get_next_traffic_light_by_location(query_location):
+        """
+        returns the next relevant traffic light for the provided location
+        """
+        relevant_traffic_light = None
+        distance_to_relevant_traffic_light = float("inf")
+
+        # print("input location", query_location.__str__())
+
+        for traffic_light in CarlaDataProvider._traffic_light_map:
+            if hasattr(traffic_light, 'trigger_volume'):
+                tl_t = CarlaDataProvider._traffic_light_map[traffic_light]
+                transformed_tv = tl_t.transform(traffic_light.trigger_volume.location)
+                distance = carla.Location(transformed_tv).distance(query_location)
 
                 if distance < distance_to_relevant_traffic_light:
                     relevant_traffic_light = traffic_light

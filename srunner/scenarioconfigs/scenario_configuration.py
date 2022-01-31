@@ -75,6 +75,7 @@ class ScenarioConfiguration(object):
     trigger_points = []
     ego_vehicles = []
     other_actors = []
+    road_signs = []  # DReyeVR added so we can read road signs
     town = None
     name = None
     type = None
