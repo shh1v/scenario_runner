@@ -68,7 +68,7 @@ class OppositeVehicleRunningRedLight(BasicScenario):
         self._other_actor_transform = None
 
         # Timeout of scenario in seconds
-        self.timeout = timeout
+        self.timeout = 10  # timeout
 
         super(OppositeVehicleRunningRedLight, self).__init__("OppositeVehicleRunningRedLight",
                                                              ego_vehicles,
@@ -77,7 +77,10 @@ class OppositeVehicleRunningRedLight(BasicScenario):
                                                              debug_mode,
                                                              criteria_enable=criteria_enable)
 
-        self._traffic_light = CarlaDataProvider.get_next_traffic_light(self.ego_vehicles[0], False)
+        start_location = config.trigger_points[0].location
+        # this happens at the start of the thing -- useless
+        # self._traffic_light = CarlaDataProvider.get_next_traffic_light(self.ego_vehicles[0], False)
+        self._traffic_light = CarlaDataProvider.get_next_traffic_light_by_location(start_location)
 
         if self._traffic_light is None:
             print("No traffic light for the given location of the ego vehicle found")
@@ -85,6 +88,8 @@ class OppositeVehicleRunningRedLight(BasicScenario):
 
         self._traffic_light.set_state(carla.TrafficLightState.Green)
         self._traffic_light.set_green_time(self.timeout)
+        # self._traffic_light.set_state(carla.TrafficLightState.Red)
+        # self._traffic_light.set_red_time(self.timeout)
 
         # other vehicle's traffic light
         traffic_light_other = CarlaDataProvider.get_next_traffic_light(self.other_actors[0], False)
@@ -96,10 +101,23 @@ class OppositeVehicleRunningRedLight(BasicScenario):
         traffic_light_other.set_state(carla.TrafficLightState.Red)
         traffic_light_other.set_red_time(self.timeout)
 
+        # print('ego light', self._traffic_light.get_location().__str__())
+        # print('ego position curr', self.ego_vehicles[0].get_location().__str__())
+        # print('ego position scenario start', self.ego_vehicles[0].get_location().__str__())
+        # print('other light', traffic_light_other.get_location().__str__())
+        # print('other position', self.other_actors[0].get_location().__str__())
+        # sys.exit(-1)
+
+        # traffic_light_other.set_red_time(self.timeout)
+
     def _initialize_actors(self, config):
         """
         Custom initialization
         """
+        # difference here seems to be that a new actor is not created
+        # rather, the first existing other_actor is assigned first_vehicle status
+        # contrast with follow_leading_vehicle which spawns a vehicle
+        # or object_crash_vehicle which spawns a blocker and a bicycle
         self._other_actor_transform = config.other_actors[0].transform
         first_vehicle_transform = carla.Transform(
             carla.Location(config.other_actors[0].transform.location.x,

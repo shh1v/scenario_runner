@@ -496,7 +496,6 @@ class VehicleTurningRoute(BasicScenario):
         added_dist = self._num_lane_changes
 
         while True:
-
             # Try to spawn the actor
             try:
                 self._other_actor_transform = get_opponent_transform(added_dist, waypoint, self._trigger_location)

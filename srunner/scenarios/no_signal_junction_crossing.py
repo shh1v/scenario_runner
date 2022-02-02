@@ -16,12 +16,17 @@ import carla
 
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (ActorTransformSetter,
+                                                                      Idle,
                                                                       ActorDestroy,
                                                                       SyncArrival,
                                                                       KeepVelocity,
+                                                                      WaypointFollower,
                                                                       StopVehicle)
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import CollisionTest
-from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import InTriggerRegion
+from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import (InTriggerRegion,
+                                                                               InTriggerDistanceToVehicle,
+                                                                               InTriggerDistanceToLocation,
+                                                                               DriveDistance)
 from srunner.scenarios.basic_scenario import BasicScenario
 
 
@@ -50,6 +55,7 @@ class NoSignalJunctionCrossing(BasicScenario):
         """
 
         self._other_actor_transform = None
+        self._referenceWaypoint = CarlaDataProvider.get_map().get_waypoint(config.trigger_points[0].location)
         # Timeout of scenario in seconds
         self.timeout = timeout
 
@@ -68,10 +74,12 @@ class NoSignalJunctionCrossing(BasicScenario):
         first_vehicle_transform = carla.Transform(
             carla.Location(config.other_actors[0].transform.location.x,
                            config.other_actors[0].transform.location.y,
-                           config.other_actors[0].transform.location.z - 500),
+                           config.other_actors[0].transform.location.z),
             config.other_actors[0].transform.rotation)
+        # if config.other_actors[0].model is None:
+        config.other_actors[0].model = 'vehicle.dodge.charger_2020'
         first_vehicle = CarlaDataProvider.request_new_actor(config.other_actors[0].model, first_vehicle_transform)
-        first_vehicle.set_simulate_physics(enabled=False)
+        first_vehicle.set_simulate_physics(enabled=True)
         self.other_actors.append(first_vehicle)
 
     def _create_behavior(self):
@@ -87,32 +95,35 @@ class NoSignalJunctionCrossing(BasicScenario):
         """
 
         # Creating leaf nodes
-        start_other_trigger = InTriggerRegion(
-            self.ego_vehicles[0],
-            -80, -70,
-            -75, -60)
+        # start_other_trigger = InTriggerRegion(
+        #     self.ego_vehicles[0],
+        #     -100, -50,
+        #     -160, -114)
+
+        start_other_trigger = InTriggerDistanceToLocation(
+                                self.ego_vehicles[0], self._referenceWaypoint.transform.location, 3.5)
 
         sync_arrival = SyncArrival(
             self.other_actors[0], self.ego_vehicles[0],
-            carla.Location(x=-74.63, y=-136.34))
+            carla.Location(x=-74, y=-143.5))
 
-        pass_through_trigger = InTriggerRegion(
+        stop_sync_behaviour_trigger = InTriggerRegion(
             self.ego_vehicles[0],
             -90, -70,
             -124, -119)
+
+        stop_sync_behaviour_trigger = InTriggerDistanceToVehicle(self.other_actors[0], self.ego_vehicles[0], 20)
 
         keep_velocity_other = KeepVelocity(
             self.other_actors[0],
             self._other_actor_target_velocity)
 
-        stop_other_trigger = InTriggerRegion(
-            self.other_actors[0],
-            -45, -35,
-            -140, -130)
+        stop_other_trigger = DriveDistance(
+            self.other_actors[0], 80)
 
-        stop_other = StopVehicle(
-            self.other_actors[0],
-            self._other_actor_max_brake)
+        # stop_other = StopVehicle(
+        #     self.other_actors[0],
+        #     self._other_actor_max_brake)
 
         end_condition = InTriggerRegion(
             self.ego_vehicles[0],
@@ -120,8 +131,11 @@ class NoSignalJunctionCrossing(BasicScenario):
             -170, -156
         )
 
+        post_sync_behaviour = WaypointFollower(self.other_actors[0], 15,
+                                                avoid_collision=True)
+
         # Creating non-leaf nodes
-        root = py_trees.composites.Sequence()
+        root = py_trees.composites.Sequence("Scenario 10: 4 way stop sign")
         scenario_sequence = py_trees.composites.Sequence()
         sync_arrival_parallel = py_trees.composites.Parallel(
             policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
@@ -130,17 +144,19 @@ class NoSignalJunctionCrossing(BasicScenario):
 
         # Building tree
         root.add_child(scenario_sequence)
-        scenario_sequence.add_child(ActorTransformSetter(self.other_actors[0], self._other_actor_transform))
+        # scenario_sequence.add_child(ActorTransformSetter(self.other_actors[0], self._other_actor_transform))
         scenario_sequence.add_child(start_other_trigger)
         scenario_sequence.add_child(sync_arrival_parallel)
+        # todo sync arrival should only work for a while
         scenario_sequence.add_child(keep_velocity_other_parallel)
-        scenario_sequence.add_child(stop_other)
-        scenario_sequence.add_child(end_condition)
+        # scenario_sequence.add_child(stop_other)
+        # scenario_sequence.add_child(end_condition)
         scenario_sequence.add_child(ActorDestroy(self.other_actors[0]))
 
         sync_arrival_parallel.add_child(sync_arrival)
-        sync_arrival_parallel.add_child(pass_through_trigger)
-        keep_velocity_other_parallel.add_child(keep_velocity_other)
+        sync_arrival_parallel.add_child(stop_sync_behaviour_trigger)
+        # keep_velocity_other_parallel.add_child(keep_velocity_other)
+        keep_velocity_other_parallel.add_child(post_sync_behaviour)
         keep_velocity_other_parallel.add_child(stop_other_trigger)
 
         return root

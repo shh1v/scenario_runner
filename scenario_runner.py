@@ -356,6 +356,12 @@ class ScenarioRunner(object):
         if not self._load_and_wait_for_world(config.town, config.ego_vehicles):
             self._cleanup()
             return False
+        else:
+            # if load and wait was successful
+            # and if the config has bg and town_amount
+            if hasattr(config, "bgseed"):
+                if config.bgseed is not None:
+                    CarlaDataProvider.set_rng_seed(config.bgseed)
 
         if self._args.agent:
             agent_class_name = self.module_agent.__name__.title().replace('_', '')
@@ -409,7 +415,7 @@ class ScenarioRunner(object):
                 self.client.start_recorder(recorder_name, True)
 
             # Load scenario and run it
-            self.manager.load_scenario(scenario, self.agent_instance)
+            self.manager.load_scenario(scenario, self.agent_instance, config.scenario_number)
             self.manager.run_scenario()
 
             # Provide outputs if required

@@ -58,7 +58,7 @@ class FollowLeadingVehicle(BasicScenario):
         """
 
         self._map = CarlaDataProvider.get_map()
-        self._first_vehicle_location = 25
+        self._first_vehicle_location = 5  # 25, we should spawn it exactly at the trigger position for this scenario
         self._first_vehicle_speed = 10
         self._reference_waypoint = self._map.get_waypoint(config.trigger_points[0].location)
         self._other_actor_max_brake = 1.0
@@ -90,23 +90,27 @@ class FollowLeadingVehicle(BasicScenario):
         """
 
         first_vehicle_waypoint, _ = get_waypoint_in_distance(self._reference_waypoint, self._first_vehicle_location)
+
+        # this is where it is moved when scenario is triggered
         self._other_actor_transform = carla.Transform(
             carla.Location(first_vehicle_waypoint.transform.location.x,
                            first_vehicle_waypoint.transform.location.y,
-                           first_vehicle_waypoint.transform.location.z + 1),
+                           first_vehicle_waypoint.transform.location.z),
             first_vehicle_waypoint.transform.rotation)
+        # this is where it is spawned
         first_vehicle_transform = carla.Transform(
             carla.Location(self._other_actor_transform.location.x,
                            self._other_actor_transform.location.y,
-                           self._other_actor_transform.location.z - 500),
+                           self._other_actor_transform.location.z +1),#-500),
             self._other_actor_transform.rotation)
+
         first_vehicle = CarlaDataProvider.request_new_actor('vehicle.nissan.patrol', first_vehicle_transform)
-        first_vehicle.set_simulate_physics(enabled=False)
+        # first_vehicle.set_simulate_physics(enabled=False)
         self.other_actors.append(first_vehicle)
 
     def _create_behavior(self):
         """
-        The scenario defined after is a "follow leading vehicle" scenario. After
+        The scenario defined below is a "follow leading vehicle" scenario. After
         invoking this scenario, it will wait for the user controlled vehicle to
         enter the start region, then make the other actor to drive until reaching
         the next intersection. Finally, the user-controlled vehicle has to be close
@@ -114,7 +118,7 @@ class FollowLeadingVehicle(BasicScenario):
         If this does not happen within 60 seconds, a timeout stops the scenario
         """
 
-        # to avoid the other actor blocking traffic, it was spawed elsewhere
+        # to avoid the other actor blocking traffic, it was spawned elsewhere
         # reset its pose to the required one
         start_transform = ActorTransformSetter(self.other_actors[0], self._other_actor_transform)
 
@@ -216,7 +220,7 @@ class FollowLeadingVehicleWithObstacle(BasicScenario):
         first_actor_transform = carla.Transform(
             carla.Location(first_actor_waypoint.transform.location.x,
                            first_actor_waypoint.transform.location.y,
-                           first_actor_waypoint.transform.location.z - 500),
+                           first_actor_waypoint.transform.location.z +1),
             first_actor_waypoint.transform.rotation)
         self._first_actor_transform = carla.Transform(
             carla.Location(first_actor_waypoint.transform.location.x,
@@ -224,10 +228,11 @@ class FollowLeadingVehicleWithObstacle(BasicScenario):
                            first_actor_waypoint.transform.location.z + 1),
             first_actor_waypoint.transform.rotation)
         yaw_1 = second_actor_waypoint.transform.rotation.yaw + 90
+
         second_actor_transform = carla.Transform(
             carla.Location(second_actor_waypoint.transform.location.x,
                            second_actor_waypoint.transform.location.y,
-                           second_actor_waypoint.transform.location.z - 500),
+                           second_actor_waypoint.transform.location.z +1),
             carla.Rotation(second_actor_waypoint.transform.rotation.pitch, yaw_1,
                            second_actor_waypoint.transform.rotation.roll))
         self._second_actor_transform = carla.Transform(

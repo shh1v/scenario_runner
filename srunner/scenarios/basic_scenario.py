@@ -134,10 +134,12 @@ class BasicScenario(object):
         if start_location:
             if ego_vehicle_route:
                 if config.route_var_name is None:  # pylint: disable=no-else-return
+                    # this just checks if you're within 5 to the start_location
                     return conditions.InTriggerDistanceToLocationAlongRoute(self.ego_vehicles[0],
                                                                             ego_vehicle_route,
                                                                             start_location,
                                                                             5)
+                    # TODO : make this trigger when ego vehicle is in the lane
                 else:
                     check_name = "WaitForBlackboardVariable: {}".format(config.route_var_name)
                     return conditions.WaitForBlackboardVariable(name=check_name,
