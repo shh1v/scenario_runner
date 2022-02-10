@@ -127,7 +127,7 @@ def get_crossing_point(actor):
     wp_cross = None
 
     if isinstance(actor, carla.Actor):
-    wp_cross = CarlaDataProvider.get_map().get_waypoint(actor.get_location())
+        wp_cross = CarlaDataProvider.get_map().get_waypoint(actor.get_location())
     elif isinstance(actor, carla.Waypoint):
         wp_cross = actor
 
@@ -219,15 +219,15 @@ def get_waypoint_in_distance(waypoint, distance):
     """
     traveled_distance = 0
     if distance >= 0:
-    while not waypoint.is_intersection and traveled_distance < distance:
-        waypoint_new = waypoint.next(1.0)[-1]
-        traveled_distance += waypoint_new.transform.location.distance(waypoint.transform.location)
-        waypoint = waypoint_new
-    else:
-        while not waypoint.is_intersection and traveled_distance < abs(distance):
-            waypoint_new = waypoint.previous(1.0)[-1]
+        while not waypoint.is_intersection and traveled_distance < distance:
+            waypoint_new = waypoint.next(1.0)[-1]
             traveled_distance += waypoint_new.transform.location.distance(waypoint.transform.location)
             waypoint = waypoint_new
+        else:
+            while not waypoint.is_intersection and traveled_distance < abs(distance):
+                waypoint_new = waypoint.previous(1.0)[-1]
+                traveled_distance += waypoint_new.transform.location.distance(waypoint.transform.location)
+                waypoint = waypoint_new
 
     return waypoint, traveled_distance
 

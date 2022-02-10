@@ -533,7 +533,7 @@ class RouteScenario(BasicScenario):
         if config.town_amount is not None:
             amount = int(config.town_amount)
         else:
-        amount = town_amount[config.town] if config.town in town_amount else 0
+            amount = town_amount[config.town] if config.town in town_amount else 0
 
         new_actors = CarlaDataProvider.request_new_batch_actors('vehicle.*',
                                                                 amount,

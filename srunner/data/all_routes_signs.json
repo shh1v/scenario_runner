@@ -1,0 +1,458 @@
+{
+    "available_routes": [
+    {
+      "Route33": [
+        {
+        "sign_configurations": [
+        {
+       "transform": {
+                "pitch": "0",
+                "x": -55.75,
+                "y": 186.20,
+                "yaw": -166.7,
+                "z": 2.0
+            },
+        "type": "static.prop.streetsign"
+        },
+       {
+          "transform": {
+              "pitch": "0",
+              "x": 35.35,
+              "y": 4.00,
+              "yaw": 0.0,
+              "z": 2.0
+          },
+          "type": "static.prop.trafficwarning"
+        },
+      {
+          "transform": {
+              "pitch": "0",
+              "x": 14.8,
+              "y": -124.00,
+              "yaw": 21.6,
+              "z": 2.0
+          },
+          "type": "static.prop.dreyevr_sign_left"
+      },
+        {
+          "transform": {
+              "pitch": "0",
+              "x": -58.51,
+              "y": -146.3,
+              "yaw": -72.0,
+              "z": 2.0
+            },
+          "type": "static.prop.dreyevr_sign_right"
+        },
+        {
+          "transform": {
+              "pitch": "0",
+              "x": -13.9,
+              "y": -188.6,
+              "yaw": 90.0,
+              "z": 2.0
+            },
+          "type": "static.prop.dreyevr_sign_straight"
+        },
+        {
+          "transform": {
+              "pitch": "0",
+              "x": 126,
+              "y": -185.5,
+              "yaw": 104.0,
+              "z": 2.0
+            },
+          "type": "static.prop.dreyevr_sign_straight"
+        }
+        ]
+      }],
+      "Route32": [
+        {
+        "sign_configurations": [
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -52.2,
+                "y": 185.5,
+                "yaw": 252.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -69.3,
+                "y": 151.70,
+                "yaw": 7.2,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_straight"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -68.8,
+                "y": 14.10,
+                "yaw": 7.2,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 22.60,
+                "y": 14.10,
+                "yaw": 72.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_straight"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -39.0,
+                "y": 4.60,
+                "yaw": 104.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_straight"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 217.40,
+                "y": 15.00,
+                "yaw": 104.4,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 225.60,
+                "y": 42.80,
+                "yaw": 180.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 139.50,
+                "y": 68.70,
+                "yaw": 108.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 28.20,
+                "y": 123.40,
+                "yaw": -86.4,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_straight"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -57.1,
+                "y": 124.5,
+                "yaw": 290.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_goal"
+          }
+        ]
+      }],
+      "Route54": [
+        {
+        "sign_configurations": [
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 38.7,
+                "y": 13.40,
+                "yaw": 0.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_left"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -37.0,
+                "y": -7.9,
+                "yaw": 287.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -41.20,
+                "y": -75.9,
+                "yaw": 0.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_straight"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -97.90,
+                "y": -149.4,
+                "yaw": -83.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_straight"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -278.90,
+                "y": -249.10,
+                "yaw": 180.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_straight"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -198.50,
+                "y": -103.10,
+                "yaw": 190.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -203.50,
+                "y": 98.30,
+                "yaw": 100.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -156.20,
+                "y": 158.40,
+                "yaw": 110.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_left"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -114.20,
+                "y": 103.40,
+                "yaw": 0.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -85.88,
+                "y": -98.17,
+                "yaw": 100.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_goal"
+          }
+        ]
+      }],
+      "Route55": [
+        {
+        "sign_configurations": [
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 57.6,
+                "y": 137.40,
+                "yaw": 289.0,
+                "z": 2.44
+              },
+            "type": "static.prop.dreyevr_sign_left"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 19.6,
+                "y": 172.10,
+                "yaw": 180.0,
+                "z": 2.44
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -88.1,
+                "y": 197.50,
+                "yaw": 255.0,
+                "z": 9.7
+              },
+            "type": "static.prop.dreyevr_sign_straight"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": -235.6,
+                "y": 42.80,
+                "yaw": 0.0,
+                "z": 12.2
+              },
+            "type": "static.prop.dreyevr_sign_straight"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 19.6,
+                "y": -182.6,
+                "yaw": 97.0,
+                "z": 2.2
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 23.0,
+                "y": -104.6,
+                "yaw": 183.0,
+                "z": 2.4
+              },
+            "type": "static.prop.dreyevr_sign_straight"
+          }
+          ,
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 21.4,
+                "y": -41.9,
+                "yaw": 180.0,
+                "z": 2.4
+              },
+            "type": "static.prop.dreyevr_sign_goal"
+          }
+        ]
+      }],
+      "Route11": [
+        {
+        "sign_configurations": [
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 136.9,
+                "y": 6.0,
+                "yaw": 100,
+                "z": 2.54
+              },
+            "type": "static.prop.dreyevr_sign_straight"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 311.6,
+                "y": 5.60,
+                "yaw": 111.0,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 331.1,
+                "y": 37.0,
+                "yaw": 197,
+                "z": 2.54
+              },
+            "type": "static.prop.dreyevr_sign_right"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 120.9,
+                "y": 52.0,
+                "yaw": 280.8,
+                "z": 2.2
+              },
+            "type": "static.prop.dreyevr_sign_leftt"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 85.4,
+                "y": 110.80,
+                "yaw": 197.9,
+                "z": 2.2
+              },
+            "type": "static.prop.dreyevr_sign_straight"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 85.0,
+                "y": 180.00,
+                "yaw": 197.9,
+                "z": 2.2
+              },
+            "type": "static.prop.dreyevr_sign_left"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 85.0,
+                "y": 180.00,
+                "yaw": 197.9,
+                "z": 2.2
+              },
+            "type": "static.prop.dreyevr_sign_left"
+          },
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 239.21,
+                "y": 192.30,
+                "yaw": 75.6,
+                "z": 2.0
+              },
+            "type": "static.prop.dreyevr_sign_goal"
+          }         
+        ]
+      }],
+      "Route21": [
+        {
+        "sign_configurations": [
+          {
+            "transform": {
+                "pitch": "0",
+                "x": 173.0,
+                "y": 309.0,
+                "yaw": 111,
+                "z": 2.54
+              },
+            "type": "static.prop.dreyevr_sign_left"
+          }        
+        ]
+      }]
+    }
+
+    ]
+}

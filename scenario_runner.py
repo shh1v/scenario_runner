@@ -606,7 +606,7 @@ def main():
 
     if arguments.agent:
         arguments.sync = True
-
+        
     scenario_runner = None
     result = True
     try:
