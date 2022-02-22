@@ -61,7 +61,8 @@ class ScenarioRunner(object):
     # Tunable parameters
     client_timeout = 10.0  # in seconds
     wait_for_world = 20.0  # in seconds
-    frame_rate = 20.0      # in Hz
+    # NOTE: tune this desired framerate depending on your machine specs
+    frame_rate = 50.0      # in Hz
 
     # CARLA world and scenario handlers
     world = None
@@ -328,7 +329,7 @@ class ScenarioRunner(object):
         if self._args.sync:
             settings = self.world.get_settings()
             settings.synchronous_mode = True
-            settings.fixed_delta_seconds = 1.0 / self.frame_rate
+            # settings.fixed_delta_seconds = 1.0 / self.frame_rate
             self.world.apply_settings(settings)
 
         CarlaDataProvider.set_client(self.client)

@@ -122,6 +122,8 @@ class RouteParser(object):
 
         else:
             weather = carla.WeatherParameters()
+            weather.mie_scattering_scale = 0.03 
+            weather.rayleigh_scattering_scale = 0.0331
             for weather_attrib in route.iter("weather"):
                 if 'preset' in weather_attrib.attrib:
                     weather = getattr(carla.WeatherParameters, weather_attrib.attrib['preset'])
@@ -144,6 +146,9 @@ class RouteParser(object):
                     weather.fog_distance = float(weather_attrib.attrib['fog_distance'])
                 if 'fog_density' in weather_attrib.attrib:
                     weather.fog_density = float(weather_attrib.attrib['fog_density'])
+                if 'scattering_intensity' in weather_attrib.attrib:
+                    weather.scattering_intensity = float(weather_attrib.attrib['scattering_intensity'])
+                   
 
         return weather
 
