@@ -1,101 +1,99 @@
 {
-    "available_scenarios": [
+  "available_scenarios": [
     {
-        "Town03": [
+      "Town03": [
         {
-        "available_event_configurations": [
-        {
-        "transform": {
+          "available_event_configurations": [
+            {
+              "transform": {
                 "pitch": "0",
                 "x": 107.73867797851562,
                 "y": -15.13755111694336,
                 "yaw": 270.0,
                 "z": 1.0
-            }
-        },
-        {
-            "transform": {
-                    "pitch": "0",
-                    "x": 60.800872802734375,
-                    "y": -186.26548767089844,
-                    "yaw": 0.0,
-                    "z": 1.0
-                }
+              }
             },
-        {
-          "transform": {
+            {
+              "transform": {
+                "pitch": "0",
+                "x": 60.800872802734375,
+                "y": -186.26548767089844,
+                "yaw": 0.0,
+                "z": 1.0
+              }
+            },
+            {
+              "transform": {
                 "pitch": "0",
                 "x": 236.90,
                 "y": -101.27,
                 "yaw": 88.3,
                 "z": 1.0
-            }
-        },
-        {
-          "transform": {
+              }
+            },
+            {
+              "transform": {
                 "pitch": "0",
                 "x": 120.06,
                 "y": -194.50,
                 "yaw": 1.4,
                 "z": 1.0
+              }
             }
-        }
-        ],
-        "scenario_type": "Scenario5"
+          ],
+          "scenario_type": "Scenario5"
         },
         {
-        "available_event_configurations": [
-        {
-          "other_actors": {
-            "right": [
-              {
-                "pitch": "0",
-                "x": -59.90,
-                "y": 131.76,
-                "yaw": -175.2,
-                "z": 0.0
-              }
-            ]
-          },
-          "transform": {
+          "available_event_configurations": [
+            {
+              "other_actors": {
+                "right": [
+                  {
+                    "pitch": "0",
+                    "x": -59.90,
+                    "y": 131.76,
+                    "yaw": -175.2,
+                    "z": 0.0
+                  }
+                ]
+              },
+              "transform": {
                 "pitch": "0",
                 "x": -74.35,
                 "y": 148.53,
                 "yaw": -83.3,
                 "z": 0.0
-
+              }
             }
-        }
-
-        ],
-        "scenario_type": "Scenario7"
+          ],
+          "scenario_type": "Scenario7"
         },
-
         {
-        "available_event_configurations": [
-          {"transform": {
+          "available_event_configurations": [
+            {
+              "transform": {
                 "pitch": "0",
                 "x": 95.52,
                 "y": 8.18,
                 "yaw": 5.4,
                 "z": 0.0
-            }
-         },
-        {"transform": {
+              }
+            },
+            {
+              "transform": {
                 "pitch": "0",
                 "x": 60.79,
                 "y": -195.80,
                 "yaw": 6.3,
                 "z": 0.0
+              }
             }
-        }
-        ],
-        "scenario_type": "Scenario12"
+          ],
+          "scenario_type": "Scenario12"
         },
-
         {
-        "available_event_configurations": [
-         {
+          "available_event_configurations": [
+            {
               "transform": {
                 "pitch": "0",
                 "x": 143.99,
@@ -103,13 +101,13 @@
                 "yaw": 1.2,
                 "z": 0.0
               }
-          }
-        ],
-        "scenario_type": "Scenario4"
+            }
+          ],
+          "scenario_type": "Scenario4"
         },
         {
-        "available_event_configurations": [
-         {
+          "available_event_configurations": [
+            {
               "transform": {
                 "pitch": "0",
                 "x": -139.44,
@@ -117,14 +115,13 @@
                 "yaw": -125.0,
                 "z": 1.0
               }
-          }
-        ],
-        "scenario_type": "Scenario1"
+            }
+          ],
+          "scenario_type": "Scenario1"
         },
-
         {
-        "available_event_configurations": [
-         {
+          "available_event_configurations": [
+            {
               "transform": {
                 "pitch": "0",
                 "x": 64.78,
@@ -132,74 +129,70 @@
                 "yaw": -177.3,
                 "z": 0.0
               }
-         },
-
-         {"transform": {
+            },
+            {
+              "transform": {
                 "pitch": "0",
                 "x": -74.10,
                 "y": 81.33,
                 "yaw": -88.6,
                 "z": 1.0
-            }
-         }
-
-        ],
-        "scenario_type": "Scenario3"
-        },
-
-        {
-        "available_event_configurations": [
-        {
-          "other_actors": {
-            "front": [
-              {
-                "pitch": "0",
-                "x": -0.39,
-                "y": -154.06,
-                "yaw": 91.7,
-                "z": 0.0
               }
-            ]
-          },
-          "transform": {
+            }
+          ],
+          "scenario_type": "Scenario3"
+        },
+        {
+          "available_event_configurations": [
+            {
+              "other_actors": {
+                "front": [
+                  {
+                    "pitch": "0",
+                    "x": -0.39,
+                    "y": -154.06,
+                    "yaw": 91.7,
+                    "z": 0.0
+                  }
+                ]
+              },
+              "transform": {
                 "pitch": "0",
                 "x": 6.31,
                 "y": -121.49,
                 "yaw": -90.2,
                 "z": 0.0
-            }
-        }
-        ],
-        "scenario_type": "Scenario8"
-        },
-
-        {
-        "available_event_configurations": [
-        {
-          "other_actors": {
-            "left": [
-              {
-                "pitch": "0",
-                "x": -74.38,
-                "y": -119.61,
-                "yaw": -93.0,
-                "z": 0.0
               }
-            ]
-          },
-          "transform": {
+            }
+          ],
+          "scenario_type": "Scenario8"
+        },
+        {
+          "available_event_configurations": [
+            {
+              "other_actors": {
+                "left": [
+                  {
+                    "pitch": "0",
+                    "x": -74.38,
+                    "y": -119.61,
+                    "yaw": -93.0,
+                    "z": 0.0
+                  }
+                ]
+              },
+              "transform": {
                 "pitch": "0",
                 "x": -39.38,
                 "y": -139.34,
                 "yaw": -178.7,
                 "z": 0.0
+              }
             }
+          ],
+          "scenario_type": "Scenario10"
         }
-
-        ],
-        "scenario_type": "Scenario10"
-        }
-        ]
-      }
-    ]
+      ]
+    }
+  ]
 }
