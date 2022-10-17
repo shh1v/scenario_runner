@@ -47,6 +47,9 @@ from srunner.scenarios.signalized_junction_right_turn import SignalizedJunctionR
 from srunner.scenarios.change_lane import ChangeLane
 from srunner.scenarios.cut_in import CutIn
 
+# DReyeVR scenarios
+from srunner.scenarios.traffic_light_trap import TrafficLightTrap
+
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTest,
                                                                      InRouteTest,
                                                                      RouteCompletionTest,
@@ -76,7 +79,9 @@ NUMBER_CLASS_TRANSLATION = {
     "Scenario11": DynamicObjectCrossingSpawnaround,
     "Scenario12": DynamicObjectCrossingNoBlocker,
     "Scenario13": CutIn,
-    "Scenario14": ChangeLane
+    "Scenario14": ChangeLane,
+    # DReyeVR scenarios
+    "TrafficLightTrap": TrafficLightTrap,
 }
 
 

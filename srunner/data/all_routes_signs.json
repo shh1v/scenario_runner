@@ -456,6 +456,22 @@
             }
           ]
         }
+      ],
+      "TrafficLightTrap": [
+        {
+          "sign_configurations": [
+            {
+              "transform": {
+                "pitch": "0",
+                "x": 173.0,
+                "y": 309.0,
+                "yaw": 111,
+                "z": 2.54
+              },
+              "type": "static.prop.dreyevr_sign_left"
+            }
+          ]
+        }
       ]
     }
   ]
