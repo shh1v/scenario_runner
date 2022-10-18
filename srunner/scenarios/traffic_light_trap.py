@@ -8,18 +8,18 @@ the EgoVehicle is about to make it. This aggravates them since it occurs multipl
 for the human driver to run the last one. 
 """
 
+import os, sys
 import py_trees
 import carla
 
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (
-    ActorTransformSetter,
-    StopVehicle,
-    LaneChange,
-    WaypointFollower,
-    Idle,
+    TrafficLightStateSetterWithTime
 )
-from srunner.scenariomanager.scenarioatomics.atomic_criteria import CollisionTest
+from srunner.scenariomanager.scenarioatomics.atomic_criteria import (
+    CollisionTest,
+    RunningRedLightTest,
+)
 from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import (
     InTriggerDistanceToVehicle,
     StandStill,
@@ -119,9 +119,6 @@ class TrafficLightTrap(BasicScenario):
 
     def _create_behavior(self):
 
-        sequence = py_trees.composites.Sequence(
-            "Traffic light trap: Sequence Behaviour"
-        )
 
         ego_in_ranges = [
             InTriggerDistanceToVehicle(
@@ -145,21 +142,15 @@ class TrafficLightTrap(BasicScenario):
             for i in range(self.trap_length)
         ]
 
-        # other_traffic_hack = TrafficLightStateSetterWithTime(
-        #     actor=self._traffic_light_other,
-        #     state=carla.TrafficLightState.Green,
-        #     duration=self.timeout,
-        #     name="Change opposite light to green S8",
-        # )
-
+        sequence = py_trees.composites.Sequence(
+            "Traffic light trap: Sequence Behaviour"
+        )
         start_scenario = py_trees.composites.Sequence()
         for i in range(self.trap_length):
-        start_scenario.add_child(ego_in_range)
-        start_scenario.add_child(ego_traffic_hack)
-        start_scenario.add_child(other_traffic_hack)
+            start_scenario.add_child(ego_in_ranges[i])
+            start_scenario.add_child(ego_traffic_hacks[i])
 
         sequence.add_child(start_scenario)
-        sequence.add_child(parallel_behaviour_root)
         # sequence.add_child(ActorDestroy(self.ego_vehicle)) # don't destroy ego!
 
         return sequence
@@ -172,8 +163,10 @@ class TrafficLightTrap(BasicScenario):
         criteria = []
 
         collision_criterion = CollisionTest(self.ego_vehicle)
+        traffic_criterion = RunningRedLightTest(self.ego_vehicle)
 
         criteria.append(collision_criterion)
+        criteria.append(traffic_criterion)
 
         return criteria
 
