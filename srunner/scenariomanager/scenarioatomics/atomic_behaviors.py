@@ -2295,6 +2295,39 @@ class ActorTransformSetter(AtomicBehavior):
 
         return new_status
 
+class WaitForSeconds(AtomicBehavior):
+    """
+    This class contains an atomic behavior to wait for a set amount of time (seconds)
+
+    Args:
+        duration: (float) number of seconds to wait
+
+    The behavior terminates once the time is up
+    """
+
+    def __init__(self, duration:float, name="WaitForSeconds"):
+        super(WaitForSeconds, self).__init__(name)
+
+        self._duration = duration
+        self._start_time = None
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+
+
+    def update(self):
+        """
+        Returns true or false depending on the time that has passed from the
+        first time this function was called
+        """
+        if self._start_time is None:
+            self._start_time = GameTime.get_time()
+        
+        timestamp = GameTime.get_time()
+        
+        if timestamp - self._start_time >= self._duration:
+            return py_trees.common.Status.SUCCESS
+        return py_trees.common.Status.RUNNING
+
+
 
 class TrafficLightStateSetter(AtomicBehavior):
 
