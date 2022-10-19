@@ -608,6 +608,8 @@ class InTriggerDistanceToVehicle(AtomicCondition):
                                                                         freespace=self._freespace,
                                                                         global_planner=self._global_rp)
 
+
+
         if self._comparison_operator(distance, self._distance):
             new_status = py_trees.common.Status.SUCCESS
 
@@ -659,10 +661,11 @@ class InTriggerDistanceToLocation(AtomicCondition):
         if location is None:
             return new_status
 
-        if self._comparison_operator(calculate_distance(
-                location, self._target_location), self._distance):
+        dist = calculate_distance(location, self._target_location)
+        if self._comparison_operator(dist, self._distance):
             new_status = py_trees.common.Status.SUCCESS
 
+        print(f"Distance: {self._actor} {self._target_location} {dist}")
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
 
         return new_status

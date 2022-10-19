@@ -21,8 +21,7 @@ from srunner.scenariomanager.scenarioatomics.atomic_criteria import (
     RunningRedLightTest,
 )
 from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import (
-    InTriggerDistanceToVehicle,
-    StandStill,
+    InTriggerDistanceToLocation,
 )
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.scenario_helper import get_waypoint_in_distance
@@ -56,6 +55,7 @@ class TrafficLightTrap(BasicScenario):
         self._reference_waypoint = self._map.get_waypoint(
             config.trigger_points[0].location
         )
+        self.other_actors = []
 
         # number of traffic lights to trap ego in
         self.trap_length: int = 4
@@ -76,7 +76,7 @@ class TrafficLightTrap(BasicScenario):
     def _initialize_actors(self, config):
 
         # traffic light actors
-        traffic_light_locns = [
+        self.traffic_light_locns = [
             # [x, y, z] according to editor
             carla.libcarla.Location(*[77.48, 4.83, 0.0]),
             carla.libcarla.Location(*[85.3, 45.78, 0.0]),
@@ -84,30 +84,34 @@ class TrafficLightTrap(BasicScenario):
             carla.libcarla.Location(*[85, 185.75, 0.0]),
         ]
 
+        assert len(self.traffic_light_locns) == self.trap_length
+
         self.traffic_light = [
             CarlaDataProvider.get_next_traffic_light_by_location(locn)
-            for locn in traffic_light_locns
+            for locn in self.traffic_light_locns
         ]
 
-        # traffic light initial state
-        self.traffic_light[0].set_state(carla.TrafficLightState.Green)
-        self.traffic_light[1].set_state(carla.TrafficLightState.Green)
-        self.traffic_light[2].set_state(carla.TrafficLightState.Yellow)
-        self.traffic_light[3].set_state(carla.TrafficLightState.Red)
+        # traffic light initial state (all green forever until vehicle approaches)
+        for i in range(self.trap_length):
+            self.traffic_light[i].set_state(carla.TrafficLightState.Green)
+            self.traffic_light[i].set_green_time(1000)
 
     def _create_behavior(self):
 
-        ego_in_ranges = [
-            InTriggerDistanceToVehicle(
-                self.traffic_light[i],
-                self.ego_vehicle,
-                10,  # distance threshold
-                name=f"Waiting for ego to get close to traffic light {i}",
+        distance_thresh_yellow = 40  # meters to trigger yellow
+        distance_thresh_red = 20  # meters to trigger red
+
+        ego_in_ranges_yellow = [
+            InTriggerDistanceToLocation(
+                actor=self.ego_vehicle,
+                target_location=self.traffic_light_locns[i],
+                distance=distance_thresh_yellow,  # distance threshold
+                name=f"Waiting for ego to get close to traffic light (yellow) {i}",
             )
             for i in range(self.trap_length)
         ]
 
-        ego_traffic_hacks = [
+        ego_traffic_hack_yellow = [
             TrafficLightStateSetterWithTime(
                 actor=self.traffic_light[i],
                 state=carla.TrafficLightState.Yellow,
@@ -119,18 +123,38 @@ class TrafficLightTrap(BasicScenario):
             for i in range(self.trap_length)
         ]
 
+        ego_in_ranges_red = [
+            InTriggerDistanceToLocation(
+                actor=self.ego_vehicle,
+                target_location=self.traffic_light_locns[i],
+                distance=distance_thresh_red,  # distance threshold
+                name=f"Waiting for ego to get close to traffic light (RED) {i}",
+            )
+            for i in range(self.trap_length)
+        ]
+
+        ego_traffic_hack_red = [
+            TrafficLightStateSetterWithTime(
+                actor=self.traffic_light[i],
+                state=carla.TrafficLightState.Red,
+                duration=5000,
+                name="Change ego light to Red for a short while",
+            )
+            for i in range(self.trap_length)
+        ]
+
         sequence = py_trees.composites.Sequence(
             "Traffic light trap: Sequence Behaviour"
         )
         start_scenario = py_trees.composites.Sequence()
-        start_scenario.add_child(ChangeAutoPilot(self.ego_vehicle, False))
         for i in range(self.trap_length):
-            start_scenario.add_child(ego_in_ranges[i])
-            start_scenario.add_child(ego_traffic_hacks[i])
+            start_scenario.add_child(ego_in_ranges_yellow[i])
+            start_scenario.add_child(ego_traffic_hack_yellow[i])
+            start_scenario.add_child(ego_in_ranges_red[i])
+            start_scenario.add_child(ego_traffic_hack_red[i])
 
         sequence.add_child(start_scenario)
         # sequence.add_child(ActorDestroy(self.ego_vehicle)) # don't destroy ego!
-
         return sequence
 
     def _create_test_criteria(self):
