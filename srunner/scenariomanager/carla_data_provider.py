@@ -714,6 +714,8 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         for i in range(amount):
             # Get vehicle by model
             blueprint = CarlaDataProvider.create_blueprint(model, rolename, safe=safe_blueprint)
+            if "dreyevr" in blueprint.id:
+                continue # don't "spawn" a DReyeVR vehicle!
 
             if random_location:
                 if CarlaDataProvider._spawn_index >= len(CarlaDataProvider._spawn_points):

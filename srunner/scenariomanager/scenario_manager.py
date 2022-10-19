@@ -119,7 +119,8 @@ class ScenarioManager(object):
 
         # retrieve and place direction signs for route if they exist
         from srunner.tools.route_parser import RouteParser
-        signs_file = os.path.join("..", "data", "all_routes_signs.json")  # scenario_file
+        # assumes os.getcwd() returns /PATH/TO/SCENARIOR_UNNER
+        signs_file = os.path.join("srunner", "data", "signs_dreyevr.json")  # scenario_file
         route_signs_list = RouteParser.parse_direction_signs_file(signs_file, self.single_route)
 
         if route_signs_list is not None:

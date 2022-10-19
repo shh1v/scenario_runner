@@ -14,7 +14,7 @@ import carla
 
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (
-    TrafficLightStateSetterWithTime
+    TrafficLightStateSetterWithTime,
 )
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import (
     CollisionTest,
@@ -60,10 +60,6 @@ class TrafficLightTrap(BasicScenario):
         # number of traffic lights to trap ego in
         self.trap_length: int = 4
 
-        # locations for the traffic lights
-        self.trigger_locations = config.trigger_points
-        assert len(self.trigger_locations) >= self.trap_length
-
         assert len(ego_vehicles) == 1
         self.ego_vehicle = ego_vehicles[0]
         assert "dreyevr" in self.ego_vehicle.type_id
@@ -77,54 +73,35 @@ class TrafficLightTrap(BasicScenario):
             criteria_enable=criteria_enable,
         )
 
-    def _get_traffic_light(self, location):
-        _traffic_light = CarlaDataProvider.get_next_traffic_light_by_location(
-            location, False
-        )
-        if _traffic_light is None:
-            print(f"No traffic light for the given location of {location} found")
-            sys.exit(-1)
-        return _traffic_light
-
     def _initialize_actors(self, config):
 
-        # add actors from xml file
-        for actor in config.other_actors:
-            vehicle = CarlaDataProvider.request_new_actor(actor.model, actor.transform)
-            self.other_actors.append(vehicle)
-            vehicle.set_simulate_physics(enabled=False)
-
-        ego_vehicle_start, _ = get_waypoint_in_distance(
-            self._reference_waypoint, self._fast_vehicle_distance
-        )
-        self.ego_vehicle_start = carla.Transform(
-            carla.Location(
-                ego_vehicle_start.transform.location.x,
-                ego_vehicle_start.transform.location.y,
-                ego_vehicle_start.transform.location.z + 1,
-            ),
-            ego_vehicle_start.transform.rotation,
-        )
-
         # traffic light actors
-        self.traffic_light = [
-            self._get_traffic_light(self.trigger_locations[i])
-            for i in range(self.trap_length)
+        traffic_light_locns = [
+            # [x, y, z] according to editor
+            carla.libcarla.Location(*[77.48, 4.83, 0.0]),
+            carla.libcarla.Location(*[85.3, 45.78, 0.0]),
+            carla.libcarla.Location(*[85, 120, 0.0]),
+            carla.libcarla.Location(*[85, 185.75, 0.0]),
         ]
+
+        self.traffic_light = [
+            CarlaDataProvider.get_next_traffic_light_by_location(locn)
+            for locn in traffic_light_locns
+        ]
+
         # traffic light initial state
-        self.traffic_light[0].set_state(carla.TrafficLightState.green)
-        self.traffic_light[1].set_state(carla.TrafficLightState.green)
-        self.traffic_light[2].set_state(carla.TrafficLightState.yellow)
-        self.traffic_light[3].set_state(carla.TrafficLightState.red)
+        self.traffic_light[0].set_state(carla.TrafficLightState.Green)
+        self.traffic_light[1].set_state(carla.TrafficLightState.Green)
+        self.traffic_light[2].set_state(carla.TrafficLightState.Yellow)
+        self.traffic_light[3].set_state(carla.TrafficLightState.Red)
 
     def _create_behavior(self):
 
-
         ego_in_ranges = [
             InTriggerDistanceToVehicle(
-                self.trigger_locations[i],
+                self.traffic_light[i],
                 self.ego_vehicle,
-                50,  # distance threshold
+                10,  # distance threshold
                 name=f"Waiting for ego to get close to traffic light {i}",
             )
             for i in range(self.trap_length)
@@ -146,6 +123,7 @@ class TrafficLightTrap(BasicScenario):
             "Traffic light trap: Sequence Behaviour"
         )
         start_scenario = py_trees.composites.Sequence()
+        start_scenario.add_child(ChangeAutoPilot(self.ego_vehicle, False))
         for i in range(self.trap_length):
             start_scenario.add_child(ego_in_ranges[i])
             start_scenario.add_child(ego_traffic_hacks[i])

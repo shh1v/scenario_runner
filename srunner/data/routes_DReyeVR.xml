@@ -2,6 +2,7 @@
 <routes>
 
 <!--	Town 1 routes -->
+	<!-- Used for TrafficLightTrap -->
 	<route id="501" town="Town01" bgseed="99" town_amount="20">
 		<weather
 			cloudiness="0"
@@ -11,14 +12,11 @@
 			sun_azimuth_angle="0"
 			sun_altitude_angle="15"
 		/>
-		<waypoint x="123.36" y="23.1" z="0.0" pitch="360.0" roll="0.0" yaw="0"/>
-		<waypoint x="311.86" y="23.1" z="0.0" pitch="360.0" roll="0.0" yaw="0"/>
-		<waypoint x="334.86" y="38.2" z="0.0" pitch="360.0" roll="0.0" yaw="90"/>
-		<waypoint x="251.2" y="55.5" z="0.0" pitch="360.0" roll="0.0" yaw="180"/> 
-		<waypoint x="109.2" y="55.5" z="0.0" pitch="360.0" roll="0.0" yaw="180"/> 
-		<waypoint x="88.2" y="114.0" z="0.0" pitch="360.0" roll="0.0" yaw="90"/> 
-		<waypoint x="88.2" y="177.0" z="0.0" pitch="360.0" roll="0.0" yaw="90"/> 
-		<waypoint x="242.4" y="198.0" z="0.0" pitch="360.0" roll="0.0" yaw="0"/> 
+		<waypoint x="58.9" y="2.1" z="0.0" pitch="0" roll="0.0" yaw="0"/>
+		<waypoint x="88.8" y="10.5" z="0.0" pitch="0" roll="0.0" yaw="90"/>
+		<!-- <waypoint x="88.3" y="42.9" z="0.0" pitch="0" roll="0.0" yaw="90"/>
+		<waypoint x="89" y="184.1" z="0.0" pitch="0" roll="0.0" yaw="90"/> -->
+		<waypoint x="89" y="225.2" z="0.0" pitch="0" roll="0.0" yaw="90"/>
 	</route>
 
 
