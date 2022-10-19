@@ -1,0 +1,25 @@
+{
+    "available_scenarios": [
+        {
+            "Town01": [
+                {
+                    "available_event_configurations": [
+                        {
+                            "transform": {
+                                "yaw": "0",
+                                "x": "58.9",
+                                "y": "2.1",
+                                "z": "0.0"
+                            }
+                        }
+                    ],
+                    "scenario_type": "TrafficLightTrap"
+                },
+                {
+                    "available_event_configurations": [],
+                    "scenario_type": "Scenario2"
+                }
+            ]
+        }
+    ]
+}
