@@ -117,48 +117,6 @@ class TrafficLightTrap(BasicScenario):
         light_duration_long = 5  # seconds
         light_duration_short = 1  # seconds
 
-        ego_in_ranges_yellow = [
-            InTriggerDistanceToLocation(
-                actor=self.ego_vehicle,
-                target_location=CarlaDataProvider._traffic_light_map[
-                    self.traffic_light[i]
-                ].location,
-                distance=distance_thresh_yellow,  # distance threshold
-                name=f"Waiting for ego to get close to traffic light (yellow) {i}",
-            )
-            for i in range(self.trap_length)
-        ]
-
-        ego_traffic_hack_yellow = [
-            TrafficLightStateSetter(
-                actor=self.traffic_light[i],
-                state=carla.TrafficLightState.Yellow,
-                name="Change ego light to yellow for a short while",
-            )
-            for i in range(self.trap_length)
-        ]
-
-        ego_in_ranges_red = [
-            InTriggerDistanceToLocation(
-                actor=self.ego_vehicle,
-                target_location=CarlaDataProvider._traffic_light_map[
-                    self.traffic_light[i]
-                ].location,
-                distance=distance_thresh_red,  # distance threshold
-                name=f"Waiting for ego to get close to traffic light (RED) {i}",
-            )
-            for i in range(self.trap_length)
-        ]
-
-        ego_traffic_hack_red = [
-            TrafficLightStateSetter(
-                actor=self.traffic_light[i],
-                state=carla.TrafficLightState.Red,
-                name="Change ego light to Red for a decent while",
-            )
-            for i in range(self.trap_length)
-        ]
-
         ego_traffic_hack_green = [
             TrafficLightStateSetter(
                 actor=self.traffic_light[i],
@@ -167,17 +125,60 @@ class TrafficLightTrap(BasicScenario):
             )
             for i in range(self.trap_length)
         ]
+
         sequence = py_trees.composites.Sequence(
             "Traffic light trap: Sequence Behaviour"
         )
         start_scenario = py_trees.composites.Sequence()
         for i in range(self.trap_length):
-            start_scenario.add_child(ego_in_ranges_yellow[i])
-            start_scenario.add_child(ego_traffic_hack_yellow[i])
-            start_scenario.add_child(ego_in_ranges_red[i])
-            start_scenario.add_child(ego_traffic_hack_red[i])
+            """Get close to light to turn it to yellow"""
+            start_scenario.add_child(
+                InTriggerDistanceToLocation(
+                    actor=self.ego_vehicle,
+                    target_location=CarlaDataProvider._traffic_light_map[
+                        self.traffic_light[i]
+                    ].location,
+                    distance=distance_thresh_yellow,  # distance threshold
+                    name=f"Waiting for ego to get close to traffic light (yellow) {i}",
+                )
+            )
+            """Set traffic light to yellow"""
+            start_scenario.add_child(
+                TrafficLightStateSetter(
+                    actor=self.traffic_light[i],
+                    state=carla.TrafficLightState.Yellow,
+                    name="Change ego light to yellow for a short while",
+                )
+            )
+            """Get close to light to turn it to red"""
+            start_scenario.add_child(
+                InTriggerDistanceToLocation(
+                    actor=self.ego_vehicle,
+                    target_location=CarlaDataProvider._traffic_light_map[
+                        self.traffic_light[i]
+                    ].location,
+                    distance=distance_thresh_red,  # distance threshold
+                    name=f"Waiting for ego to get close to traffic light (RED) {i}",
+                )
+            )
+            """Set traffic light to red"""
+            start_scenario.add_child(
+                TrafficLightStateSetter(
+                    actor=self.traffic_light[i],
+                    state=carla.TrafficLightState.Red,
+                    name="Change ego light to Red for a decent while",
+                )
+            )
+            """Wait some duration"""
             start_scenario.add_child(WaitForSeconds(light_duration_long))
-            start_scenario.add_child(ego_traffic_hack_green[i])
+            """Set traffic light back to green"""
+            start_scenario.add_child(
+                TrafficLightStateSetter(
+                    actor=self.traffic_light[i],
+                    state=carla.TrafficLightState.Green,
+                    name="Change ego light to green for a decent while",
+                )
+            )
 
         sequence.add_child(start_scenario)
         # sequence.add_child(ActorDestroy(self.ego_vehicle)) # don't destroy ego!
