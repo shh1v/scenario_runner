@@ -7,12 +7,32 @@
               {
                 "transform": {
                   "pitch": "0",
-                  "x": 173.0,
-                  "y": 309.0,
-                  "yaw": 111,
-                  "z": 2.54
+                  "x": 4.7,
+                  "y": 294.7,
+                  "yaw": 0,
+                  "z": 2.34
                 },
-                "type": "static.prop.dreyevr_sign_left"
+                "type": "static.prop.dreyevr_sign_straight"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 5.2,
+                  "y": 17.3,
+                  "yaw": 0,
+                  "z": 2.3
+                },
+                "type": "static.prop.dreyevr_sign_right"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 81.5,
+                  "y": -5.3,
+                  "yaw": 90,
+                  "z": 2.34
+                },
+                "type": "static.prop.dreyevr_sign_right"
               }
             ]
           }
