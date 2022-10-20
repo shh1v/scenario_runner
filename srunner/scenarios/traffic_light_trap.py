@@ -53,9 +53,7 @@ class TrafficLightTrap(BasicScenario):
         """
         self.timeout = timeout
         self._map = CarlaDataProvider.get_map()
-        self._reference_waypoint = self._map.get_waypoint(
-            config.trigger_points[0].location
-        )
+        self._start_waypoint = self._map.get_waypoint(config.trigger_points[0].location)
         self.other_actors = []
 
         # number of traffic lights to trap ego in
@@ -77,7 +75,7 @@ class TrafficLightTrap(BasicScenario):
     def _initialize_actors(self, config):
 
         # traffic light actors
-        self.traffic_light_locns = [
+        traffic_light_locns = [
             # [x, y, z] according to editor
             carla.libcarla.Location(*[77.48, 4.83, 0.0]),
             carla.libcarla.Location(*[85.3, 45.78, 0.0]),
@@ -85,17 +83,32 @@ class TrafficLightTrap(BasicScenario):
             carla.libcarla.Location(*[85, 185.75, 0.0]),
         ]
 
-        assert len(self.traffic_light_locns) == self.trap_length
+        assert len(traffic_light_locns) == self.trap_length
 
         self.traffic_light = [
             CarlaDataProvider.get_next_traffic_light_by_location(locn)
-            for locn in self.traffic_light_locns
+            for locn in traffic_light_locns
         ]
 
+        # get all the subsequent traffic lights from the ego-vehicle's position
+        self.traffic_lights = [
+            CarlaDataProvider.get_next_traffic_light_by_location(
+                self._start_waypoint.transform.location
+            )
+        ]
+        # TODO: these are NOT working (because the traffic light waypoints are immediately flagged as "is_intersection" which leads to early-out
+        # and we need to account for the soonest non-equal intersection with the traffic sign in the correct (us-facing) orientation)
+        for i in range(1, self.trap_length):
+            self.traffic_lights.append(
+                CarlaDataProvider.get_next_traffic_light(
+                    self.traffic_lights[i - 1], use_cached_location=False
+                )
+            )
+
         # traffic light initial state (all green forever until vehicle approaches)
-        for i in range(self.trap_length):
-            self.traffic_light[i].set_state(carla.TrafficLightState.Green)
-            self.traffic_light[i].set_green_time(1000)
+        for light in self.traffic_light:
+            light.set_state(carla.TrafficLightState.Green)
+            light.set_green_time(1000)
 
     def _create_behavior(self):
 
@@ -107,7 +120,9 @@ class TrafficLightTrap(BasicScenario):
         ego_in_ranges_yellow = [
             InTriggerDistanceToLocation(
                 actor=self.ego_vehicle,
-                target_location=self.traffic_light_locns[i],
+                target_location=CarlaDataProvider._traffic_light_map[
+                    self.traffic_light[i]
+                ].location,
                 distance=distance_thresh_yellow,  # distance threshold
                 name=f"Waiting for ego to get close to traffic light (yellow) {i}",
             )
@@ -126,7 +141,9 @@ class TrafficLightTrap(BasicScenario):
         ego_in_ranges_red = [
             InTriggerDistanceToLocation(
                 actor=self.ego_vehicle,
-                target_location=self.traffic_light_locns[i],
+                target_location=CarlaDataProvider._traffic_light_map[
+                    self.traffic_light[i]
+                ].location,
                 distance=distance_thresh_red,  # distance threshold
                 name=f"Waiting for ego to get close to traffic light (RED) {i}",
             )

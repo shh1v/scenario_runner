@@ -380,6 +380,8 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
     def get_next_traffic_light(actor, use_cached_location=True):
         """
         returns the next relevant traffic light for the provided actor
+        - use_cached_location: to load the saved location in the global world state (not recommended)
+        - intersection_radius: float denoting threshold for how large an intersection is (to not pick the same intersection lights)
         """
 
         if not use_cached_location:
@@ -402,6 +404,8 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         distance_to_relevant_traffic_light = float("inf")
 
         for traffic_light in CarlaDataProvider._traffic_light_map:
+            if traffic_light == actor:
+                continue # skip returning self
             if hasattr(traffic_light, 'trigger_volume'):
                 tl_t = CarlaDataProvider._traffic_light_map[traffic_light]
                 transformed_tv = tl_t.transform(traffic_light.trigger_volume.location)
