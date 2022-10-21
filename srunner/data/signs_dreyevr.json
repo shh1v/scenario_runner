@@ -33,6 +33,36 @@
                   "z": 2.34
                 },
                 "type": "static.prop.dreyevr_sign_right"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 95.5,
+                  "y": 46.1,
+                  "yaw": 180,
+                  "z": 2.34
+                },
+                "type": "static.prop.dreyevr_sign_straight"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 95.5,
+                  "y": 123,
+                  "yaw": 180,
+                  "z": 2.34
+                },
+                "type": "static.prop.dreyevr_sign_straight"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 95.5,
+                  "y": 185.2,
+                  "yaw": 180,
+                  "z": 2.34
+                },
+                "type": "static.prop.dreyevr_sign_straight"
               }
             ]
           }

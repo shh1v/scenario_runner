@@ -16,6 +16,8 @@ from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (
     TrafficLightStateSetter,
     WaitForSeconds,
+    AccelerateToVelocity,
+    StopVehicle,
 )
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import (
     CollisionTest,
@@ -23,6 +25,7 @@ from srunner.scenariomanager.scenarioatomics.atomic_criteria import (
 )
 from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import (
     InTriggerDistanceToLocation,
+    DriveDistance,
 )
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.scenario_helper import get_waypoint_in_distance
@@ -62,6 +65,7 @@ class TrafficLightTrap(BasicScenario):
         assert len(ego_vehicles) == 1
         self.ego_vehicle = ego_vehicles[0]
         assert "dreyevr" in self.ego_vehicle.type_id
+        self.jaywalker = None
 
         super(TrafficLightTrap, self).__init__(
             "ChangeLane",
@@ -117,22 +121,10 @@ class TrafficLightTrap(BasicScenario):
         light_duration_long = 5  # seconds
         light_duration_short = 1  # seconds
 
-        ego_traffic_hack_green = [
-            TrafficLightStateSetter(
-                actor=self.traffic_light[i],
-                state=carla.TrafficLightState.Green,
-                name="Change ego light to green for a decent while",
-            )
-            for i in range(self.trap_length)
-        ]
-
-        sequence = py_trees.composites.Sequence(
-            "Traffic light trap: Sequence Behaviour"
-        )
-        start_scenario = py_trees.composites.Sequence()
+        traffic_light_seq = py_trees.composites.Sequence()
         for i in range(self.trap_length):
             """Get close to light to turn it to yellow"""
-            start_scenario.add_child(
+            traffic_light_seq.add_child(
                 InTriggerDistanceToLocation(
                     actor=self.ego_vehicle,
                     target_location=CarlaDataProvider._traffic_light_map[
@@ -143,7 +135,7 @@ class TrafficLightTrap(BasicScenario):
                 )
             )
             """Set traffic light to yellow"""
-            start_scenario.add_child(
+            traffic_light_seq.add_child(
                 TrafficLightStateSetter(
                     actor=self.traffic_light[i],
                     state=carla.TrafficLightState.Yellow,
@@ -151,7 +143,7 @@ class TrafficLightTrap(BasicScenario):
                 )
             )
             """Get close to light to turn it to red"""
-            start_scenario.add_child(
+            traffic_light_seq.add_child(
                 InTriggerDistanceToLocation(
                     actor=self.ego_vehicle,
                     target_location=CarlaDataProvider._traffic_light_map[
@@ -162,7 +154,7 @@ class TrafficLightTrap(BasicScenario):
                 )
             )
             """Set traffic light to red"""
-            start_scenario.add_child(
+            traffic_light_seq.add_child(
                 TrafficLightStateSetter(
                     actor=self.traffic_light[i],
                     state=carla.TrafficLightState.Red,
@@ -170,9 +162,9 @@ class TrafficLightTrap(BasicScenario):
                 )
             )
             """Wait some duration"""
-            start_scenario.add_child(WaitForSeconds(light_duration_long))
+            traffic_light_seq.add_child(WaitForSeconds(light_duration_long))
             """Set traffic light back to green"""
-            start_scenario.add_child(
+            traffic_light_seq.add_child(
                 TrafficLightStateSetter(
                     actor=self.traffic_light[i],
                     state=carla.TrafficLightState.Green,
@@ -180,7 +172,52 @@ class TrafficLightTrap(BasicScenario):
                 )
             )
 
-        sequence.add_child(start_scenario)
+        """PEDESTRIAN JAYWALKING ON THE VERY LAST ONE"""
+        jaywalk_sequence = py_trees.composites.Sequence()
+        jaywalk_sequence.add_child(
+            InTriggerDistanceToLocation(
+                actor=self.ego_vehicle,
+                target_location=CarlaDataProvider._traffic_light_map[
+                    self.traffic_light[-1]
+                ].location,
+                distance=distance_thresh_red,  # distance threshold
+                name=f"Waiting for ego to get close to traffic light (red) to trigger jaywalker {i}",
+            )
+        )
+
+        if self.jaywalker is None:
+            try:
+                self.jaywalker = CarlaDataProvider.request_new_actor(
+                    "walker.pedestrian.0009",
+                    carla.Transform(
+                        carla.Location(x=85.4, y=189.1, z=0.65), carla.Rotation()
+                    ),
+                )
+            except:  # pylint: disable=bare-except
+                print("unable to spawn actor")
+        if self.jaywalker is not None:
+            # target_locn = carla.Location(x=103, y=189.1, z=0.65)
+            jaywalk_sequence.add_child(
+                AccelerateToVelocity(
+                    actor=self.jaywalker, throttle_value=1.0, target_velocity=5
+                )
+            )
+            jaywalk_sequence.add_child(
+                DriveDistance(
+                    actor=self.jaywalker,
+                    distance=10,  # meters
+                    name="walker runs for a while",
+                )
+            )
+            jaywalk_sequence.add_child(
+                StopVehicle(actor=self.jaywalker, brake_value=1.0, name="walker stop")
+            )
+
+        sequence = py_trees.composites.Parallel(
+            policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE,
+            name="Traffic light trap: Parallel Behaviour",
+            children=[traffic_light_seq, jaywalk_sequence]
+        )
         # sequence.add_child(ActorDestroy(self.ego_vehicle)) # don't destroy ego!
         return sequence
 
