@@ -11,6 +11,7 @@ for the human driver to run the last one.
 import os, sys
 import py_trees
 import carla
+import random
 
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (
@@ -216,7 +217,7 @@ class TrafficLightTrap(BasicScenario):
         sequence = py_trees.composites.Parallel(
             policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE,
             name="Traffic light trap: Parallel Behaviour",
-            children=[traffic_light_seq, jaywalk_sequence]
+            children=[traffic_light_seq, jaywalk_sequence],
         )
         # sequence.add_child(ActorDestroy(self.ego_vehicle)) # don't destroy ego!
         return sequence

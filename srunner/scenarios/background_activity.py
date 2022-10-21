@@ -35,6 +35,19 @@ class BackgroundActivity(BasicScenario):
         'Town10': 120,
     }
 
+    town_amount_walkers = {
+        'Town01': 120,
+        'Town02': 100,
+        'Town03': 120,
+        'Town04': 200,
+        'Town05': 120,
+        'Town06': 150,
+        'Town07': 110,
+        'Town08': 180,
+        'Town09': 300,
+        'Town10': 120,
+    }
+
     def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, timeout=35 * 60):
         """
         Setup all relevant parameters and create scenario
@@ -66,12 +79,25 @@ class BackgroundActivity(BasicScenario):
                                                                 autopilot=True,
                                                                 random_location=True,
                                                                 rolename='background')
-
         if new_actors is None:
             raise Exception("Error: Unable to add the background activity, all spawn points were occupied")
 
         for _actor in new_actors:
             self.other_actors.append(_actor)
+
+        """Also spawn a bunch of walkers"""
+        new_walkers = CarlaDataProvider.request_new_batch_actors('walker.*',
+                                                                town_amount_walkers[town_name],
+                                                                carla.Transform(),
+                                                                autopilot=True,
+                                                                random_location=True,
+                                                                rolename='background')
+        if new_walkers is None:
+            raise Exception("Error: Unable to add the (walkers) background activity")
+        
+        for _actor in new_walkers:
+            self.other_actors.append(_actor)
+
 
     def _create_behavior(self):
         """

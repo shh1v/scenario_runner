@@ -503,7 +503,7 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
             blueprint = CarlaDataProvider._rng.choice(blueprints_)
         except ValueError:
             # The model is not part of the blueprint library. Let's take a default one for the given category
-            bp_filter = "vehicle.*"
+            bp_filter = "vehicle.*" if "vehicle" in model else "walker.*"
             new_model = _actor_blueprint_categories[actor_category]
             if new_model != '':
                 bp_filter = new_model
@@ -566,7 +566,7 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         actor_ids = [r.actor_id for r in responses if not r.error]
         for r in responses:
             if r.error:
-                print("WARNING: Not all actors were spawned")
+                print(f"WARNING: Not all actors were spawned ({len(actor_ids)} / {len(responses)})")
                 break
         actors = list(CarlaDataProvider._world.get_actors(actor_ids))
         return actors
@@ -744,6 +744,62 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         for actor in actors:
             if actor is None:
                 continue
+            CarlaDataProvider._carla_actor_pool[actor.id] = actor
+            CarlaDataProvider.register_actor(actor)
+
+        return actors
+    
+    @staticmethod
+    def request_new_batch_walkers(model, amount, spawn_points, autopilot=False,
+                                 random_location=False, rolename='scenario', tick=True):
+        """
+        Simplified version of "request_new_actors". This method also create several actors in batch.
+
+        Instead of needing a list of ActorConfigurationData, an "amount" parameter is used.
+        This makes actor spawning easier but reduces the amount of configurability.
+
+        Some parameters are the same for all actors (rolename, autopilot and random location)
+        while others are randomized (color)
+        """
+
+        SpawnActor = carla.command.SpawnActor      # pylint: disable=invalid-name
+        SetAutopilot = carla.command.SetAutopilot  # pylint: disable=invalid-name
+        FutureActor = carla.command.FutureActor    # pylint: disable=invalid-name
+
+        CarlaDataProvider.generate_spawn_points()
+
+        batch = []
+
+        for i in range(amount):
+            # Get vehicle by model
+            blueprint = CarlaDataProvider.create_blueprint(model, rolename, safe=False)
+            if "dreyevr" in blueprint.id:
+                continue # don't "spawn" a DReyeVR vehicle!
+
+            if random_location:
+                random_idx = random.randint(low=0, high=len(CarlaDataProvider._spawn_points))
+                spawn_point = CarlaDataProvider._spawn_points[random_idx]
+            else:
+                try:
+                    spawn_point = spawn_points[i]
+                except IndexError:
+                    print("The amount of spawn points is lower than the amount of vehicles spawned")
+                    break
+
+            # ensure spawn point is on the sidewalk
+            sp_wp = CarlaDataProvider.get_map().get_waypoint(spawn_point.location, lane_type=carla.LaneType.Sidewalk)
+            sp_wp.transform.location.z += 0.2
+
+            if spawn_point:
+                batch.append(SpawnActor(blueprint, sp_wp.transform))
+
+        actors = CarlaDataProvider.handle_actor_batch(batch, tick)
+        from srunner.scenariomanager.actorcontrols.pedestrian_control import PedestrianControl
+
+        for actor in actors:
+            if actor is None:
+                continue
+            PedestrianControl(actor)
             CarlaDataProvider._carla_actor_pool[actor.id] = actor
             CarlaDataProvider.register_actor(actor)
 
