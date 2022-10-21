@@ -831,14 +831,20 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         actors = CarlaDataProvider.handle_actor_batch(batch, tick)
         from srunner.scenariomanager.actorcontrols.pedestrian_control import PedestrianControl
 
+        spawned_actors = []
+        actor_autopilots = []
         for actor in actors:
             if actor is None:
                 continue
-            PedestrianControl(actor)
             CarlaDataProvider._carla_actor_pool[actor.id] = actor
             CarlaDataProvider.register_actor(actor)
+            spawned_actors.append(actor)
+            if autopilot:
+                autopilot = PedestrianControl(actor)
+                autopilot.update_target_speed(0.2)
+                actor_autopilots.append(autopilot)
 
-        return actors
+        return spawned_actors, actor_autopilots
 
     @staticmethod
     def get_actors():

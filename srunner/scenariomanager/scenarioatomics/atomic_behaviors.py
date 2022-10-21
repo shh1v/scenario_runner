@@ -404,6 +404,38 @@ class UpdateAllActorControls(AtomicBehavior):
 
         return py_trees.common.Status.RUNNING
 
+class TickWalkerAutopilots(AtomicBehavior):
+
+    """
+    Atomic to update (run one control loop step) all walker controls.
+
+    The behavior is always in RUNNING state.
+
+    Args:
+        walker_autopilots (list): list of the PedestrianControl's associated with the walkers
+        name (string): Name of the behavior.
+            Defaults to 'UpdateAllActorControls'.
+    """
+
+    def __init__(self, walker_autopilots, name="UpdateAllWalkerControls"):
+        """
+        Constructor
+        """
+        self.walkers = walker_autopilots
+        super(TickWalkerAutopilots, self).__init__(name)
+
+    def update(self):
+        """
+        Execute one control loop step for all actor controls.
+
+        returns:
+            py_trees.common.Status.RUNNING
+        """
+        for actor in self.walkers:
+            actor.run_step()
+
+        return py_trees.common.Status.RUNNING
+
 
 class ChangeActorTargetSpeed(AtomicBehavior):
 

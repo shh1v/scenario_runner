@@ -26,7 +26,7 @@ from agents.navigation.local_planner import RoadOption
 from srunner.scenarioconfigs.scenario_configuration import ScenarioConfiguration, ActorConfigurationData
 # pylint: enable=line-too-long
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
-from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle, ScenarioTriggerer
+from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle, ScenarioTriggerer, TickWalkerAutopilots
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.route_parser import RouteParser, TRIGGER_THRESHOLD, TRIGGER_ANGLE_THRESHOLD
 from srunner.tools.route_manipulation import interpolate_trajectory
@@ -568,14 +568,15 @@ class RouteScenario(BasicScenario):
             self.other_actors.append(_actor)
 
         """Spawn all walkers"""
-        new_walkers = CarlaDataProvider.request_new_batch_walkers('walker.*',
-                                                                  town_amount_walkers[config.town],
-                                                                  [],
-                                                                  autopilot=True,
-                                                                  random_location=True,
-                                                                  rolename='background_walker')
+        new_walkers, autopilots = CarlaDataProvider.request_new_batch_walkers('walker.*',
+                                                                              town_amount_walkers[config.town],
+                                                                              [],
+                                                                              autopilot=True,
+                                                                              random_location=True,
+                                                                              rolename='background_walker')
         if new_walkers is None:
             raise Exception("Error: Unable to add the (walkers) background activity")
+        self.walker_autopilots = autopilots
         
         for _actor in new_walkers:
             self.other_actors.append(_actor)
@@ -593,6 +594,13 @@ class RouteScenario(BasicScenario):
         scenario_trigger_distance = 25  # Max trigger distance between route and scenario
 
         behavior = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
+
+        # add all walker autopilot ticks
+        behavior.add_child(
+            TickWalkerAutopilots(
+                self.walker_autopilots
+            )
+        )
 
         subbehavior = py_trees.composites.Parallel(name="Behavior",
                                                    policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ALL)
