@@ -536,16 +536,16 @@ class RouteScenario(BasicScenario):
         }
 
         town_amount_walkers = {
-            'Town01': 120,
-            'Town02': 100,
-            'Town03': 120,
-            'Town04': 200,
-            'Town05': 120,
-            'Town06': 150,
-            'Town07': 110,
-            'Town08': 180,
-            'Town09': 300,
-            'Town10': 120,
+            'Town01': 1200,
+            'Town02': 1000,
+            'Town03': 1200,
+            'Town04': 2000,
+            'Town05': 1200,
+            'Town06': 1500,
+            'Town07': 1100,
+            'Town08': 1800,
+            'Town09': 3000,
+            'Town10': 1200,
         }
 
         if config.town_amount is not None:

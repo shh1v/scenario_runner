@@ -11,7 +11,6 @@ for the human driver to run the last one.
 import os, sys
 import py_trees
 import carla
-import random
 
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (

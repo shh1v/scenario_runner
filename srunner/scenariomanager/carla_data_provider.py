@@ -569,6 +569,42 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
                 print(f"WARNING: Not all actors were spawned ({len(actor_ids)} / {len(responses)})")
                 break
         actors = list(CarlaDataProvider._world.get_actors(actor_ids))
+
+        max_iters = 3
+        for retry_attempt in range(max_iters):
+            """retry on those failed actors... again and again and again"""
+            
+            assert len(batch) == len(responses)
+            batch = [batch[i] for i in range(len(batch)) if responses[i].error]
+
+            if len(batch) == 0:
+                break
+
+            for b in batch:
+                new_location = CarlaDataProvider._rng.choice(CarlaDataProvider._spawn_points).location
+                new_location.x += CarlaDataProvider._rng.uniform(low=-2, high=2)
+                new_location.y += CarlaDataProvider._rng.uniform(low=-2, high=2)
+                sp_wp = CarlaDataProvider.get_map().get_waypoint(new_location, lane_type=carla.LaneType.Sidewalk)
+                sp_wp.transform.location.z += 0.2
+                b.transform.location = sp_wp.transform.location
+            responses = CarlaDataProvider._client.apply_batch_sync(batch, sync_mode and tick)
+            assert len(batch) == len(responses)
+            
+            # Wait (or not) for the actors to be spawned properly before we do anything
+            if not tick:
+                pass
+            elif sync_mode:
+                CarlaDataProvider._world.tick()
+            else:
+                CarlaDataProvider._world.wait_for_tick()
+            actor_ids = [r.actor_id for r in responses if not r.error]
+            for r in responses:
+                if r.error:
+                    print(f"WARNING ({retry_attempt+1}/{max_iters}): Not all actors were spawned ({len(actor_ids)} / {len(responses)})")
+                    break
+                
+            actors += (list(CarlaDataProvider._world.get_actors(actor_ids)))
+
         return actors
 
     @staticmethod
@@ -777,8 +813,7 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
                 continue # don't "spawn" a DReyeVR vehicle!
 
             if random_location:
-                random_idx = random.randint(low=0, high=len(CarlaDataProvider._spawn_points))
-                spawn_point = CarlaDataProvider._spawn_points[random_idx]
+                spawn_point = CarlaDataProvider._rng.choice(CarlaDataProvider._spawn_points)
             else:
                 try:
                     spawn_point = spawn_points[i]
