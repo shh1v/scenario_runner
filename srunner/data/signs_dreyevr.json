@@ -66,6 +66,32 @@
               }
             ]
           }
+        ],
+        "911": [
+          {
+            "sign_configurations": [
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 272.1,
+                  "y": 51.5,
+                  "z": 2.34,
+                  "yaw": 180
+                },
+                "type": "static.prop.dreyevr_sign_straight"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 168.3,
+                  "y": 51.5,
+                  "z": 2.34,
+                  "yaw": 180
+                },
+                "type": "static.prop.dreyevr_sign_right"
+              }
+            ]
+          }
         ]
       }
     ]

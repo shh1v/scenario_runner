@@ -49,6 +49,7 @@ from srunner.scenarios.cut_in import CutIn
 
 # DReyeVR scenarios
 from srunner.scenarios.traffic_light_trap import TrafficLightTrap
+from srunner.scenarios.distraction_911 import Distraction911
 
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTest,
                                                                      InRouteTest,
@@ -82,6 +83,7 @@ NUMBER_CLASS_TRANSLATION = {
     "Scenario14": ChangeLane,
     # DReyeVR scenarios
     "TrafficLightTrap": TrafficLightTrap,
+    "Distraction911": Distraction911,
 }
 
 
@@ -547,6 +549,9 @@ class RouteScenario(BasicScenario):
             'Town09': 3000,
             'Town10': 1200,
         }
+
+        # use this to disable walkers (for debug purposes)
+        town_amount_walkers = {k: 0 for k in town_amount_walkers.keys()}
 
         if config.town_amount is not None:
             amount = int(config.town_amount)

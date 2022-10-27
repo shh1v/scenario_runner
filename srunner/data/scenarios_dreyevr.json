@@ -24,8 +24,25 @@
                     "scenario_type": "TrafficLightTrap"
                 },
                 {
+                    "available_event_configurations": [
+                        {
+                            "transform": {
+                                "yaw": "180",
+                                "x": "272.4",
+                                "y": "55.4",
+                                "z": "0"
+                            }
+                        }
+                    ],
+                    "scenario_type": "Distraction911"
+                },
+                {
                     "available_event_configurations": [],
                     "scenario_type": "Scenario2"
+                }
+            ],
+            "Town03": [
+                {
                 }
             ]
         }

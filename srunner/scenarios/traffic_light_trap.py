@@ -68,7 +68,7 @@ class TrafficLightTrap(BasicScenario):
         self.jaywalker = None
 
         super(TrafficLightTrap, self).__init__(
-            "ChangeLane",
+            "TrafficLightTrap",
             ego_vehicles,
             config,
             world,
