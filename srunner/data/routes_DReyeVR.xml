@@ -28,6 +28,9 @@
 			sun_azimuth_angle="30"
 			sun_altitude_angle="45"
 		/>
+		<waypoint x="92.4" y="90.4" z="0.0" pitch="0" roll="0.0" yaw="270"/>
+		<waypoint x="105.8" y="1.6" z="0.0" pitch="0" roll="0.0" yaw="0"/>
+		<waypoint x="334.8" y="14.9" z="0.0" pitch="0" roll="0.0" yaw="90"/>
 		<waypoint x="272.4" y="55.4" z="0.0" pitch="0" roll="0.0" yaw="180"/>
 		<waypoint x="168.3" y="55.4" z="0.0" pitch="0" roll="0.0" yaw="180"/>
 		<waypoint x="130.8" y="-1.7" z="0.0" pitch="0" roll="0.0" yaw="180"/>

@@ -187,6 +187,30 @@ class RunScript(AtomicBehavior):
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
         return new_status
 
+class RunFunction(AtomicBehavior):
+
+    """
+    This is an atomic behavior to start execution of an additional function.
+    """
+
+    def __init__(self, function, args = (), name="RunFunction"):
+        """
+        Setup parameters
+        """
+        super(RunFunction, self).__init__(name)
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+        self._function = function
+        self._args = args
+
+    def update(self):
+        """
+        Start function
+        """
+        self._function(*self._args)
+        # fn = getattr(self.owner, self._function.__name__)
+        # fn(self._args)
+        return py_trees.common.Status.SUCCESS
+
 
 class ChangeParameter(AtomicBehavior):
     """

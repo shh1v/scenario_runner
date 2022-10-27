@@ -14,6 +14,7 @@ import carla
 
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (
+    RunFunction,
     WaitForSeconds,
     AccelerateToVelocity,
     StopVehicle,
@@ -56,7 +57,9 @@ class Distraction911(BasicScenario):
         self._start_waypoint = self._map.get_waypoint(config.trigger_points[0].location)
         self.other_actors = []
 
-        assert CarlaDataProvider.get_map().name == "Carla/Maps/Town01" # only Town01 supported!
+        assert (
+            CarlaDataProvider.get_map().name == "Carla/Maps/Town01"
+        )  # only Town01 supported!
 
         assert len(ego_vehicles) == 1
         self.ego_vehicle = ego_vehicles[0]
@@ -73,13 +76,11 @@ class Distraction911(BasicScenario):
         )
 
     def _initialize_actors(self, config):
-        self._spawn_911()
-
-    def _spawn_911(self):
 
         police_idx = 30
         homeowner_idx = 5
 
+        # fmt: off
         self.distractions = {
             # key: (vehicle model, vehicle pos [x, y, z], vehicle rot [roll, pitch, yaw]
             "policecar1": ("vehicle.dodge.charger_police", [152.1, 37.4, 1], [0, 0, 90]),
@@ -90,6 +91,30 @@ class Distraction911(BasicScenario):
             "policeman2": (f"walker.pedestrian.{police_idx:04d}", [149.4, 38.89, 10.3], [0, 0, 190]),
             "homeowner": (f"walker.pedestrian.{homeowner_idx:04d}", [148.5, 38.4, 10.3], [0, 0, 370]),
         }
+        # fmt: on
+
+        if self.jaywalker is None:
+            try:
+                # spawn jaywalker next to ambulance
+                jaywalk_spawn_loc = carla.Location(*self.distractions["ambulance"][1])
+                jaywalk_spawn_loc.x += 0.5
+                jaywalk_spawn_loc.y -= (
+                    1.5  # left of the ambulance (behind, so ego can't see)
+                )
+                jaywalk_spawn_loc.z = 0
+
+                self.jaywalker = CarlaDataProvider.request_new_actor(
+                    "walker.pedestrian.0009",
+                    carla.Transform(jaywalk_spawn_loc, carla.Rotation()),
+                )
+            except Exception as e:
+                print(f"unable to spawn jaywalker -- {e}")
+
+        # spawn 911 distractions halfway through the route!
+        # self._spawn_911()
+
+    def _spawn_911(self):
+
         for name, spawn_data in self.distractions.items():
             model, pos, rot = spawn_data
 
@@ -97,46 +122,43 @@ class Distraction911(BasicScenario):
                 actor = CarlaDataProvider.request_new_actor(
                     model=model,
                     spawn_point=carla.Transform(
-                        carla.Location(*pos), 
+                        carla.Location(*pos),
                         carla.Rotation(roll=rot[0], pitch=rot[1], yaw=rot[2]),
                     ),
                 )
                 self.other_actors.append(actor)
             except Exception as e:
                 print(f"unable to spawn actor: {name} -- {e}")
+        print("spawned 911 distraction!")
 
     def _create_behavior(self):
 
         distance_thresh_jaywalk = 20  # meters to trigger jaywalk
 
-        """PEDESTRIAN JAYWALKING ON THE VERY LAST ONE"""
+        spawn_distractions = py_trees.composites.Sequence()
+        spawn_distractions.add_child(
+            InTriggerDistanceToLocation(
+                actor=self.ego_vehicle,
+                # middle of the route (check waypoints in xml file)
+                target_location=carla.Location(x=334.8, y=14.9, z=0.0),
+                distance=distance_thresh_jaywalk,  # distance threshold
+                name=f"Waiting for ego to get close to middle of route to spawn distractions",
+            )
+        )
+        spawn_distractions.add_child(
+            RunFunction(function=self._spawn_911, args=())
+        )
+
         jaywalk_sequence = py_trees.composites.Sequence()
         jaywalk_sequence.add_child(
             InTriggerDistanceToLocation(
                 actor=self.ego_vehicle,
-                target_location=carla.Location(*self.distractions["ambulance"][1]), # ambulance location
+                target_location=carla.Location(*self.distractions["ambulance"][1]),
                 distance=distance_thresh_jaywalk,  # distance threshold
                 name=f"Waiting for ego to get close to distraction to trigger jaywalker",
             )
         )
 
-        if self.jaywalker is None:
-            try:
-                # spawn jaywalker next to ambulance
-                jaywalk_spawn_loc = carla.Location(*self.distractions["ambulance"][1])
-                jaywalk_spawn_loc.x += 0.5
-                jaywalk_spawn_loc.y -= 1.5 # left of the ambulance (behind, so ego can't see)
-                jaywalk_spawn_loc.z = 0
-
-                self.jaywalker = CarlaDataProvider.request_new_actor(
-                    "walker.pedestrian.0009",
-                    carla.Transform(
-                        jaywalk_spawn_loc,
-                        carla.Rotation()
-                    ),
-                )
-            except Exception as e:
-                print(f"unable to spawn jaywalker -- {e}")
         if self.jaywalker is not None:
             # target_locn = carla.Location(x=103, y=189.1, z=0.65)
             jaywalk_sequence.add_child(
@@ -158,7 +180,7 @@ class Distraction911(BasicScenario):
         sequence = py_trees.composites.Parallel(
             policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE,
             name="Distraction911: Parallel Behaviour",
-            children=[jaywalk_sequence],
+            children=[spawn_distractions, jaywalk_sequence],
         )
         return sequence
 
