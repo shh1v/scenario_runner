@@ -42,7 +42,21 @@
                 }
             ],
             "Town03": [
+                {}
+            ],
+            "Town05": [
                 {
+                    "available_event_configurations": [
+                        {
+                            "transform": {
+                                "pitch": "0",
+                                "x": 35.19,
+                                "y": 56.92,
+                                "z": 0.0,
+                                "yaw": -88.4
+                            }
+                        }
+                    ]
                 }
             ]
         }

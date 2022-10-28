@@ -50,6 +50,7 @@ from srunner.scenarios.cut_in import CutIn
 # DReyeVR scenarios
 from srunner.scenarios.traffic_light_trap import TrafficLightTrap
 from srunner.scenarios.distraction_911 import Distraction911
+from srunner.scenarios.obstructed_jaywalk import ObstructedJaywalk
 
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTest,
                                                                      InRouteTest,
@@ -84,6 +85,7 @@ NUMBER_CLASS_TRANSLATION = {
     # DReyeVR scenarios
     "TrafficLightTrap": TrafficLightTrap,
     "Distraction911": Distraction911,
+    "ObstructedJaywalk": ObstructedJaywalk
 }
 
 

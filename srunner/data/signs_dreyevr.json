@@ -92,6 +92,112 @@
               }
             ]
           }
+        ],
+        "54": [
+          {
+            "sign_configurations": [
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 38.7,
+                  "y": 13.40,
+                  "yaw": 0.0,
+                  "z": 2.0
+                },
+                "type": "static.prop.dreyevr_sign_left"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": -37.0,
+                  "y": -7.9,
+                  "yaw": 287.0,
+                  "z": 2.0
+                },
+                "type": "static.prop.dreyevr_sign_right"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": -41.20,
+                  "y": -75.9,
+                  "yaw": 0.0,
+                  "z": 2.0
+                },
+                "type": "static.prop.dreyevr_sign_straight"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": -97.90,
+                  "y": -149.4,
+                  "yaw": -83.0,
+                  "z": 2.0
+                },
+                "type": "static.prop.dreyevr_sign_straight"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": -278.90,
+                  "y": -249.10,
+                  "yaw": 180.0,
+                  "z": 2.0
+                },
+                "type": "static.prop.dreyevr_sign_straight"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": -198.50,
+                  "y": -103.10,
+                  "yaw": 190.0,
+                  "z": 2.0
+                },
+                "type": "static.prop.dreyevr_sign_right"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": -203.50,
+                  "y": 98.30,
+                  "yaw": 100.0,
+                  "z": 2.0
+                },
+                "type": "static.prop.dreyevr_sign_right"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": -156.20,
+                  "y": 158.40,
+                  "yaw": 110.0,
+                  "z": 2.0
+                },
+                "type": "static.prop.dreyevr_sign_left"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": -114.20,
+                  "y": 103.40,
+                  "yaw": 0.0,
+                  "z": 2.0
+                },
+                "type": "static.prop.dreyevr_sign_right"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": -85.88,
+                  "y": -98.17,
+                  "yaw": 100.0,
+                  "z": 2.0
+                },
+                "type": "static.prop.dreyevr_sign_goal"
+              }
+            ]
+          }
         ]
       }
     ]
