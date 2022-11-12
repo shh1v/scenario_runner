@@ -448,6 +448,7 @@ class RouteScenario(BasicScenario):
         for scenario_number, definition in enumerate(scenario_definitions):
             # Get the class possibilities for this scenario number
             scenario_class = NUMBER_CLASS_TRANSLATION[definition['name']]
+            print(f"Starting scenario class: {definition['name']}")
 
             # Create the other actors that are going to appear
             if definition['other_actors'] is not None:
@@ -528,7 +529,7 @@ class RouteScenario(BasicScenario):
 
         # Create the background activity of the route
         town_amount = {
-            'Town01': 120,
+            'Town01': 12,
             'Town02': 0,
             'Town03': 10,
             'Town04': 50,
@@ -540,16 +541,16 @@ class RouteScenario(BasicScenario):
         }
 
         town_amount_walkers = {
-            'Town01': 1200,
-            'Town02': 1000,
-            'Town03': 1200,
-            'Town04': 2000,
-            'Town05': 1200,
-            'Town06': 1500,
-            'Town07': 1100,
-            'Town08': 1800,
-            'Town09': 3000,
-            'Town10': 1200,
+            'Town01': 50,
+            'Town02': 200,
+            'Town03': 200,
+            'Town04': 200,
+            'Town05': 200,
+            'Town06': 200,
+            'Town07': 200,
+            'Town08': 200,
+            'Town09': 200,
+            'Town10': 200,
         }
 
         # use this to disable walkers (for debug purposes)
@@ -578,7 +579,7 @@ class RouteScenario(BasicScenario):
         new_walkers, autopilots = CarlaDataProvider.request_new_batch_walkers('walker.*',
                                                                               town_amount_walkers[config.town],
                                                                               [],
-                                                                              autopilot=True,
+                                                                              autopilot=False,
                                                                               random_location=True,
                                                                               rolename='background_walker')
         if new_walkers is None:
@@ -586,6 +587,7 @@ class RouteScenario(BasicScenario):
         self.walker_autopilots = autopilots
         
         for _actor in new_walkers:
+            _actor.apply_tag("DummyWalker") # start the naive autopilot
             self.other_actors.append(_actor)
 
 

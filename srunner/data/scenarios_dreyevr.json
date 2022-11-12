@@ -56,7 +56,8 @@
                                 "yaw": -88.4
                             }
                         }
-                    ]
+                    ],
+                    "scenario_type": "Scenario12"
                 }
             ]
         }
