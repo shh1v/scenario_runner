@@ -93,6 +93,72 @@
             ]
           }
         ],
+        "19": [
+          {
+            "sign_configurations": [
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 178.1,
+                  "y": 112.2,
+                  "z": 2.34,
+                  "yaw": 90
+                },
+                "type": "static.prop.dreyevr_sign_right"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 186.2,
+                  "y": 174.2,
+                  "z": 2.34,
+                  "yaw": 180
+                },
+                "type": "static.prop.dreyevr_sign_straight"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 186.3,
+                  "y": 224.2,
+                  "z": 2.34,
+                  "yaw": 180
+                },
+                "type": "static.prop.dreyevr_sign_straight"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 186.3,
+                  "y": 294.5,
+                  "z": 2.34,
+                  "yaw": 180
+                },
+                "type": "static.prop.dreyevr_sign_right"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 154.6,
+                  "y": 298.5,
+                  "z": 2.34,
+                  "yaw": 270
+                },
+                "type": "static.prop.dreyevr_sign_straight"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 60.4,
+                  "y": 298.5,
+                  "z": 2.34,
+                  "yaw": 270
+                },
+                "type": "static.prop.dreyevr_sign_straight"
+              }
+            ]
+          }
+        ],
         "54": [
           {
             "sign_configurations": [

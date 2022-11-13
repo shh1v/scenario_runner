@@ -51,6 +51,7 @@ from srunner.scenarios.cut_in import CutIn
 from srunner.scenarios.traffic_light_trap import TrafficLightTrap
 from srunner.scenarios.distraction_911 import Distraction911
 from srunner.scenarios.obstructed_jaywalk import ObstructedJaywalk
+from srunner.scenarios.busy_concert import BusyConcert
 
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTest,
                                                                      InRouteTest,
@@ -85,7 +86,8 @@ NUMBER_CLASS_TRANSLATION = {
     # DReyeVR scenarios
     "TrafficLightTrap": TrafficLightTrap,
     "Distraction911": Distraction911,
-    "ObstructedJaywalk": ObstructedJaywalk
+    "ObstructedJaywalk": ObstructedJaywalk,
+    "BusyConcert": BusyConcert
 }
 
 
@@ -444,6 +446,9 @@ class RouteScenario(BasicScenario):
             #     world.debug.draw_string(loc, str(scenario['name']), draw_shadow=False,
             #                             color=carla.Color(0, 0, 255), life_time=100000, persistent_lines=True)
             pass
+            
+        if len(scenario_definitions) == 0:
+            print("No scenarios instances defined!")
 
         for scenario_number, definition in enumerate(scenario_definitions):
             # Get the class possibilities for this scenario number

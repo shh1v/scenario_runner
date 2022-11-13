@@ -36,6 +36,23 @@
 		<waypoint x="130.8" y="-1.7" z="0.0" pitch="0" roll="0.0" yaw="180"/>
 	</route>
 
+	<!-- Used for BusyConcert -->
+	<route id="19" town="Town02" bgseed="99" town_amount="20">
+		<weatherw
+			cloudiness="0"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="30"
+			sun_altitude_angle="45"
+		/>
+		<waypoint x="159.9" y="109.2" z="0.0" pitch="0" roll="0.0" yaw="0"/>
+		<waypoint x="189.9" y="175.2" z="0.0" pitch="0" roll="0.0" yaw="90"/>
+		<waypoint x="189.9" y="291.2" z="0.0" pitch="0" roll="0.0" yaw="90"/>
+		<waypoint x="58.4" y="302.3" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+		<waypoint x="3.1" y="302.3" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+	</route>
+
 <!--	Town 5 routes -->
 	<!-- Used for ObstructedJaywalk -->
 	<route id="54" town="Town05" bgseed="99" town_amount="0">

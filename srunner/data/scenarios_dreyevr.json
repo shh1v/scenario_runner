@@ -41,8 +41,21 @@
                     "scenario_type": "Scenario2"
                 }
             ],
-            "Town03": [
-                {}
+            "Town02": [
+                {
+                    "available_event_configurations": [
+                        {
+                            "transform":  {
+                                "pitch": "0",
+                                "x": 159.9,
+                                "y": 109.2,
+                                "z": 0.0,
+                                "yaw": 0.0
+                            }
+                        }
+                    ],
+                    "scenario_type": "BusyConcert"
+                }
             ],
             "Town05": [
                 {
