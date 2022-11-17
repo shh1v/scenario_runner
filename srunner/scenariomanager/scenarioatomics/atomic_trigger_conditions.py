@@ -664,6 +664,7 @@ class InTriggerDistanceToLocation(AtomicCondition):
         dist = calculate_distance(location, self._target_location)
         if self._comparison_operator(dist, self._distance):
             new_status = py_trees.common.Status.SUCCESS
+        # print(f"distance: {self.__class__.__name__} ({dist})")
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
 

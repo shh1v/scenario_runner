@@ -11,6 +11,7 @@ This module provides Challenge routes as standalone scenarios
 
 from __future__ import print_function
 
+import os
 import math
 import traceback
 import xml.etree.ElementTree as ET
@@ -211,6 +212,7 @@ class RouteScenario(BasicScenario):
         self.sampled_scenarios_definitions = None
 
         self._update_route(world, config, debug_mode)
+        self._draw_all_waypoints(world, self.route, 1.0, )
 
         self.ego_vehicle = self._initialize_ego_vehicle_DReyeVR(find_ego_vehicle(world))
 
@@ -429,6 +431,27 @@ class RouteScenario(BasicScenario):
 
         return sampled_scenarios
 
+    def _build_route_signs(self, name:str) -> None:
+        # retrieve and place direction signs for route if they exist
+        from srunner.tools.route_parser import RouteParser
+        # assumes os.getcwd() returns /PATH/TO/SCENARIO_RUNNER
+        signs_file = os.path.join("srunner", "data", "signs_dreyevr.json")  # scenario_file
+        route_signs_list = RouteParser.parse_direction_signs_file(signs_file, name)
+
+        if route_signs_list is not None:
+            # place directional signs in world
+            route_signs_dict = route_signs_list[0]
+            print("Spawning signs for route", name)
+            for sign in route_signs_dict['sign_configurations']:
+                sign_type = sign['type']
+                sign_waypoint = sign['transform']
+                sign_transform = RouteParser.convert_dict2transform(sign_waypoint)
+                traffic_sign = CarlaDataProvider.request_new_actor(sign_type,
+                                                    sign_transform,
+                                                    rolename='navigation_sign')
+        else:
+            print("ERROR: No route_signs_dict", signs_file, name)
+
     def _build_scenario_instances(self, world, ego_vehicle, scenario_definitions,
                                   scenarios_per_tick=5, timeout=300, debug_mode=False):
         """
@@ -452,8 +475,10 @@ class RouteScenario(BasicScenario):
 
         for scenario_number, definition in enumerate(scenario_definitions):
             # Get the class possibilities for this scenario number
-            scenario_class = NUMBER_CLASS_TRANSLATION[definition['name']]
-            print(f"Starting scenario class: {definition['name']}")
+            name:str = definition['name']
+            scenario_class = NUMBER_CLASS_TRANSLATION[name]
+            print(f"Starting scenario class: {name}")
+            self._build_route_signs(name)
 
             # Create the other actors that are going to appear
             if definition['other_actors'] is not None:
@@ -485,8 +510,8 @@ class RouteScenario(BasicScenario):
 
                 scenario_number += 1
             except Exception as e:      # pylint: disable=broad-except
-                if debug_mode:
-                    traceback.print_exc()
+                # if debug_mode:
+                traceback.print_exc()
                 print("Skipping scenario '{}' due to setup error: {}".format(definition['name'], e))
                 continue
 
@@ -546,7 +571,7 @@ class RouteScenario(BasicScenario):
         }
 
         town_amount_walkers = {
-            'Town01': 50,
+            'Town01': 200,
             'Town02': 200,
             'Town03': 200,
             'Town04': 200,
@@ -559,7 +584,7 @@ class RouteScenario(BasicScenario):
         }
 
         # use this to disable walkers (for debug purposes)
-        town_amount_walkers = {k: 0 for k in town_amount_walkers.keys()}
+        # town_amount_walkers = {k: 0 for k in town_amount_walkers.keys()}
 
         if config.town_amount is not None:
             amount = int(config.town_amount)

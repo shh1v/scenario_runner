@@ -177,9 +177,8 @@ class Distraction911(BasicScenario):
                 StopVehicle(actor=self.jaywalker, brake_value=1.0, name="walker stop")
             )
 
-        sequence = py_trees.composites.Parallel(
-            policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE,
-            name="Distraction911: Parallel Behaviour",
+        sequence = py_trees.composites.Sequence(
+            name="Distraction911: Sequence Behaviour",
             children=[spawn_distractions, jaywalk_sequence],
         )
         return sequence

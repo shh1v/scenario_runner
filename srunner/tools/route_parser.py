@@ -45,25 +45,19 @@ class RouteParser(object):
         return final_dict  # the file has a current maps name that is an one element vec
 
     @staticmethod
-    def parse_direction_signs_file(signs_filename, single_route=None):
+    def parse_direction_signs_file(signs_filename, single_route_name:str):
         """
         Return the annotations of where to place which signs to give human users
         directions when driving in the simulator.
-        :param signs_filename: the filename for the sign placement data file
-        :return:
         """
         with open(signs_filename, 'r') as f:
             signs_dict = json.loads(f.read())
         
         routes_dict = signs_dict['available_routes'][0]
-
-        for route_name in routes_dict.keys():
-            
-            route_num = route_name.strip("Route")
-            if int(route_num) == int(single_route):
-                return routes_dict[route_name]
-
-        return None
+        if single_route_name not in routes_dict:
+            print(f"No route named \"{single_route_name}\" in dict: \"{signs_filename}\"")
+            return None
+        return routes_dict[single_route_name]
 
 
     @staticmethod

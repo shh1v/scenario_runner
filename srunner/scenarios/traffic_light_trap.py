@@ -81,7 +81,7 @@ class TrafficLightTrap(BasicScenario):
         # traffic light actors
         traffic_light_locns = [
             # [x, y, z] according to editor
-            carla.libcarla.Location(*[77.48, 4.83, 0.0]),
+            carla.libcarla.Location(*[101.98, -4.2, 0.0]),
             carla.libcarla.Location(*[85.3, 45.78, 0.0]),
             carla.libcarla.Location(*[85, 120, 0.0]),
             carla.libcarla.Location(*[85, 185.75, 0.0]),
@@ -94,20 +94,20 @@ class TrafficLightTrap(BasicScenario):
             for locn in traffic_light_locns
         ]
 
-        # get all the subsequent traffic lights from the ego-vehicle's position
-        self.traffic_lights = [
-            CarlaDataProvider.get_next_traffic_light_by_location(
-                self._start_waypoint.transform.location
-            )
-        ]
-        # TODO: these are NOT working (because the traffic light waypoints are immediately flagged as "is_intersection" which leads to early-out
-        # and we need to account for the soonest non-equal intersection with the traffic sign in the correct (us-facing) orientation)
-        for i in range(1, self.trap_length):
-            self.traffic_lights.append(
-                CarlaDataProvider.get_next_traffic_light(
-                    self.traffic_lights[i - 1], use_cached_location=False
-                )
-            )
+        # # get all the subsequent traffic lights from the ego-vehicle's position
+        # self.traffic_lights = [
+        #     CarlaDataProvider.get_next_traffic_light_by_location(
+        #         self._start_waypoint.transform.location
+        #     )
+        # ]
+        # # TODO: these are NOT working (because the traffic light waypoints are immediately flagged as "is_intersection" which leads to early-out
+        # # and we need to account for the soonest non-equal intersection with the traffic sign in the correct (us-facing) orientation)
+        # for i in range(1, self.trap_length):
+        #     self.traffic_lights.append(
+        #         CarlaDataProvider.get_next_traffic_light(
+        #             self.traffic_lights[i - 1], use_cached_location=False
+        #         )
+        #     )
 
         # traffic light initial state (all green forever until vehicle approaches)
         for light in self.traffic_light:

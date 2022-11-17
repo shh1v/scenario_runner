@@ -1,38 +1,18 @@
 {
     "available_routes": [
       {
-        "501": [
+        "TrafficLightTrap": [
           {
             "sign_configurations": [
               {
                 "transform": {
                   "pitch": "0",
-                  "x": 4.7,
-                  "y": 294.7,
-                  "yaw": 0,
+                  "x": 102.8,
+                  "y": -5.6,
+                  "yaw": -90,
                   "z": 2.34
                 },
-                "type": "static.prop.dreyevr_sign_straight"
-              },
-              {
-                "transform": {
-                  "pitch": "0",
-                  "x": 5.2,
-                  "y": 17.3,
-                  "yaw": 0,
-                  "z": 2.3
-                },
-                "type": "static.prop.dreyevr_sign_right"
-              },
-              {
-                "transform": {
-                  "pitch": "0",
-                  "x": 81.5,
-                  "y": -5.3,
-                  "yaw": 90,
-                  "z": 2.34
-                },
-                "type": "static.prop.dreyevr_sign_right"
+                "type": "static.prop.dreyevr_sign_left"
               },
               {
                 "transform": {
@@ -57,26 +37,56 @@
               {
                 "transform": {
                   "pitch": "0",
-                  "x": 95.5,
-                  "y": 185.2,
+                  "x": 85.2,
+                  "y": 182.8,
                   "yaw": 180,
                   "z": 2.34
                 },
-                "type": "static.prop.dreyevr_sign_straight"
+                "type": "static.prop.dreyevr_sign_left"
               }
             ]
           }
         ],
-        "911": [
+        "Distraction911": [
           {
             "sign_configurations": [
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 119.6,
+                  "y": -7.2,
+                  "z": 2.34,
+                  "yaw": 0
+                },
+                "type": "static.prop.dreyevr_sign_right"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 322.4,
+                  "y": 6.5,
+                  "z": 2.34,
+                  "yaw": 90
+                },
+                "type": "static.prop.dreyevr_sign_right"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 330.7,
+                  "y": 45.3,
+                  "z": 2.34,
+                  "yaw": 180
+                },
+                "type": "static.prop.dreyevr_sign_right"
+              },
               {
                 "transform": {
                   "pitch": "0",
                   "x": 272.1,
                   "y": 51.5,
                   "z": 2.34,
-                  "yaw": 180
+                  "yaw": 270
                 },
                 "type": "static.prop.dreyevr_sign_straight"
               },
@@ -86,14 +96,24 @@
                   "x": 168.3,
                   "y": 51.5,
                   "z": 2.34,
-                  "yaw": 180
+                  "yaw": 270
                 },
                 "type": "static.prop.dreyevr_sign_right"
+              },
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": 162.3,
+                  "y": 12.6,
+                  "z": 2.34,
+                  "yaw": 0
+                },
+                "type": "static.prop.dreyevr_sign_left"
               }
             ]
           }
         ],
-        "19": [
+        "BusyConcert": [
           {
             "sign_configurations": [
               {
@@ -159,7 +179,7 @@
             ]
           }
         ],
-        "54": [
+        "Scenario12": [
           {
             "sign_configurations": [
               {
