@@ -90,6 +90,22 @@ class Distraction911(BasicScenario):
             "policeman1": (f"walker.pedestrian.{police_idx:04d}", [149.5, 38, 10.3], [0, 0, 170]),
             "policeman2": (f"walker.pedestrian.{police_idx:04d}", [149.4, 38.89, 10.3], [0, 0, 190]),
             "homeowner": (f"walker.pedestrian.{homeowner_idx:04d}", [148.5, 38.4, 10.3], [0, 0, 370]),
+            "bystander01": (f"walker.pedestrian.{22:04d}", [161.3, 30.86, 10.3], [0, 0, 205]),
+            "bystander02": (f"walker.pedestrian.{12:04d}", [161.4, 18.8, 10.3], [0, 0, 180]),
+            "bystander03": (f"walker.pedestrian.{13:04d}", [161.6, 22.6, 10.3], [0, 0, 165]),
+            "bystander04": (f"walker.pedestrian.{14:04d}", [161.7, 35.8, 10.3], [0, 0, 195]),
+            "bystander05": (f"walker.pedestrian.{25:04d}", [161.2, 24.5, 10.3], [0, 0, 180]),
+            "bystander06": (f"walker.pedestrian.{26:04d}", [161.4, 19.66, 10.3], [0, 0, 184]),
+            "bystander07": (f"walker.pedestrian.{7:04d}", [161.7, 26.33, 10.3], [0, 0, 191]),
+            "bystander08": (f"walker.pedestrian.{8:04d}", [161.3, 31.5, 10.3], [0, 0, 200]),
+            "bystander09": (f"walker.pedestrian.{18:04d}", [161.3, 30.86, 10.3], [0, 0, 205]),
+            "bystander10": (f"walker.pedestrian.{10:04d}", [161.7, 18.8, 10.3], [0, 0, 180]),
+            "bystander11": (f"walker.pedestrian.{21:04d}", [161.2, 22.6, 10.3], [0, 0, 165]),
+            "bystander12": (f"walker.pedestrian.{12:04d}", [161.3, 35.8, 10.3], [0, 0, 195]),
+            "bystander13": (f"walker.pedestrian.{33:04d}", [161.1, 24.5, 10.3], [0, 0, 180]),
+            "bystander14": (f"walker.pedestrian.{20:04d}", [161.4, 19.66, 10.3], [0, 0, 184]),
+            "bystander15": (f"walker.pedestrian.{21:04d}", [161.5, 26.33, 10.3], [0, 0, 191]),
+            "bystander16": (f"walker.pedestrian.{17:04d}", [161.6, 31.5, 10.3], [0, 0, 200]),
         }
         # fmt: on
 
@@ -107,6 +123,7 @@ class Distraction911(BasicScenario):
                     "walker.pedestrian.0009",
                     carla.Transform(jaywalk_spawn_loc, carla.Rotation()),
                 )
+                self.jaywalker.apply_tag("Overlay")
             except Exception as e:
                 print(f"unable to spawn jaywalker -- {e}")
 
@@ -133,7 +150,7 @@ class Distraction911(BasicScenario):
 
     def _create_behavior(self):
 
-        distance_thresh_jaywalk = 20  # meters to trigger jaywalk
+        distance_thresh_jaywalk = 15  # meters to trigger jaywalk
 
         spawn_distractions = py_trees.composites.Sequence()
         spawn_distractions.add_child(

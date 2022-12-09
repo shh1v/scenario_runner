@@ -195,6 +195,7 @@ class TrafficLightTrap(BasicScenario):
                 )
             except:  # pylint: disable=bare-except
                 print("unable to spawn actor")
+            self.jaywalker.apply_tag("Overlay")
         if self.jaywalker is not None:
             # target_locn = carla.Location(x=103, y=189.1, z=0.65)
             jaywalk_sequence.add_child(

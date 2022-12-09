@@ -212,7 +212,8 @@ class RouteScenario(BasicScenario):
         self.sampled_scenarios_definitions = None
 
         self._update_route(world, config, debug_mode)
-        self._draw_all_waypoints(world, self.route, 1.0, )
+        if debug_mode:
+            self._draw_all_waypoints(world, self.route, 1.0, )
 
         self.ego_vehicle = self._initialize_ego_vehicle_DReyeVR(find_ego_vehicle(world))
 
@@ -559,7 +560,7 @@ class RouteScenario(BasicScenario):
 
         # Create the background activity of the route
         town_amount = {
-            'Town01': 12,
+            'Town01': 30,
             'Town02': 0,
             'Town03': 10,
             'Town04': 50,
@@ -571,7 +572,7 @@ class RouteScenario(BasicScenario):
         }
 
         town_amount_walkers = {
-            'Town01': 200,
+            'Town01': 80,
             'Town02': 200,
             'Town03': 200,
             'Town04': 200,
