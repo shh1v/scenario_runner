@@ -115,6 +115,32 @@ class ScenarioManager(object):
         if self._agent is not None:
             self._agent.setup_sensors(self.ego_vehicles[0], self._debug_mode)
 
+        self.load_DReyeVR_signs()
+
+    def load_DReyeVR_signs(self):
+        # retrieve and place direction signs for route if they exist
+        from srunner.tools.route_parser import RouteParser
+
+        import os
+        signs_file = os.path.join(os.environ("SCENARIO_RUNNER_ROOT"), "srunner", "data", "all_routes_signs.json")
+        route_signs_list = RouteParser.parse_direction_signs_file(signs_file, self.single_route)
+
+        if route_signs_list is None:
+            print(f"No route_signs_dict (json) for route {self.single_route} in \"{signs_file}\"")
+            return
+
+        # place directional signs from json in world
+        assert len(route_signs_list) == 1
+        route_signs_dict = route_signs_list[0]
+        print("Spawning DReyeVR signs for route", self.single_route)
+        for sign in route_signs_dict['sign_configurations']:
+            sign_type = sign['type']
+            sign_waypoint = sign['transform']
+            sign_transform = RouteParser.convert_dict2transform(sign_waypoint)
+            print(f"Loading \"{sign_type}\" @ {sign_transform}")
+            # TODO: keep track of these signs somewhere?
+            traffic_sign = CarlaDataProvider.request_new_actor(sign_type, sign_transform, rolename='navigation_sign')
+
     def run_scenario(self):
         """
         Trigger the start of the scenario and wait for it to finish/fail

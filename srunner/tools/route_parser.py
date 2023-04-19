@@ -117,6 +117,27 @@ class RouteParser(object):
         return weather
 
     @staticmethod
+    def parse_direction_signs_file(signs_filename, single_route=None):
+        """
+        Return the annotations of where to place which signs to give human users
+        directions when driving in the simulator.
+        :param signs_filename: the filename for the sign placement data file
+        :param single_route: the route id (int) to specify which sign route
+        :return: dictionary of sign types and transforms
+        """
+        with open(signs_filename, 'r') as f:
+            signs_dict = json.loads(f.read())
+
+        routes_dict = signs_dict['available_routes'][0]
+
+        for route_name in routes_dict.keys():
+            route_num = route_name.strip("Route")
+            if int(route_num) == int(single_route):
+                return routes_dict[route_name]
+
+        return None
+
+    @staticmethod
     def check_trigger_position(new_trigger, existing_triggers):
         """
         Check if this trigger position already exists or if it is a new one.
@@ -147,6 +168,19 @@ class RouteParser(object):
         waypoint['y'] = float(waypoint['y'])
         waypoint['z'] = float(waypoint['z'])
         waypoint['yaw'] = float(waypoint['yaw'])
+
+
+    @staticmethod
+    def convert_dict2transform(waypoint):
+        """
+        Convert waypoint values to Carla.transform
+        """
+        transform = carla.Transform()
+        transform.location.x = float(waypoint['x'])
+        transform.location.y = float(waypoint['y'])
+        transform.location.z = float(waypoint['z'])
+        transform.rotation.yaw = float(waypoint['yaw'])
+        return transform
 
     @staticmethod
     def match_world_location_to_route(world_location, route_description):
