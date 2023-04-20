@@ -18,7 +18,6 @@ except IndexError:
     print(f"Unable to find Carla PythonAPI file in {egg_dir}")
 
 import carla
-from dreyevr.utils import find_ego_vehicle
 
 from scenario_runner import ScenarioRunner
 
@@ -46,6 +45,7 @@ def run_schematic(argparser, scenario_runner_instance):
 
     # can be completely avoided if --visualize is False
     # NOTE: this import uses export PYTHONPATH=$PYTHONPATH:${CARLA_ROOT}/PythonAPI/examples
+    raise NotImplementedError
     from dreyevr.examples.schematic_mode import schematic_run
 
     # for full definitions of these args see no_rendering_mode.py
