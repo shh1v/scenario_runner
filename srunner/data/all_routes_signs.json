@@ -1,0 +1,22 @@
+{
+    "available_routes": [
+      {
+        "Route21": [
+          {
+            "sign_configurations": [
+              {
+                "transform": {
+                  "pitch": "0",
+                  "x": -122.0,
+                  "y": 126.0,
+                  "z": 2.2,
+                  "yaw": -90
+                },
+                "type": "static.prop.dreyevr_sign_right"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

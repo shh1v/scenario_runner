@@ -48,6 +48,10 @@ from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTe
                                                                      RunningStopTest,
                                                                      ActorSpeedAboveThresholdTest)
 
+import sys, os
+sys.path.insert(0, os.path.join(os.getenv("CARLA_ROOT"), "PythonAPI", "carla")) # for agents
+sys.path.insert(0, os.path.join(os.getenv("CARLA_ROOT"), "PythonAPI")) # for DReyeVR stuff
+
 # DReyeVR utils (forward compatible)
 try:
     from dreyevr.utils import find_ego_vehicle

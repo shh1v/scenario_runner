@@ -21,6 +21,8 @@ import carla
 
 from scenario_runner import ScenarioRunner
 
+recorder_file = None
+
 
 def start_scenario_runner(scenario_runner_instance):
     try:
@@ -74,12 +76,14 @@ def start_recording(client, args, scenario_runner_instance):
     time_str: str = datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
     filename: str = f"exp_{args.title}_{time_str}.rec"
 
-    new_filename = client.start_recorder(filename)
-    print(f"Recording on file: {filename}")
+    global recorder_file # to "return" from this thread
+    recorder_file = client.start_recorder(filename)
+    print("Recording on file: %s" % recorder_file)
 
 
 def stop_recording(client):
-    print(f"Stopping recording, file saved to {filename}")
+    global recorder_file
+    print(f"Stopping recording, file saved to \"{recorder_file}\"")
     client.stop_recorder()
 
 
@@ -145,29 +149,20 @@ def main():
 
     # start the listening recorder thread (background, waits for scenario to begin)
     recording_thread = Thread(
-        target=start_recording,
-        args=(
-            client,
-            args,
-            scenario_runner_instance,
-        ),
+        target=start_recording, args=(client, args, scenario_runner_instance,)
     )
     recording_thread.start()  # run in background
 
     if args.visualize is True:
         schematic_thread = Thread(
-            target=run_schematic,
-            args=(
-                argparser,
-                scenario_runner_instance,
-            ),
+            target=run_schematic, args=(argparser, scenario_runner_instance,)
         )
         schematic_thread.start()
 
     start_scenario_runner(scenario_runner_instance)
 
     # finish recording
-    stop_recording(client, filename)
+    stop_recording(client)
 
 
 if __name__ == "__main__":

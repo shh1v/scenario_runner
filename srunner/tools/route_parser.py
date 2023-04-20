@@ -126,6 +126,9 @@ class RouteParser(object):
         :param single_route: the route id (int) to specify which sign route
         :return: dictionary of sign types and transforms
         """
+        import os
+        if not os.path.exists(signs_filename):
+            return None
         with open(signs_filename, 'r') as f:
             signs_dict = json.loads(f.read())
 

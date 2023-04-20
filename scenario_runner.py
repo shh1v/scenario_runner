@@ -30,6 +30,10 @@ import time
 import json
 import pkg_resources
 
+sys.path.insert(0, os.path.join(os.getenv("CARLA_ROOT"), "PythonAPI")) # for Carla stuff
+sys.path.insert(0, os.path.join(os.getenv("CARLA_ROOT"), "PythonAPI", "carla")) # for agents
+sys.path.insert(0, os.path.join(os.getenv("CARLA_ROOT"), "PythonAPI", "dreyevr")) # for DReyeVR stuff
+
 import carla
 
 from srunner.scenarioconfigs.openscenario_configuration import OpenScenarioConfiguration
