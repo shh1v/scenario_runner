@@ -66,6 +66,7 @@ class RouteParser(object):
             new_config.name = "RouteScenario_{}".format(route_id)
             new_config.weather = RouteParser.parse_weather(route)
             new_config.scenario_file = scenario_file
+            new_config.scenario_number = single_route
 
             waypoint_list = []  # the list of waypoints that can be found on this route
             for waypoint in route.iter('waypoint'):

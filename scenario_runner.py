@@ -408,7 +408,7 @@ class ScenarioRunner(object):
                 self.client.start_recorder(recorder_name, True)
 
             # Load scenario and run it
-            self.manager.load_scenario(scenario, self.agent_instance)
+            self.manager.load_scenario(scenario, self.agent_instance, config.scenario_number)
             self.manager.run_scenario()
 
             # Provide outputs if required
