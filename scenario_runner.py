@@ -31,7 +31,10 @@ import json
 import pkg_resources
 
 import carla
-
+import sys
+sys.path.insert(0,'C:\\carla\\carla.demo\\PythonAPI\\carla') # for agents
+sys.path.insert(0,'C:\\carla\\carla.demo\\PythonAPI\\examples') # for DReyeVR stuff
+#print(sys.path)
 from srunner.scenarioconfigs.openscenario_configuration import OpenScenarioConfiguration
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenario_manager import ScenarioManager

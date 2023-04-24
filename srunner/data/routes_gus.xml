@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<routes>
+
+<!--	Town 1 routes -->
+	<!-- Used for TrafficLightTrap -->
+	<route id="501" town="Town01" bgseed="99" town_amount="20">
+		<weather
+			cloudiness="0"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="0"
+			sun_altitude_angle="15"
+		/>
+		<waypoint x="121.2" y="-1.4" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+		<waypoint x="89" y="173.2" z="0.0" pitch="0" roll="0.0" yaw="90"/>
+		<waypoint x="130" y="199.8" z="0.0" pitch="0" roll="0.0" yaw="0"/>
+
+	</route>
+
+	<!-- Used for Distraction911 -->
+	<route id="911" town="Town01" bgseed="99" town_amount="20">
+		<weather
+			cloudiness="0"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="30"
+			sun_altitude_angle="45"
+		/>
+		<waypoint x="92.4" y="90.4" z="0.0" pitch="0" roll="0.0" yaw="270"/>
+		<waypoint x="105.8" y="1.6" z="0.0" pitch="0" roll="0.0" yaw="0"/>
+		<waypoint x="317.2" y="14.9" z="0.0" pitch="0" roll="0.0" yaw="0"/>
+		<waypoint x="335.1" y="39.7" z="0.0" pitch="0" roll="0.0" yaw="90"/>
+		<waypoint x="272.4" y="55.4" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+		<waypoint x="168.3" y="55.4" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+		<waypoint x="130.8" y="-1.7" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+	</route>
+
+	<!-- Used for Distraction911 + TrafficLight -->
+    <route id="911501" town="Town01" bgseed="99" town_amount="20">
+		<weather
+			cloudiness="0"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="30"
+			sun_altitude_angle="10"
+		/>
+		<waypoint x="120.2" y="1.3" z="0.0" pitch="0" roll="0.0" yaw="0"/> 
+		<!--start of Distraction scenario-->
+		<waypoint x="317.2" y="14.9" z="0.0" pitch="0" roll="0.0" yaw="0"/>
+		<waypoint x="335.1" y="39.7" z="0.0" pitch="0" roll="0.0" yaw="90"/>
+		<waypoint x="272.4" y="55.4" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+		<waypoint x="168.3" y="55.4" z="0.0" pitch="0" roll="0.0" yaw="180"/> 
+		<waypoint x="130.8" y="-1.7" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+		<!--start of traffic light scenario-->
+		<waypoint x="121.2" y="-1.4" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+		<waypoint x="89" y="173.2" z="0.0" pitch="0" roll="0.0" yaw="90"/>
+		<waypoint x="130" y="199.8" z="0.0" pitch="0" roll="0.0" yaw="0"/>
+	</route>
+
+    <route id="111" town="Town01" bgseed="99" town_amount="20">
+		<weather
+			cloudiness="0"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="30"
+			sun_altitude_angle="10"
+		/>
+		<waypoint x="168.3" y="55.4" z="0.0" pitch="0" roll="0.0" yaw="180"/> 
+		<waypoint x="130.8" y="-1.7" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+		<!--start of traffic light scenario-->
+		<waypoint x="121.2" y="-1.4" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+		<waypoint x="89" y="173.2" z="0.0" pitch="0" roll="0.0" yaw="90"/>
+		<waypoint x="130" y="199.8" z="0.0" pitch="0" roll="0.0" yaw="0"/>
+	</route>
+
+	<!-- Used for BusyConcert -->
+	<route id="19" town="Town02" bgseed="99" town_amount="20">
+		<weather
+			cloudiness="0"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="30"
+			sun_altitude_angle="45"
+		/>
+		<waypoint x="159.9" y="109.2" z="0.0" pitch="0" roll="0.0" yaw="0"/>
+		<waypoint x="189.9" y="175.2" z="0.0" pitch="0" roll="0.0" yaw="90"/>
+		<waypoint x="189.9" y="291.2" z="0.0" pitch="0" roll="0.0" yaw="90"/>
+		<waypoint x="58.4" y="302.3" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+		<waypoint x="3.1" y="302.3" z="0.0" pitch="0" roll="0.0" yaw="180"/>
+	</route>
+
+<!--	Town 5 routes -->
+	<!-- Used for ObstructedJaywalk -->
+	<route id="54" town="Town05" bgseed="99" town_amount="0">
+		<weather
+			preset="CloudySunset"
+			cloudiness="70"
+			precipitation="0"
+			precipitation_deposits="0"
+			wind_intensity="0"
+			sun_azimuth_angle="0"
+			sun_altitude_angle="5"
+		/>
+		<waypoint x="35.19" y="56.92" z="0.0" pitch="360.0" roll="0.0" yaw="-88.4"/>
+		<waypoint x="-32.52" y="-1.02" z="0.0" pitch="360.0" roll="0.0" yaw="179.7"/>
+		<waypoint x="-47.75" y="-46.78" z="0.0" pitch="360.0" roll="0.0" yaw="-90.5"/>
+		<waypoint x="-102.85" y="-142.17" z="0.0" pitch="360.0" roll="0.0" yaw="-178.4"/>
+		<waypoint x="-195.31" y="-105.96" z="0.0" pitch="360.0" roll="0.0" yaw="89.5"/>
+		<waypoint x="-272.52" y="-33.20" z="0.0" pitch="360.0" roll="0.0" yaw="92.4"/>
+		<waypoint x="-207.39" y="91.74" z="0.0" pitch="360.0" roll="0.0" yaw="-2.0"/>
+		<waypoint x="-119.68" y="117.62" z="0.0" pitch="360.0" roll="0.0" yaw="-87.4"/>
+		<waypoint x="-65.77" y="91.90" z="0.0" pitch="360.0" roll="0.0" yaw="0.3"/>
+	</route>
+
+
+</routes>

@@ -46,6 +46,9 @@ from srunner.scenarios.signalized_junction_left_turn import SignalizedJunctionLe
 from srunner.scenarios.signalized_junction_right_turn import SignalizedJunctionRightTurn, SignalizedJunctionRightTurn_original
 from srunner.scenarios.change_lane import ChangeLane
 from srunner.scenarios.cut_in import CutIn
+from srunner.scenarios.distraction_911 import Distraction911
+from srunner.scenarios.traffic_light_trap import TrafficLightTrap
+
 
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTest,
                                                                      InRouteTest,
@@ -76,8 +79,11 @@ NUMBER_CLASS_TRANSLATION = {
     "Scenario11": DynamicObjectCrossingSpawnaround,
     "Scenario12": DynamicObjectCrossingNoBlocker,
     "Scenario13": CutIn,
-    "Scenario14": ChangeLane
-}
+    "Scenario14": ChangeLane,
+    # DReyeVR scenarios
+    "TrafficLightTrap": TrafficLightTrap,
+    "Distraction911": Distraction911
+    }
 
 
 def convert_json_to_transform(actor_dict):
@@ -427,13 +433,13 @@ class RouteScenario(BasicScenario):
 
         if debug_mode:
             # TODO commenting for now to not give away scenarios
-            # for scenario in scenario_definitions:
-            #     loc = carla.Location(scenario['trigger_position']['x'],
-            #                          scenario['trigger_position']['y'],
-            #                          scenario['trigger_position']['z']) + carla.Location(z=2.0)
-            #     world.debug.draw_point(loc, size=0.3, color=carla.Color(255, 0, 0), life_time=100000)
-            #     world.debug.draw_string(loc, str(scenario['name']), draw_shadow=False,
-            #                             color=carla.Color(0, 0, 255), life_time=100000, persistent_lines=True)
+            for scenario in scenario_definitions:
+                loc = carla.Location(scenario['trigger_position']['x'],
+                                     scenario['trigger_position']['y'],
+                                     scenario['trigger_position']['z']) + carla.Location(z=2.0)
+                world.debug.draw_point(loc, size=0.3, color=carla.Color(255, 0, 0), life_time=100000)
+                world.debug.draw_string(loc, str(scenario['name']), draw_shadow=False,
+                                        color=carla.Color(0, 0, 255), life_time=100000, persistent_lines=True)
             pass
 
         for scenario_number, definition in enumerate(scenario_definitions):

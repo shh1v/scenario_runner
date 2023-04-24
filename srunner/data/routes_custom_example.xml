@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <routes>
 
-<!--	Town 1 routes -->
+<!--	Town 01 routes -->
 	<route id="11" town="Town01" bgseed="99" town_amount="25">
 		<weather
 			cloudiness="0"
@@ -59,7 +59,7 @@
 		<waypoint x="132.2" y="212.4" z="0.2" pitch="0.0" roll="0.0" yaw="90" />
 	</route>
 
-<!--Town 05 routes-->
+<!--	Town 05 routes-->
 	<route id="50" town="Town05" bgseed="99" town_amount="35">
 		<weather
 				cloudiness="50"
@@ -100,7 +100,7 @@
 		<!--		<waypoint x="35.08445358276367" y="69.111328125" z="1.52587890625e-05" pitch="0.0" roll="0.0" yaw="90.97711181640625" />-->
 	</route>
 
-<!--	Turn right and around -->
+	<!--	Turn right and around -->
 	<route id="51" town="Town05">
 		<!--<waypoint x="6.47" y="2.52" z="0.0" pitch="360.0" roll="0.0" yaw="0.3"/>-->
 		<waypoint x="34.81" y="-17.19" z="0.0" pitch="360.0" roll="0.0" yaw="-88.7"/>
@@ -109,7 +109,7 @@
 		<waypoint x="96.09" y="-17.65" z="0.0" pitch="360.0" roll="0.0" yaw="92.0"/>
 		<waypoint x="46.47" y="-2.50" z="0.0" pitch="360.0" roll="0.0" yaw="-179.4"/>
 	</route>
-<!--	Highway route on ramp -->
+	<!--	Highway route on ramp -->
 
 	<!--	We need a highway  merging scenario for sure -->
 	<route id="52" town="Town05">
@@ -196,22 +196,15 @@
 		<waypoint x="284.4" y="16.4" z="2.5" pitch="360.0" roll="0.0" yaw="179.720"/>
 		<waypoint x="141.55" y="-170.35" z="0.0" pitch="360.0" roll="0.0" yaw="0.0"/>
 	</route>
-<!-- Town 04 into highway -->
-	<route id="41" town="Town04">
-		<waypoint x="314.7" y="-183.7" z="0" yaw="270"/>
-		<waypoint x="314.7" y="-232.7" z="0" yaw="270"/>
-		<waypoint x="270.7" y="-250.3" z="0" yaw="180"/>
-	</route>
-
 	
-<!--	Town 6 route -->
+<!--	Town 06 route -->
 	<route id="60" town="Town06">
 		<waypoint x="-23.95" y="-15.65" z="0.0" pitch="360.0" roll="0.0" yaw="0.0"/>
 		<waypoint x="272.11" y="42.48" z="0.0" pitch="360.0" roll="0.0" yaw="5.6"/>
 		<waypoint x="515.16" y="21.82" z="0.0" pitch="360.0" roll="0.0" yaw="296.5"/>
 	</route>
 
-<!--	Town 7 farm route -->
+<!--	Town 07 farm route -->
 	<route id="70" town="Town07">
 	<!--		bus stop-->
 	<waypoint x="-6.03" y="-93.05" z="0.0" pitch="360.0" roll="0.0" yaw="88.1"/>
@@ -264,14 +257,14 @@
 	</route>
 
 
-	<route id="32" town="Town03" town_amount="25" bgseed="55">
+	<route id="32" town="Town03" town_amount="20">
 		<weather
 			cloudiness="5"
 			precipitation="0"
 			precipitation_deposits="15"
 			wind_intensity="0"
 			sun_azimuth_angle="10"
-			sun_altitude_angle="15"
+			sun_altitude_angle="5"
 			scattering_intensity="1.0"
 		/>
 		<waypoint x="-33.79" y="176.37" z="0.0" pitch="360.0" roll="0.0" yaw="152.5"/>

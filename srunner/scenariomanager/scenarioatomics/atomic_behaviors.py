@@ -187,6 +187,44 @@ class RunScript(AtomicBehavior):
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
         return new_status
 
+class RunFunction(AtomicBehavior):
+
+    """
+    This is an atomic behavior to start execution of an additional function.
+    """
+
+    def __init__(self, function, args = (), name="RunFunction"):
+        """
+        Setup parameters
+        """
+        super(RunFunction, self).__init__(name)
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+        self._function = function
+        self._args = args
+
+    def update(self):
+        """
+        Start function
+        """
+        self._function(*self._args)
+        # fn = getattr(self.owner, self._function.__name__)
+        # fn(self._args)
+        return py_trees.common.Status.SUCCESS
+
+class WaitForSeconds(AtomicBehavior):
+    """
+    This class contains an atomic behavior to wait for a set amount of time (seconds)
+    Args:
+        duration: (float) number of seconds to wait
+    The behavior terminates once the time is up
+    """
+
+    def __init__(self, duration:float, name="WaitForSeconds"):
+        super(WaitForSeconds, self).__init__(name)
+
+        self._duration = duration
+        self._start_time = None
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
 
 class ChangeParameter(AtomicBehavior):
     """

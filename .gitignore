@@ -16,4 +16,4 @@ results*.txt
 *.svg
 *.dot
 scratch
-
+Docs/img/*
