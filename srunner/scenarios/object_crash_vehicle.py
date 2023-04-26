@@ -581,7 +581,9 @@ class DynamicObjectCrossing(BasicScenario):
             lane_width * math.sin(math.radians(position_yaw)))
         blocker_location = carla.Location(x_static, y_static,
                        spawn_point_wp.transform.location.z)
-        blocker_location -= offset_location / 4
+        # increasing the amount you subtract from blocker location
+        # offsets towards the road (away from sidewalk)
+        blocker_location -= offset_location / 4 
         self.transform2 = carla.Transform(blocker_location,
                                           carla.Rotation(yaw=orientation_yaw - 90))  # face opp to road direction
 

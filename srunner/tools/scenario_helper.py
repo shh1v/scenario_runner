@@ -223,11 +223,11 @@ def get_waypoint_in_distance(waypoint, distance):
             waypoint_new = waypoint.next(1.0)[-1]
             traveled_distance += waypoint_new.transform.location.distance(waypoint.transform.location)
             waypoint = waypoint_new
-        else:
-            while not waypoint.is_intersection and traveled_distance < abs(distance):
-                waypoint_new = waypoint.previous(1.0)[-1]
-                traveled_distance += waypoint_new.transform.location.distance(waypoint.transform.location)
-                waypoint = waypoint_new
+    else:
+        while not waypoint.is_intersection and traveled_distance < abs(distance):
+            waypoint_new = waypoint.previous(1.0)[-1]
+            traveled_distance += waypoint_new.transform.location.distance(waypoint.transform.location)
+            waypoint = waypoint_new
 
     return waypoint, traveled_distance
 

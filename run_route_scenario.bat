@@ -6,14 +6,18 @@ SET PORT=2000
 :: export ROUTE=leaderboard\data\route11.xml   # change to desired route
 @REM SET ROUTE_FILE=srunner\data\routes_custom.xml
 @REM SET SCENARIO_FILE=srunner\data\town03_scenarios.json
-@REM SET ROUTE_NUM=21
+@REM @REM SET SCENARIO_FILE=leaderboard\data\periph_study_scenarios.json
+@REM SET ROUTE_NUM=32
 
-SET ROUTE_FILE=srunner\data\routes_gus.xml
-SET SCENARIO_FILE=srunner\data\gus-thesis\scenarios_gus.json
-SET ROUTE_NUM=111
+
+@REM SET ROUTE_FILE=srunner\data\routes_gus.xml
+@REM SET SCENARIO_FILE=srunner\data\gus-thesis\scenarios_gus.json
+@REM SET ROUTE_NUM=111
 @REM SET ROUTE_NUM=911501
 
-@REM SET SCENARIO_FILE=leaderboard\data\periph_study_scenarios.json
+SET ROUTE_FILE=srunner\data\routes_custom.xml
+SET SCENARIO_FILE=srunner\data\town05_scenarios.json
+SET ROUTE_NUM=54
 
 ::clear PYTHONPATH so this doesn't accumulate
 SET PYTHONPATH=

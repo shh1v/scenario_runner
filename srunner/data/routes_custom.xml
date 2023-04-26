@@ -60,7 +60,7 @@
 	</route>
 
 <!--Town 05 routes-->
-	<route id="50" town="Town05" bgseed="99" town_amount="35">
+	<route id="50" town="Town05" bgseed="99" town_amount="0">
 		<weather
 				cloudiness="50"
 				precipitation="0"
@@ -111,7 +111,7 @@
 	</route>
 <!--	Highway route on ramp -->
 
-	<!--	We need a highway  merging scenario for sure -->
+	<!--	We need a highway  merging scenario -->
 	<route id="52" town="Town05">
 		<!--		<waypoint x="6.47" y="2.52" z="0.0" pitch="360.0" roll="0.0" yaw="0.3"/>-->
 		<!--		turn left -->

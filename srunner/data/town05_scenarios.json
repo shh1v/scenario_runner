@@ -45,26 +45,37 @@
         },
         {
         "available_event_configurations": [
-            {"transform": {
+            {"other_actors": {
+                "front": [
+                {
                     "pitch": "0",
-                    "x": 46.90,
-                    "y": -94.56,
-                    "yaw": 179.5,
-                    "z": 1.0
+                    "x": 27.8,
+                    "y": -25.60,
+                    "yaw": 90,
+                    "z": 0.0
                 }
+                ]
+            },
+                "transform": {
+                    "pitch": "0",
+                    "x": 31.20,
+                    "y": 16.30,
+                    "yaw": 270.0,
+                    "z": 0.0
+                }            
             },
             {
-             "other_actors": {
-                 "front": [
-                    {
-                        "pitch": "0",
-                        "x": 42.75,
-                        "y": -2.45,
-                        "yaw": 178.1,
-                        "z": 0.0
-                    }
-                 ]
-                },
+            "other_actors": {
+                "front": [
+                {
+                    "pitch": "0",
+                    "x": 42.75,
+                    "y": -2.45,
+                    "yaw": 178.1,
+                    "z": 0.0
+                }
+                ]
+            },
              "transform": {
                 "pitch": "0",
                 "x": 15.99,
@@ -146,7 +157,7 @@
             }
         }
         ],
-            "scenario_type": "Scenario7"
+        "scenario_type": "Scenario7"
         },
 
         {
