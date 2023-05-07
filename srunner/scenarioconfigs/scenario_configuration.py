@@ -75,7 +75,6 @@ class ScenarioConfiguration(object):
     trigger_points = []
     ego_vehicles = []
     other_actors = []
-    road_signs = [] # added by DReyeVR so we can dynamically spawn road signs
     town = None
     name = None
     type = None
