@@ -30,6 +30,10 @@ import time
 import json
 import pkg_resources
 
+sys.path.insert(0, os.path.join(os.getenv("CARLA_ROOT"), "PythonAPI")) # for Carla stuff
+sys.path.insert(0, os.path.join(os.getenv("CARLA_ROOT"), "PythonAPI", "carla")) # for agents
+sys.path.insert(0, os.path.join(os.getenv("CARLA_ROOT"), "PythonAPI", "dreyevr")) # for DReyeVR stuff
+
 import carla
 
 from srunner.scenarioconfigs.openscenario_configuration import OpenScenarioConfiguration
@@ -408,7 +412,7 @@ class ScenarioRunner(object):
                 self.client.start_recorder(recorder_name, True)
 
             # Load scenario and run it
-            self.manager.load_scenario(scenario, self.agent_instance)
+            self.manager.load_scenario(scenario, self.agent_instance, config.scenario_number)
             self.manager.run_scenario()
 
             # Provide outputs if required

@@ -803,7 +803,8 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
 
         for actor_id in CarlaDataProvider._carla_actor_pool.copy():
             actor = CarlaDataProvider._carla_actor_pool[actor_id]
-            if actor is not None and actor.is_alive:
+            # don't delete the DReyeVR ego vehicle bc it becomes awkward to continue playing
+            if actor is not None and actor.is_alive and actor.type_id != CarlaDataProvider.ego_DReyeVR:
                 batch.append(DestroyActor(actor))
 
         if CarlaDataProvider._client:
