@@ -205,6 +205,8 @@ class RouteScenario(BasicScenario):
         if debug_mode:
             self._draw_waypoints(world, self.route, vertical_shift=1.0, persistency=50000.0)
 
+        self._setup_nav_signs(self.route)
+
     def _initialize_ego_vehicle_DReyeVR(self, ego_vehicle):
         """
         Set/Update the start position of the ego_vehicle (instead of _update_ego_vehicle below)
@@ -274,6 +276,76 @@ class RouteScenario(BasicScenario):
                                color=carla.Color(0, 0, 255), life_time=persistency)
         world.debug.draw_point(waypoints[-1][0].location + carla.Location(z=vertical_shift), size=0.2,
                                color=carla.Color(255, 0, 0), life_time=persistency)
+
+    def _get_valid_sign_transform(self, wp_transform):
+        # use the original waypoint location as long as it is on a sidewalk
+        _wp = CarlaDataProvider.get_map().get_waypoint(wp_transform.location,
+                                                        project_to_road=False,
+                                                        lane_type=carla.LaneType.Any)
+        if _wp is None:
+            return None
+        # find the first non-road waypoint so our drivers can read it (with a limit)
+        max_tries:int = 100
+        while max_tries > 0 and _wp.lane_type not in [carla.LaneType.Sidewalk, carla.LaneType.Shoulder]:
+            max_tries -= 1
+            right_wp = _wp.get_right_lane()
+            if right_wp is not None:
+                _wp = right_wp
+            else:
+                continue # skip this one
+        # carla transforms don't have a native assignment operator :/
+        t = carla.Transform(_wp.transform.location, _wp.transform.rotation)
+        if max_tries == 0:  # didn't find a sidewalk, so push it slightly right by the road lane width
+            push = t.get_right_vector() * _wp.lane_width * 1.1 # 10% more just to be safe
+            # carla locations don't have a native += operator
+            t.location = carla.Location(x=t.location.x + push.x,
+                                        y=t.location.y + push.y,
+                                        z=t.location.z + push.z)
+        t.location.z += 2.0 # go up slightly (for the height of the road sign)
+        t.rotation.yaw += 90.0 # rotate another 90 degrees
+        return t
+
+    def _setup_nav_signs(self, waypoints: list):
+        """
+        Draw the signs along the waypoints of a route automatically
+        """
+        prev_sign_type = None # only request new actor if nav type changes
+        for i, w in enumerate(waypoints):
+            wp_transform, sign_type = w
+            if prev_sign_type is not None and prev_sign_type == sign_type:
+                continue # only spawn a sign when the waypoint type changes
+            prev_sign_type = sign_type
+            sign_transform = self._get_valid_sign_transform(wp_transform)
+            if sign_transform is None:
+                continue # invalid
+            # now we can finally go about spawning the sign in this location
+            DReyeVR_sign_type: str = "dreyevr_sign_straight"
+            if sign_type == RoadOption.LEFT:
+                DReyeVR_sign_type = "dreyevr_sign_left"
+            elif sign_type == RoadOption.RIGHT:
+                DReyeVR_sign_type = "dreyevr_sign_right"
+            elif sign_type == RoadOption.CHANGELANELEFT:
+                continue
+            elif sign_type == RoadOption.CHANGELANERIGHT:
+                continue
+            elif sign_type == RoadOption.STRAIGHT:
+                DReyeVR_sign_type = "dreyevr_sign_straight"
+            else:
+                continue
+            sign_type: str = f"static.prop.{DReyeVR_sign_type}"
+            print(f"Spawning ({sign_type}) sign {i} at {sign_transform}")
+            traffic_sign = CarlaDataProvider.request_new_actor(sign_type,
+                                                               sign_transform,
+                                                               rolename='navigation_sign')
+        # plot the final goal waypoint (at the end)
+        wp_transform_final = waypoints[-1][0]
+        goal_sign_transform = self._get_valid_sign_transform(wp_transform_final)
+        if goal_sign_transform is not None:
+            sign_type: str = f"static.prop.dreyevr_sign_goal"
+            print(f"Spawning ({sign_type}) sign {len(waypoints) - 1} at {goal_sign_transform}")
+            traffic_sign = CarlaDataProvider.request_new_actor(sign_type,
+                                                               goal_sign_transform,
+                                                               rolename='navigation_sign')
 
     def _scenario_sampling(self, potential_scenarios_definitions, random_seed=0):
         """
