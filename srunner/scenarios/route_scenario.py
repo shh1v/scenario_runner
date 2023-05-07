@@ -48,21 +48,7 @@ from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTe
                                                                      RunningStopTest,
                                                                      ActorSpeedAboveThresholdTest)
 
-import sys, os
-sys.path.insert(0, os.path.join(os.getenv("CARLA_ROOT"), "PythonAPI", "carla")) # for agents
-sys.path.insert(0, os.path.join(os.getenv("CARLA_ROOT"), "PythonAPI")) # for DReyeVR stuff
-
-# DReyeVR utils (forward compatible)
-try:
-    from dreyevr.utils import find_ego_vehicle
-except:
-    pass
-
-# backwards compatible
-try:
-    from DReyeVR_utils import find_ego_vehicle
-except:
-    pass
+from examples.DReyeVR_utils import find_ego_vehicle
 
 SECONDS_GIVEN_PER_METERS = 0.4
 

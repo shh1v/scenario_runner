@@ -13,7 +13,7 @@ try:
     CARLA_ROOT: str = os.getenv("CARLA_ROOT")
     egg_dir = os.path.join(CARLA_ROOT, "PythonAPI", "carla", "dist")
     sys.path.append(glob.glob(os.path.join(egg_dir, f"carla-*.egg"))[0])
-    sys.path.append(os.path.join(CARLA_ROOT, "PythonAPI", "dreyevr"))
+    sys.path.append(os.path.join(CARLA_ROOT, "PythonAPI", "examples"))
 except IndexError:
     print(f"Unable to find Carla PythonAPI file in {egg_dir}")
 
