@@ -795,9 +795,9 @@ class ChangeActorWaypoints(AtomicBehavior):
         # At the moment everything besides "shortest" will use the CARLA GlobalPlanner
         grp = GlobalRoutePlanner(CarlaDataProvider.get_world().get_map(), 2.0)
         route = []
-        for i, _ in enumerate(carla_route_elements):
-            if carla_route_elements[i][1] == "shortest":
-                route.append(carla_route_elements[i][0])
+        for i, e in enumerate(carla_route_elements):
+            if e[1] == "shortest":
+                route.append(e[0])
             else:
                 if i == 0:
                     mmap = CarlaDataProvider.get_map()
@@ -810,12 +810,12 @@ class ChangeActorWaypoints(AtomicBehavior):
                     waypoint = ego_next_wp.transform.location
                 else:
                     waypoint = carla_route_elements[i - 1][0].location
-                waypoint_next = carla_route_elements[i][0].location
+                waypoint_next = e[0].location
                 try:
                     interpolated_trace = grp.trace_route(waypoint, waypoint_next)
                 except networkx.NetworkXNoPath:
                     print("WARNING: No route from {} to {} - Using direct path instead".format(waypoint, waypoint_next))
-                    route.append(carla_route_elements[i][0])
+                    route.append(e[0])
                     continue
                 for wp_tuple in interpolated_trace:
                     # The router sometimes produces points that go backward, or are almost identical

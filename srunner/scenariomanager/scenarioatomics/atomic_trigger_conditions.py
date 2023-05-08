@@ -949,7 +949,7 @@ class InTimeToArrivalToVehicleSideLane(InTimeToArrivalToLocation):
         elif self._side_lane == 'left':
             other_side_waypoint = other_waypoint.get_right_lane()
         else:
-            raise Exception("cut_in_lane must be either 'left' or 'right'")
+            raise RuntimeError("cut_in_lane must be either 'left' or 'right'")
 
         other_side_location = other_side_waypoint.transform.location
 
@@ -971,7 +971,7 @@ class InTimeToArrivalToVehicleSideLane(InTimeToArrivalToLocation):
         elif self._side_lane == 'left':
             other_side_waypoint = other_waypoint.get_right_lane()
         else:
-            raise Exception("cut_in_lane must be either 'left' or 'right'")
+            raise RuntimeError("cut_in_lane must be either 'left' or 'right'")
         if other_side_waypoint is None:
             return new_status
 

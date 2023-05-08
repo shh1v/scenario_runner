@@ -235,7 +235,8 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         Get weather presets from CARLA
         """
         rgx = re.compile('.+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)')
-        name = lambda x: ' '.join(m.group(0) for m in rgx.finditer(x))
+        def name(x:str) -> str: 
+            return ' '.join(m.group(0) for m in rgx.finditer(x))
         presets = [x for x in dir(carla.WeatherParameters) if re.match('[A-Z].+', x)]
         return [(getattr(carla.WeatherParameters, x), name(x)) for x in presets]
 
@@ -251,7 +252,7 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         # Parse all traffic lights
         CarlaDataProvider._traffic_light_map.clear()
         for traffic_light in CarlaDataProvider._world.get_actors().filter('*traffic_light*'):
-            if traffic_light not in CarlaDataProvider._traffic_light_map.keys():
+            if traffic_light not in CarlaDataProvider._traffic_light_map:
                 CarlaDataProvider._traffic_light_map[traffic_light] = traffic_light.get_transform()
             else:
                 raise KeyError(
@@ -797,7 +798,7 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         for actor_id in CarlaDataProvider._carla_actor_pool.copy():
             actor = CarlaDataProvider._carla_actor_pool[actor_id]
             # don't delete the DReyeVR ego vehicle bc it becomes awkward to continue playing
-            if actor is not None and actor.is_alive and actor.type_id != CarlaDataProvider.ego_DReyeVR:
+            if actor is not None and actor.is_alive and "dreyevr" not in actor.type_id:
                 batch.append(DestroyActor(actor))
 
         if CarlaDataProvider._client:

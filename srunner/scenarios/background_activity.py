@@ -68,7 +68,7 @@ class BackgroundActivity(BasicScenario):
                                                                 rolename='background')
 
         if new_actors is None:
-            raise Exception("Error: Unable to add the background activity, all spawn points were occupied")
+            raise RuntimeError("Error: Unable to add the background activity, all spawn points were occupied")
 
         for _actor in new_actors:
             self.other_actors.append(_actor)

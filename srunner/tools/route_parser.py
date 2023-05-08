@@ -7,6 +7,7 @@
 Module used to parse all the route and scenario configuration parameters.
 """
 
+import os
 import json
 import math
 import xml.etree.ElementTree as ET
@@ -126,10 +127,9 @@ class RouteParser(object):
         :param single_route: the route id (int) to specify which sign route
         :return: dictionary of sign types and transforms
         """
-        import os
         if not os.path.exists(signs_filename):
             return None
-        with open(signs_filename, 'r') as f:
+        with open(signs_filename, 'r', encoding='UTF-8') as f:
             signs_dict = json.loads(f.read())
 
         routes_dict = signs_dict['available_routes'][0]
@@ -172,7 +172,6 @@ class RouteParser(object):
         waypoint['y'] = float(waypoint['y'])
         waypoint['z'] = float(waypoint['z'])
         waypoint['yaw'] = float(waypoint['yaw'])
-
 
     @staticmethod
     def convert_dict2transform(waypoint):

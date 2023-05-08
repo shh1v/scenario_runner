@@ -129,7 +129,7 @@ class ParameterRef:
         elif self.is_parameter():
             value = CarlaDataProvider.get_osc_global_param_value(self.reference_text)
             if value is None:
-                raise Exception("Parameter '{}' is not defined".format(self.reference_text[1:]))
+                raise RuntimeError("Parameter '{}' is not defined".format(self.reference_text[1:]))
         else:
             value = None
         return value
@@ -139,14 +139,14 @@ class ParameterRef:
         if value is not None:
             return float(value)
         else:
-            raise Exception("could not convert '{}' to float".format(self.reference_text))
+            raise RuntimeError("could not convert '{}' to float".format(self.reference_text))
 
     def __int__(self) -> int:
         value = self.get_interpreted_value()
         if value is not None:
             return int(float(value))
         else:
-            raise Exception("could not convert '{}' to int".format(self.reference_text))
+            raise RuntimeError("could not convert '{}' to int".format(self.reference_text))
 
     def __str__(self) -> str:
         value = self.get_interpreted_value()
@@ -637,7 +637,7 @@ class OpenScenarioParser(object):
             droll = 0
             if rel_pos.find('Orientation') is not None:
                 orientation = rel_pos.find('Orientation')
-                is_absolute = (orientation.attrib.get('type') == "absolute")
+                is_absolute = bool(orientation.attrib.get('type') == "absolute")
                 dyaw = math.degrees(float(ParameterRef(orientation.attrib.get('h', 0))))
                 dpitch = math.degrees(float(ParameterRef(orientation.attrib.get('p', 0))))
                 droll = math.degrees(float(ParameterRef(orientation.attrib.get('r', 0))))

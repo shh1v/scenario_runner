@@ -113,7 +113,7 @@ class BasicScenario(object):
         if config.other_actors:
             new_actors = CarlaDataProvider.request_new_actors(config.other_actors)
             if not new_actors:
-                raise Exception("Error: Unable to add actors")
+                raise RuntimeError("Error: Unable to add actors")
 
             for new_actor in new_actors:
                 self.other_actors.append(new_actor)
