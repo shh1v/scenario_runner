@@ -12,8 +12,10 @@ import argparse
 try:
     CARLA_ROOT: str = os.getenv("CARLA_ROOT")
     egg_dir = os.path.join(CARLA_ROOT, "PythonAPI", "carla", "dist")
-    sys.path.append(glob.glob(os.path.join(egg_dir, f"carla-*.egg"))[0])
-    sys.path.append(os.path.join(CARLA_ROOT, "PythonAPI", "examples"))
+    sys.path.extend([glob.glob(os.path.join(egg_dir, f"carla-*.egg"))[0],
+                     os.path.join(CARLA_ROOT, "PythonAPI"),
+                     os.path.join(CARLA_ROOT, "PythonAPI", "carla"),
+                     os.path.join(CARLA_ROOT, "PythonAPI", "examples")])
 except IndexError:
     print(f"Unable to find Carla PythonAPI file in {egg_dir}")
 
@@ -76,7 +78,7 @@ def start_recording(client, args, scenario_runner_instance):
     time_str: str = datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
     filename: str = f"exp_{args.title}_{time_str}.rec"
 
-    global recorder_file # to "return" from this thread
+    global recorder_file  # to "return" from this thread
     recorder_file = client.start_recorder(filename)
     print("Recording on file: %s" % recorder_file)
 
