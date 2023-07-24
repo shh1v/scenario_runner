@@ -218,7 +218,7 @@ class ScenarioRunner(object):
                 ego_vehicle_missing = False
                 for ego_vehicle in ego_vehicles:
                     ego_vehicle_found = False
-                    carla_vehicles = CarlaDataProvider.get_world().get_actors().filter('vehicle.*')
+                    carla_vehicles = CarlaDataProvider.get_world().get_actors().filter('*vehicle.*')
                     for carla_vehicle in carla_vehicles:
                         if carla_vehicle.attributes['role_name'] == ego_vehicle.rolename:
                             ego_vehicle_found = True
@@ -310,13 +310,16 @@ class ScenarioRunner(object):
             ego_vehicle_found = False
             if self._args.waitForEgo:
                 while not ego_vehicle_found and not self._shutdown_requested:
-                    vehicles = self.client.get_world().get_actors().filter('vehicle.*')
+                    vehicles = self.client.get_world().get_actors().filter('*vehicle.*')
                     for ego_vehicle in ego_vehicles:
                         ego_vehicle_found = False
                         for vehicle in vehicles:
                             if vehicle.attributes['role_name'] == ego_vehicle.rolename:
                                 ego_vehicle_found = True
+                                print(f"Vehicle attribute match: {vehicle.attributes['role_name']}")
                                 break
+                            else:
+                                print(f"Vehicle attribute mismatch: {vehicle.attributes['role_name']} != {ego_vehicle.rolename}")
                         if not ego_vehicle_found:
                             print("Not all ego vehicles ready. Waiting ... ")
                             time.sleep(1)
@@ -394,6 +397,7 @@ class ScenarioRunner(object):
                                           config,
                                           self._args.randomize,
                                           self._args.debug)
+            print("Successfully prepared scenario: " + config.name)
         except Exception as exception:                  # pylint: disable=broad-except
             print("The scenario cannot be loaded")
             traceback.print_exc()
@@ -408,7 +412,9 @@ class ScenarioRunner(object):
                 self.client.start_recorder(recorder_name, True)
 
             # Load scenario and run it
-            self.manager.load_scenario(scenario, self.agent_instance, config.scenario_number)
+            # Commented out the scenario number parameter as it is used to load DReyeVR signs; but I do not need it.
+            # self.manager.load_scenario(scenario, self.agent_instance, config.scenario_number)
+            self.manager.load_scenario(scenario, self.agent_instance)
             self.manager.run_scenario()
 
             # Provide outputs if required

@@ -290,7 +290,7 @@ class OpenScenarioConfiguration(ScenarioConfiguration):
         Helper function to _set_actor_information for getting vehicle information from XML tree
         """
         color = None
-        model = vehicle.attrib.get('name', "vehicle.*")
+        model = vehicle.attrib.get('name', "*vehicle.*")
         category = vehicle.attrib.get('vehicleCategory', "car")
         ego_vehicle = False
         for prop in obj.iter("Property"):
