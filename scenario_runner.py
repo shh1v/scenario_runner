@@ -222,7 +222,7 @@ class ScenarioRunner(object):
                 ego_vehicle_missing = False
                 for ego_vehicle in ego_vehicles:
                     ego_vehicle_found = False
-                    carla_vehicles = CarlaDataProvider.get_world().get_actors().filter('vehicle.*')
+                    carla_vehicles = CarlaDataProvider.get_world().get_actors().filter('*vehicle.*')
                     for carla_vehicle in carla_vehicles:
                         if carla_vehicle.attributes['role_name'] == ego_vehicle.rolename:
                             ego_vehicle_found = True
@@ -314,7 +314,7 @@ class ScenarioRunner(object):
             ego_vehicle_found = False
             if self._args.waitForEgo:
                 while not ego_vehicle_found and not self._shutdown_requested:
-                    vehicles = self.client.get_world().get_actors().filter('vehicle.*')
+                    vehicles = self.client.get_world().get_actors().filter('*vehicle.*')
                     for ego_vehicle in ego_vehicles:
                         ego_vehicle_found = False
                         for vehicle in vehicles:

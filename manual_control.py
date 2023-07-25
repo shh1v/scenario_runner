@@ -155,7 +155,7 @@ class World(object):
         while self.player is None:
             print("Waiting for the ego vehicle...")
             time.sleep(1)
-            possible_vehicles = self.world.get_actors().filter('vehicle.*')
+            possible_vehicles = self.world.get_actors().filter('*vehicle.*')
             for vehicle in possible_vehicles:
                 if vehicle.attributes['role_name'] == 'hero':
                     print("Ego vehicle found")
@@ -420,7 +420,7 @@ class HUD(object):
         collision = [colhist[x + self.frame - 200] for x in range(0, 200)]
         max_col = max(1.0, max(collision))
         collision = [x / max_col for x in collision]
-        vehicles = world.world.get_actors().filter('vehicle.*')
+        vehicles = world.world.get_actors().filter('*vehicle.*')
         self._info_text = [
             'Server:  % 16.0f FPS' % self.server_fps,
             'Client:  % 16.0f FPS' % clock.get_fps(),

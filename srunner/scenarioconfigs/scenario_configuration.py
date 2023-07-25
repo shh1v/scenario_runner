@@ -36,7 +36,7 @@ class ActorConfigurationData(object):
         static method to initialize an ActorConfigurationData from a given ET tree
         """
 
-        model = node.attrib.get('model', 'vehicle.*')
+        model = node.attrib.get('model', '*vehicle.*')
 
         pos_x = float(node.attrib.get('x', 0))
         pos_y = float(node.attrib.get('y', 0))

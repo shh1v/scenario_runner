@@ -1453,8 +1453,8 @@ def main():
     argparser.add_argument(
         '--filter',
         metavar='PATTERN',
-        default='vehicle.*',
-        help='actor filter (default: "vehicle.*")')
+        default='*vehicle.*',
+        help='actor filter (default: "*vehicle.*")')
     argparser.add_argument(
         '--map',
         metavar='TOWN',
