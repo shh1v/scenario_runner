@@ -511,6 +511,8 @@ class RouteScenario(BasicScenario):
 
         if new_actors is None:
             raise RuntimeError("Error: Unable to add the background activity, all spawn points were occupied")
+        else:
+            print(f"Added {len(new_actors)} background actors")
 
         if not hasattr(self, "other_actors"):
             self.other_actors = []

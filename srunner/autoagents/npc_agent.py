@@ -11,6 +11,7 @@ from __future__ import print_function
 
 import carla
 from agents.navigation.basic_agent import BasicAgent
+from examples.DReyeVR_utils import find_ego_vehicle
 
 from srunner.autoagents.autonomous_agent import AutonomousAgent
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
@@ -70,6 +71,7 @@ class NpcAgent(AutonomousAgent):
                     break
 
             if not hero_actor:
+                print("No Hero actor found")
                 return carla.VehicleControl()
 
             # Add an agent that follows the route to the ego

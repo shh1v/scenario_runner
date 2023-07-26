@@ -251,7 +251,7 @@ class BackgroundBehavior(AtomicBehavior):
         timestep = self._world.get_snapshot().timestamp.delta_seconds
         self._tm = CarlaDataProvider.get_client().get_trafficmanager(
             CarlaDataProvider.get_traffic_manager_port())
-        self._tm.global_percentage_speed_difference(0.0)
+        self._tm.global_percentage_speed_difference(-150.0)
         self._night_mode = night_mode
 
         # Global variables
@@ -275,10 +275,10 @@ class BackgroundBehavior(AtomicBehavior):
         self._road_checker_index = 0
         self._road_ego_key = ""
 
-        self._road_front_vehicles = 3  # Amount of vehicles in front of the ego
-        self._road_back_vehicles = 3  # Amount of vehicles behind the ego
-        self._road_vehicle_dist = 8  # Distance road vehicles leave betweeen each other[m]
-        self._road_spawn_dist = 11  # Initial distance between spawned road vehicles [m]
+        self._road_front_vehicles = 1  # Amount of vehicles in front of the ego
+        self._road_back_vehicles = 1  # Amount of vehicles behind the ego
+        self._road_vehicle_dist = 100  # Distance road vehicles leave betweeen each other[m]
+        self._road_spawn_dist = 50  # Initial distance between spawned road vehicles [m]
         self._road_new_sources_dist = 20  # Distance of the source to the start of the new lanes
         self._radius_increase_ratio = 1.8  # Meters the radius increases per m/s of the ego
         self._extra_radius = 0.0  # Extra distance to avoid the road behavior from blocking
@@ -308,9 +308,9 @@ class BackgroundBehavior(AtomicBehavior):
 
         self._opposite_removal_dist = 30  # Distance at which actors are destroyed
         self._opposite_sources_dist = 60  # Distance from the ego to the opposite sources [m]
-        self._opposite_vehicle_dist = 10  # Distance opposite vehicles leave betweeen each other[m]
+        self._opposite_vehicle_dist = 15  # Distance opposite vehicles leave betweeen each other[m]
         self._opposite_spawn_dist = 20  # Initial distance between spawned opposite vehicles [m]
-        self._opposite_sources_max_actors = 8  # Maximum vehicles alive at the same time per source
+        self._opposite_sources_max_actors = 5  # Maximum vehicles alive at the same time per source
 
         # Scenario 2 variables
         self._is_scenario_2_active = False
