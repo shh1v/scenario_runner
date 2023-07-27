@@ -13,10 +13,10 @@ import glob
 import os
 import time
 import sys
-sys.path.append('../../carla/PythonAPI/examples/')
-sys.path.append('../../carla/PythonAPI/experiment/')
 
 # Local imports
+sys.path.append('../../carla/PythonAPI/examples/')
+sys.path.append('../../carla/PythonAPI/experiment/')
 import carla
 from experiment_utils import ExperimentHelper
 from DReyeVR_utils import find_ego_vehicle
@@ -27,6 +27,8 @@ from agents.navigation.behavior_agent import BehaviorAgent
 import argparse
 import logging
 
+def is_nearly_equal(a, b, tolerance=0.01):
+    return abs(a - b) < tolerance
 def main(**kargs):
     logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
@@ -43,56 +45,36 @@ def main(**kargs):
         traffic_manager.set_hybrid_physics_mode(True) # TODO: Set DReyeVR's role to hero
         traffic_manager.set_hybrid_physics_radius(70.0)
 
-        # Simulation Syncronization
-        #
-        # Run the simulation in asynchronous mode with variable time (default)
-        # step when not recording driving performance or running any traffic scenarios.
-        #
-        # Run the simulation in synchronous mode with fixed time
-        # step when not recording driving performance or running any traffic scenarios.
+        # Simulation Synchronization
         ExperimentHelper.set_synchronous_mode(world)
-
-        # waypoints = world.get_map().generate_waypoints(1)
-        # for w in waypoints:
-        #     world.debug.draw_string(w.transform.location, 'O', draw_shadow=False,
-        #                                     color=carla.Color(r=255, g=0, b=0), life_time=120.0,
-        #                                     persistent_lines=True)
 
         # Setting actors starting position to the start of the route
         DReyeVR_vehicle = find_ego_vehicle(world)
         DReyeVR_vehicle.set_transform(carla.Transform(carla.Location(8.5, 19.3, 0), carla.Rotation(0, -90.3, 0)))
         world.tick()
-
-        with open("raw_waypoints/route_4.txt", "a") as file:
-            new_transform = None
-            old_transform = None
+        
+        new_transform = None
+        old_transform = None
+        with open("raw_waypoints/route_5.txt", "w") as file:
             while True:
                 old_transform = new_transform
                 new_transform = DReyeVR_vehicle.get_transform()
-                if old_transform is not None and (new_transform.location == old_transform.location):
-                    # Dont write the same transform twice
+                if old_transform is not None and (is_nearly_equal(new_transform.location.x, old_transform.location.x, tolerance=0.01) and is_nearly_equal(new_transform.location.y, old_transform.location.y, tolerance=0.01) and is_nearly_equal(new_transform.location.z, old_transform.location.z, tolerance=0.01)):
+                    # Don't write the same transform twice
                     world.tick()
                     continue
-                elif old_transform is not None and (old_transform.location.distance(new_transform.location) < 0.5):
-                    # Dont write transform that are too close together
-                    world.tick()
-                    continue
-                try:
-                    # Open the file in append mode
-                    file.write(str(new_transform))
-                    file.write("\n")
-                except Exception as e:
-                    print("An error occurred:", str(e))
-                    break
+                file.write(str(new_transform) + "\n")
+                file.flush()  # Force write to disk after each update.
+                os.fsync(file.fileno())  # Ensure it's written to disk.
                 world.tick()
+
     finally:
         pass
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     try:
         main(host='127.0.0.1', port=2000, tm_port=8000)
     except KeyboardInterrupt:
-        pass
-    finally:
         print('\ndone.')
+
