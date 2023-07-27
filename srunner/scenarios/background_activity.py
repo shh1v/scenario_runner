@@ -275,7 +275,7 @@ class BackgroundBehavior(AtomicBehavior):
         self._road_checker_index = 0
         self._road_ego_key = ""
 
-        self._road_front_vehicles = 1  # Amount of vehicles in front of the ego
+        self._road_front_vehicles = 0  # Amount of vehicles in front of the ego
         self._road_back_vehicles = 1  # Amount of vehicles behind the ego
         self._road_vehicle_dist = 100  # Distance road vehicles leave betweeen each other[m]
         self._road_spawn_dist = 50  # Initial distance between spawned road vehicles [m]

@@ -1,9 +1,19 @@
+#!/usr/bin/env python
+
+# Copyright (c) 2023 Okanagan Visualization & Interaction (OVI) Lab
+# The University of British Columbia, BC, Canada
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
+
+"""Script used to translate vehicle location txt file into an xml file."""
+
 import re
 from lxml.etree import Element, SubElement, tostring, ElementTree
 
 # Configs
-input_file = 'raw_waypoints/route_1.txt'
-output_file = 'route_data/route_1.xml'
+input_file = 'raw_waypoints/route_4.txt'
+output_file = 'route_data/route_4.xml'
 route_id = 0
 town = "Town04"
 

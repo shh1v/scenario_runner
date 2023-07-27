@@ -75,7 +75,7 @@ class NpcAgent(AutonomousAgent):
                 return carla.VehicleControl()
 
             # Add an agent that follows the route to the ego
-            self._agent = BasicAgent(hero_actor, 30)
+            self._agent = BasicAgent(hero_actor, 120)
 
             plan = []
             prev_wp = None

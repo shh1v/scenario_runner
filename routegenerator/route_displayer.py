@@ -6,7 +6,7 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-"""Script used to record the vehicle location into a txt file."""
+"""Script used to display the route xml file in the simulation that was generated."""
 
 # Standard library imports
 import glob
@@ -24,6 +24,7 @@ from agents.navigation.basic_agent import BasicAgent
 from agents.navigation.behavior_agent import BehaviorAgent
 
 # Other library imports
+import xml.etree.ElementTree as ET
 import argparse
 import logging
 
@@ -49,42 +50,36 @@ def main(**kargs):
         # step when not recording driving performance or running any traffic scenarios.
         #
         # Run the simulation in synchronous mode with fixed time
-        # step when not recording driving performance or running any traffic scenarios.
-        ExperimentHelper.set_synchronous_mode(world)
-
-        # waypoints = world.get_map().generate_waypoints(1)
-        # for w in waypoints:
-        #     world.debug.draw_string(w.transform.location, 'O', draw_shadow=False,
-        #                                     color=carla.Color(r=255, g=0, b=0), life_time=120.0,
-        #                                     persistent_lines=True)
+        # step when not recording driving performance or running any traffic scenarios
 
         # Setting actors starting position to the start of the route
         DReyeVR_vehicle = find_ego_vehicle(world)
         DReyeVR_vehicle.set_transform(carla.Transform(carla.Location(8.5, 19.3, 0), carla.Rotation(0, -90.3, 0)))
         world.tick()
 
-        with open("raw_waypoints/route_4.txt", "a") as file:
-            new_transform = None
-            old_transform = None
-            while True:
-                old_transform = new_transform
-                new_transform = DReyeVR_vehicle.get_transform()
-                if old_transform is not None and (new_transform.location == old_transform.location):
-                    # Dont write the same transform twice
-                    world.tick()
-                    continue
-                elif old_transform is not None and (old_transform.location.distance(new_transform.location) < 0.5):
-                    # Dont write transform that are too close together
-                    world.tick()
-                    continue
-                try:
-                    # Open the file in append mode
-                    file.write(str(new_transform))
-                    file.write("\n")
-                except Exception as e:
-                    print("An error occurred:", str(e))
-                    break
-                world.tick()
+        # assuming your xml is in a string, otherwise load it from a file
+        xml_data = None
+        with open('route_data/route_4.xml', 'r') as file:
+            xml_data = file.read()
+
+        root = ET.fromstring(xml_data)
+
+        for route in root.findall('route'):
+            route_id = route.get('id')
+            town = route.get('town')
+            print(f'Route ID: {route_id}, Town: {town}')
+            
+            for waypoint in route.findall('waypoint'):
+                x = waypoint.get('x')
+                y = waypoint.get('y')
+                z = waypoint.get('z')
+                pitch = waypoint.get('pitch')
+                yaw = waypoint.get('yaw')
+                roll = waypoint.get('roll')
+                world.debug.draw_string(carla.Location(float(x), float(y), float(z)), 'O', draw_shadow=False,
+                                            color=carla.Color(r=0, g=255, b=0), life_time=300.0,
+                                            persistent_lines=True)
+
     finally:
         pass
 
