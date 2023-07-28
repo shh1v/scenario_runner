@@ -412,9 +412,7 @@ class ScenarioRunner(object):
                 self.client.start_recorder(recorder_name, True)
 
             # Load scenario and run it
-            # Commented out the scenario number parameter as it is used to load DReyeVR signs; but I do not need it.
-            # self.manager.load_scenario(scenario, self.agent_instance, config.scenario_number)
-            self.manager.load_scenario(scenario, self.agent_instance)
+            self.manager.load_scenario(scenario, self.agent_instance, config.scenario_number)
             self.manager.run_scenario()
 
             # Provide outputs if required
