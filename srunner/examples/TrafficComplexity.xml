@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <scenarios>
     <scenario name="TrafficComplexity_1RV" type="TrafficComplexity" town="Town04">
+        <!-- ego actor: Note that the location of this vehicle does not matter-->
         <ego_vehicle x="284.4" y="16.4" z="2.5" yaw="-173" model="vehicle.lincoln.mkz_2017" />
         <!-- lead actor-->
         <other_actor model="vehicle.volkswagen.t2" lane="same" role="relevant"
@@ -15,6 +16,7 @@
     </scenario>
 
     <scenario name="TrafficComplexity_3RV" type="TrafficComplexity" town="Town04">
+        <!-- ego actor: Note that the location of this vehicle does not matter-->
         <ego_vehicle x="284.4" y="16.4" z="2.5" yaw="-173" model="vehicle.lincoln.mkz_2017" />
         <!-- lead actor-->
         <other_actor model="vehicle.volkswagen.t2" lane="same" role="relevant"

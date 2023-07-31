@@ -42,6 +42,10 @@ class TrafficComplexity(BasicScenario):
         """
         Initialize all parameters required for triggerring traffic complexity scenario
         """
+        self._world = world
+        self._ego_vehicles = ego_vehicles
+        self._lead_vehicle = None
+        self._config = config
         self._map = CarlaDataProvider.get_map()
         self._dreyevr_init_waypoint = self._map.get_waypoint(ego_vehicles[0].get_location(), project_to_road=True, lane_type=carla.LaneType.Driving)
     
@@ -67,8 +71,8 @@ class TrafficComplexity(BasicScenario):
         # Setting all the actors velocity using sequence composite
         velocity_setter = py_trees.composites.Sequence("Velocity Setter")
 
-        # Spawn all the vehicle in their respective locations and speed
-        for actor in self.config.other_actors:
+        # Spawn all the other vehicle in their respective locations and speed
+        for actor in self._config.other_actors:
             # Figure out on which lane the vehicle must be spawned
             lane = actor.lane
             if lane not in ["left", "right", "same"]:
@@ -76,6 +80,10 @@ class TrafficComplexity(BasicScenario):
             
             if inverse and lane != "same":
                 lane = "left" if lane == "right" else "right"
+            
+            # Check if the vehicle is a lead vehicle (that has the slower speed)
+            if actor.lane == "same" and actor.vehicle_offset < 0 and actor.role == "relvant":
+                self._lead_vehicle = actor
 
             # Get the waypoint where the vehicle must be spawned
             vehicle_waypoint, waypoint_distance = get_waypoint_in_distance(self._dreyevr_init_waypoint, actor.vehicle_offset, True, lane)
@@ -94,9 +102,26 @@ class TrafficComplexity(BasicScenario):
             velocity_setter.add_child(set_init_velocity)
             set_keep_velocity = KeepVelocity(vehicle, actor.speed, True) # Keep the velocity immediately
             velocity_setter.add_child(set_keep_velocity)
+        
+        # Make sure that the lead vehicle is spawned
+        if self._lead_vehicle is None:
+            raise RuntimeError("Lead vehicle not spawned. Please verify the scenario configuration.")
 
+        # Once the actors are spawned and their velocity is set, add the trigger behaviour
+        # NOTE: The Idle behaviour can also be used instead of trigger behaviour but the time budget as a confounding mught be an issue
+        TOR_trigger_condition = py_trees.composites.Sequence("Take-Over Request Trigger Condition")
+        trigger_distance = (self._ego_vehicles[0].get_velocity().length() - self._lead_vehicle.get_velocity().length()) * 10.0
+        trigger_when_close = InTriggerDistanceToVehicle(self._lead_vehicle, self._ego_vehicles[0], distance=trigger_distance, name="Trigger TOR when close")
+        TOR_trigger_condition.add_child(trigger_when_close)
 
+        # TODO: Once the TOR is triggered, communicate this to CARLA
 
+        # Now build the behaviour tree
+        root = py_trees.composites.Parallel("Parallel Behavior", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
+        root.add_child(velocity_setter)
+        root.add_child(TOR_trigger_condition)
+
+        return root
             
     def _create_test_criteria(self):
         """
