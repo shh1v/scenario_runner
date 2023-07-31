@@ -34,18 +34,21 @@ class TrafficComplexity(BasicScenario):
     :param timeout is the overall scenario timeout (optional, default=60 seconds)
     """
 
-    # some ego vehicle parameters
-    # some parameters for the other vehicles
+    timeout = 1200
 
     def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, criteria_enable=True,
                  timeout=60):
         """
         Initialize all parameters required for triggerring traffic complexity scenario
         """
+        print("Scenario: Initializing Traffic Complexity Scenario")
+              
         self._world = world
         self._ego_vehicles = ego_vehicles
         self._lead_vehicle = None
         self._config = config
+        print("other:", config.other_actors)
+        print("ego:", ego_vehicles)
         self._map = CarlaDataProvider.get_map()
         self._dreyevr_init_waypoint = self._map.get_waypoint(ego_vehicles[0].get_location(), project_to_road=True, lane_type=carla.LaneType.Driving)
     
@@ -65,6 +68,8 @@ class TrafficComplexity(BasicScenario):
         Setup the behavior for triggerring traffic complexity scenario
         """
 
+        print("Scenario: Initializing Traffic Complexity Behavior")
+
         # NOTE: Spawn the vehicle either in the lane specified or exact opposite lane
         inverse = random.choice([True, False])
 
@@ -74,6 +79,7 @@ class TrafficComplexity(BasicScenario):
         # Spawn all the other vehicle in their respective locations and speed
         for actor in self._config.other_actors:
             # Figure out on which lane the vehicle must be spawned
+            print("Spawning {} on {} at {}".format(actor.model, actor.lane, str(actor.vehicle_offset)))
             lane = actor.lane
             if lane not in ["left", "right", "same"]:
                 raise RuntimeError(f"Invalid lane {lane} for {actor.model} on {actor.lane} at {actor.vehicle_offset}")
@@ -82,11 +88,11 @@ class TrafficComplexity(BasicScenario):
                 lane = "left" if lane == "right" else "right"
             
             # Check if the vehicle is a lead vehicle (that has the slower speed)
-            if actor.lane == "same" and actor.vehicle_offset < 0 and actor.role == "relvant":
+            if actor.lane == "same" and actor.vehicle_offset > 0 and actor.role == "relevant":
                 self._lead_vehicle = actor
 
             # Get the waypoint where the vehicle must be spawned
-            vehicle_waypoint, waypoint_distance = get_waypoint_in_distance(self._dreyevr_init_waypoint, actor.vehicle_offset, True, lane)
+            vehicle_waypoint, waypoint_distance = get_waypoint_in_distance(self._dreyevr_init_waypoint, actor.vehicle_offset, False, lane)
 
             # Check if a junction is not interefering with the spawn location
             if abs(waypoint_distance - actor.vehicle_offset) >= 5.0:

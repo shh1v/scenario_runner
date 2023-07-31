@@ -389,7 +389,8 @@ class ScenarioRunner(object):
             elif self._args.route:
                 scenario = RouteScenario(world=self.world,
                                          config=config,
-                                         debug_mode=self._args.debug)
+                                         debug_mode=self._args.debug,
+                                         background_activity=self._args.bg)
             else:
                 scenario_class = self._get_scenario_class_or_fail(config.type)
                 scenario = scenario_class(self.world,
@@ -571,6 +572,9 @@ def main():
     parser.add_argument('--randomize', action="store_true", help='Scenario parameters are randomized')
     parser.add_argument('--repetitions', default=1, type=int, help='Number of scenario executions')
     parser.add_argument('--waitForEgo', action="store_true", help='Connect the scenario to an existing ego vehicle')
+
+    # AutoHive implementation: add --bg flag to add background activity
+    parser.add_argument('--bg', action="store_true", help='Add background activity to the scenario')
 
     arguments = parser.parse_args()
     # pylint: enable=line-too-long

@@ -1,0 +1,38 @@
+{
+    "available_scenarios": [
+        {
+            "Town04": [
+                {
+                    "available_event_configurations": [
+                        {
+                            "transform": {
+                                "pitch": "0.0",
+                                "x": "9.441221",
+                                "y": "203.310989",
+                                "yaw": "-90.289124",
+                                "z": "0.0"
+                            },
+                            "other_actors": [
+                                {
+                                    "model": "vehicle.volkswagen.t2",
+                                    "lane": "same",
+                                    "role": "relevant",
+                                    "vehicle_offset": "222.2224",
+                                    "speed": "80"
+                                },
+                                {
+                                    "model": "vehicle.volkswagen.t2",
+                                    "lane": "left",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "-1133.3322",
+                                    "speed": "120"
+                                }
+                            ]
+                        }
+                    ],
+                    "scenario_type": "Scenario11"
+                }
+            ]
+        }
+    ]
+}
