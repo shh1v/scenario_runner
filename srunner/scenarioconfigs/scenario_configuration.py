@@ -52,7 +52,7 @@ class ActorConfigurationData(object):
 
         rolename = node.attrib.get('rolename', rolename)
 
-        speed = node.attrib.get('speed', 0)
+        speed = float(node.attrib.get('speed', 0))
 
         autopilot = False
         if 'autopilot' in node.keys():
@@ -67,7 +67,7 @@ class ActorConfigurationData(object):
         # Custom attrbutes for AutoHive Implementation
         lane = node.attrib.get('lane', None)
         role = node.attrib.get('role', None)
-        vehicle_offset = node.attrib.get('vehicle_offset', None)
+        vehicle_offset = float(node.attrib.get('vehicle_offset', None))
 
         if (lane != None or role != None or vehicle_offset != None or speed != None):
             # This is a vehicle for a take-over scenario

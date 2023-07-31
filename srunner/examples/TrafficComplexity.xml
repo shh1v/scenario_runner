@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<scenarios>
+    <scenario name="TrafficComplexity_1RV" type="TrafficComplexity" town="Town04">
+        <ego_vehicle x="284.4" y="16.4" z="2.5" yaw="-173" model="vehicle.lincoln.mkz_2017" />
+        <!-- lead actor-->
+        <other_actor model="vehicle.volkswagen.t2" lane="same" role="relevant"
+            vehicle_offset="222.2224"
+            speed="80" />
+        <!-- adjacent actors-->
+        <other_actor model="vehicle.volkswagen.t2" lane="leftright" role="notrelevant"
+            vehicle_offset="-1133.3322"
+            speed="120" />
+        <weather cloudiness="0" precipitation="0" precipitation_deposits="0" wind_intensity="0"
+            sun_azimuth_angle="0" sun_altitude_angle="75" />
+    </scenario>
+
+    <scenario name="TrafficComplexity_3RV" type="TrafficComplexity" town="Town04">
+        <ego_vehicle x="284.4" y="16.4" z="2.5" yaw="-173" model="vehicle.lincoln.mkz_2017" />
+        <!-- lead actor-->
+        <other_actor model="vehicle.volkswagen.t2" lane="same" role="relevant"
+            vehicle_offset="222.2224"
+            speed="80" />
+        <!-- adjacent actors-->
+        <other_actor model="vehicle.volkswagen.t2" lane="leftright" role="notrelevant"
+            vehicle_offset="-1133.3322"
+            speed="120" />
+        <weather cloudiness="0" precipitation="0" precipitation_deposits="0" wind_intensity="0"
+            sun_azimuth_angle="0" sun_altitude_angle="75" />
+    </scenario>
+</scenarios>

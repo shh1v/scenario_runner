@@ -44,6 +44,7 @@ from srunner.scenarios.junction_crossing_route import NoSignalJunctionCrossingRo
 from srunner.scenarios.signalized_junction_left_turn import SignalizedJunctionLeftTurn
 from srunner.scenarios.signalized_junction_right_turn import SignalizedJunctionRightTurn
 from srunner.scenarios.opposite_vehicle_taking_priority import OppositeVehicleRunningRedLight
+from srunner.scenarios.traffic_complexity import TrafficComplexity
 from srunner.scenarios.background_activity import BackgroundActivity
 
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTest,
@@ -66,7 +67,8 @@ NUMBER_CLASS_TRANSLATION = {
     "Scenario7": OppositeVehicleRunningRedLight,
     "Scenario8": SignalizedJunctionLeftTurn,
     "Scenario9": SignalizedJunctionRightTurn,
-    "Scenario10": NoSignalJunctionCrossingRoute
+    "Scenario10": NoSignalJunctionCrossingRoute,
+    "Scenario11": TrafficComplexity
 }
 
 
