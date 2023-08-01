@@ -84,10 +84,6 @@ class TrafficComplexity(BasicScenario):
             
             if inverse and lane != "same":
                 lane = "left" if lane == "right" else "right"
-            
-            # Check if the vehicle is a lead vehicle (that has the slower speed)
-            if actor.lane == "same" and actor.vehicle_offset > 0 and actor.role == "relevant":
-                self._lead_vehicle = actor
 
             # Get the waypoint where the vehicle must be spawned
             vehicle_waypoint, waypoint_distance = get_waypoint_in_distance(self._map.get_waypoint(config.trigger_points[0].location), actor.vehicle_offset, False, lane)
@@ -118,6 +114,10 @@ class TrafficComplexity(BasicScenario):
 
             # Add the vehicle to the actor list
             self._other_actors.append(vehicle)
+
+            # Check if the vehicle is a lead vehicle (that has the slower speed)
+            if actor.lane == "same" and actor.vehicle_offset > 0 and actor.role == "relevant":
+                self._lead_vehicle = vehicle
 
             # Sanity check if values were added to all the three lists
             if not (len(self._other_actors) == len(self._actor_transforms) == len(self._actor_velocities)):
