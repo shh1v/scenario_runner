@@ -469,7 +469,6 @@ class RouteScenario(BasicScenario):
                                                                           'hero')]
             route_var_name = "ScenarioRouteNumber{}".format(scenario_number)
             scenario_configuration.route_var_name = route_var_name
-            print("other:", scenario_configuration.other_actors)
             try:
                 scenario_instance = scenario_class(world=world, ego_vehicles=[ego_vehicle], config=scenario_configuration,
                                                    criteria_enable=False, timeout=timeout)
