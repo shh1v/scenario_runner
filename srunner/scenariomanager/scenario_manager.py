@@ -176,8 +176,17 @@ class ScenarioManager(object):
             self.start_system_time
         self.scenario_duration_game = end_game_time - start_game_time
 
+        def print_failure_reasons(node, indent=0):
+            status = node.status
+            if status == py_trees.common.Status.FAILURE:
+                print(" " * indent + "Failure in node: " + node.name)
+                if hasattr(node, 'children'):
+                    for child in node.children:
+                        print_failure_reasons(child, indent + 2)
+
         if self.scenario_tree.status == py_trees.common.Status.FAILURE:
             print("ScenarioManager: Terminated due to failure")
+            print_failure_reasons(self.scenario_tree)
 
     def _tick_scenario(self, timestamp):
         """

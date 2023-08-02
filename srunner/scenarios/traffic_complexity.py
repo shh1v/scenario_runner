@@ -15,6 +15,7 @@ import carla
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (SetInitSpeed,
                                                                       ActorTransformSetter,
+                                                                      WaypointFollower,
                                                                       Idle)
 from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import InTriggerDistanceToVehicle
 from srunner.scenarios.basic_scenario import BasicScenario
@@ -96,10 +97,11 @@ class TrafficComplexity(BasicScenario):
             vehicle_above_transform = carla.Transform(
                 carla.Location(vehicle_waypoint.transform.location.x,
                                vehicle_waypoint.transform.location.y,
-                               vehicle_waypoint.transform.location.z + 1),
+                               vehicle_waypoint.transform.location.z + 5),
                 vehicle_waypoint.transform.rotation)
             self._actor_transforms.append(vehicle_above_transform)
-            self._actor_velocities.append(actor.speed)
+            # NOTE: The speed is in km/h and needs to be converted to m/s
+            self._actor_velocities.append(actor.speed * 5/18)
 
             # Manipulating the waypoint transform's z value to spawn in below ground
             vehicle_below_transform = carla.Transform(
@@ -136,10 +138,16 @@ class TrafficComplexity(BasicScenario):
         Setup the behavior for triggerring traffic complexity scenario
         """
 
-        # Setting all the actors transform and  velocity using sequence composite
-        vehicle_params_setter = py_trees.composites.Sequence("Vehicle transform and velocity setter")
+        # Now build the behaviour tree
+        root = py_trees.composites.Parallel("Parallel Behavior", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ALL)
 
+        # Setting all the actors transform and  velocity using sequence composite
         for _, (vehicle, vehicle_transform, vehicle_velocity) in enumerate(zip(self._other_actors, self._actor_transforms, self._actor_velocities)):
+            print("Pytrees: Will Set the transform of {} to {} with speed {} m/s".format(vehicle, vehicle_transform, vehicle_velocity))
+
+            # Creating a sequence tree for each vehicle params
+            vehicle_params_setter = py_trees.composites.Sequence(f"Vehicle Parameters Setter: for vehicle id: {vehicle}")
+
             # Setting the transform
             set_above_transform = ActorTransformSetter(vehicle, vehicle_transform) # Set the transform of the vehicle above ground
             vehicle_params_setter.add_child(set_above_transform)
@@ -148,20 +156,28 @@ class TrafficComplexity(BasicScenario):
             set_init_velocity = SetInitSpeed(vehicle, vehicle_velocity) # Set the target speed immediately
             vehicle_params_setter.add_child(set_init_velocity)
 
+            # Now, set the auto agent for the vehicles so they can drive by themselves
+            # NOTE: Using WaypointFollower as the auto agent. No target is given as it will simply follow the leading points
+            set_agent = WaypointFollower(actor=vehicle, target_speed=vehicle_velocity, avoid_collision=False)
+            vehicle_params_setter.add_child(set_agent)
+
+            # Lastly, add the vehicle params setter to the root
+            root.add_child(vehicle_params_setter)
+
+
         # Once the actors are spawned and their velocity is set, add the trigger behaviour
         # NOTE: The Idle behaviour can also be used instead of trigger behaviour but the time budget as a confounding mught be an issue
         TOR_trigger_condition = py_trees.composites.Sequence("Take-Over Request Trigger Condition")
-        trigger_distance = 50 # TODO: Set this dynamically based on the speed of the lead vehicle
+        trigger_distance = 5 # TODO: Set this dynamically based on the speed of the lead vehicle
         trigger_when_close = InTriggerDistanceToVehicle(self._lead_vehicle, self._ego_vehicles[0], distance=trigger_distance, name="Trigger TOR when close")
         TOR_trigger_condition.add_child(trigger_when_close)
 
         # TODO: Once the TOR is triggered, communicate this to CARLA
 
-        # Now build the behaviour tree
-        root = py_trees.composites.Parallel("Parallel Behavior", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
-        root.add_child(vehicle_params_setter)
+        # Add the trigger condition to the root
         root.add_child(TOR_trigger_condition)
 
+        # Lastly, return the root
         return root
             
     def _create_test_criteria(self):
