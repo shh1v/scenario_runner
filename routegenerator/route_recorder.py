@@ -15,8 +15,8 @@ import time
 import sys
 
 # Local imports
-sys.path.append('../../carla/PythonAPI/examples/')
-sys.path.append('../../carla/PythonAPI/experiment/')
+sys.path.append('../carla/PythonAPI/examples/')
+sys.path.append('../carla/PythonAPI/experiment/')
 import carla
 from experiment_utils import ExperimentHelper
 from DReyeVR_utils import find_ego_vehicle
@@ -50,12 +50,11 @@ def main(**kargs):
 
         # Setting actors starting position to the start of the route
         DReyeVR_vehicle = find_ego_vehicle(world)
-        DReyeVR_vehicle.set_transform(carla.Transform(carla.Location(8.5, 19.3, 0), carla.Rotation(0, -90.3, 0)))
         world.tick()
         
         new_transform = None
         old_transform = None
-        with open("raw_waypoints/route_5.txt", "w") as file:
+        with open("routegenerator/raw_waypoints/route_7.txt", "w") as file:
             while True:
                 old_transform = new_transform
                 new_transform = DReyeVR_vehicle.get_transform()

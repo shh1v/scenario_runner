@@ -176,8 +176,17 @@ class ScenarioManager(object):
             self.start_system_time
         self.scenario_duration_game = end_game_time - start_game_time
 
+        def print_failure_reasons(node, indent=0):
+            status = node.status
+            if status == py_trees.common.Status.FAILURE:
+                print(" " * indent + "Failure in node: " + node.name)
+                if hasattr(node, 'children'):
+                    for child in node.children:
+                        print_failure_reasons(child, indent + 2)
+
         if self.scenario_tree.status == py_trees.common.Status.FAILURE:
             print("ScenarioManager: Terminated due to failure")
+            print_failure_reasons(self.scenario_tree)
 
     def _tick_scenario(self, timestamp):
         """
@@ -203,7 +212,8 @@ class ScenarioManager(object):
             if self._agent is not None:
                 # print(f"Ego action for {self.ego_vehicles[0]} (1 of {len(self.ego_vehicles)}): {ego_action}")
                 self.ego_vehicles[0].apply_control(ego_action)
-
+                # print(f"Ego applied for {self.ego_vehicles[0]} (1 of {len(self.ego_vehicles)}): {self.ego_vehicles[0].get_control()}")
+                
             # Tick scenario
             self.scenario_tree.tick_once()
 

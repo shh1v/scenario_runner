@@ -19,7 +19,7 @@ class ActorConfigurationData(object):
     """
 
     def __init__(self, model, transform, rolename='other', speed=0, autopilot=False,
-                 random=False, color=None, category="car", args=None):
+                 random=False, color=None, category="car", args=None, lane=None, role=None, vehicle_offset=None):
         self.model = model
         self.rolename = rolename
         self.transform = transform
@@ -29,6 +29,11 @@ class ActorConfigurationData(object):
         self.color = color
         self.category = category
         self.args = args
+
+        # Custom attributes for AutoHive Implementation
+        self.lane = lane
+        self.role = role
+        self.vehicle_offset = vehicle_offset
 
     @staticmethod
     def parse_from_node(node, rolename):
@@ -47,7 +52,7 @@ class ActorConfigurationData(object):
 
         rolename = node.attrib.get('rolename', rolename)
 
-        speed = node.attrib.get('speed', 0)
+        speed = float(node.attrib.get('speed', 0))
 
         autopilot = False
         if 'autopilot' in node.keys():
@@ -59,7 +64,16 @@ class ActorConfigurationData(object):
 
         color = node.attrib.get('color', None)
 
-        return ActorConfigurationData(model, transform, rolename, speed, autopilot, random_location, color)
+        # Custom attrbutes for AutoHive Implementation
+        lane = node.attrib.get('lane', None)
+        role = node.attrib.get('role', None)
+        vehicle_offset = float(node.attrib.get('vehicle_offset', None))
+
+        if (lane != None or role != None or vehicle_offset != None or speed != None):
+            # This is a vehicle for a take-over scenario
+            return ActorConfigurationData(model, transform, rolename, speed, autopilot, random_location, color, "Car", None, lane, role, vehicle_offset)
+        else:
+            return ActorConfigurationData(model, transform, rolename, speed, autopilot, random_location, color, "Car", None)
 
 
 class ScenarioConfiguration(object):

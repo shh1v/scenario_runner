@@ -75,7 +75,8 @@ class NpcAgent(AutonomousAgent):
                 return carla.VehicleControl()
 
             # Add an agent that follows the route to the ego
-            self._agent = BasicAgent(hero_actor, 120)
+            # NOTE: Changed parameters for AutoHive implementation
+            self._agent = BasicAgent(hero_actor, 100, {"max_brake": 1.0, "base_vehicle_threshold": 10.0, "base_tlight_threshold": 10.0})
 
             plan = []
             prev_wp = None

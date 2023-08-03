@@ -205,17 +205,23 @@ def get_location_in_distance_from_wp(waypoint, distance, stop_at_junction=True):
     return waypoint.transform.location, traveled_distance
 
 
-def get_waypoint_in_distance(waypoint, distance, stop_at_junction=True):
+def get_waypoint_in_distance(waypoint, distance, stop_at_junction=True, on_lane="same"):
     """
     Obtain a waypoint in a given distance from the current actor's location.
     Note: Search is stopped on first intersection.
     @return obtained waypoint and the traveled distance
     """
+
+    if on_lane == "left":
+        waypoint = waypoint.get_left_lane()
+    elif on_lane == "right":
+        waypoint = waypoint.get_right_lane()
+
     traveled_distance = 0
-    while not (waypoint.is_intersection and stop_at_junction) and traveled_distance < distance:
-        wp_next = waypoint.next(1.0)
-        if wp_next:
-            waypoint_new = wp_next[-1]
+    while not (waypoint.is_intersection and stop_at_junction) and traveled_distance < abs(distance):
+        wp_adj = waypoint.next(1.0) if distance >= 0 else waypoint.previous(1.0)
+        if wp_adj:
+            waypoint_new = wp_adj[-1]
             traveled_distance += waypoint_new.transform.location.distance(waypoint.transform.location)
             waypoint = waypoint_new
         else:

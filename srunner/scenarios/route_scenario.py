@@ -44,6 +44,7 @@ from srunner.scenarios.junction_crossing_route import NoSignalJunctionCrossingRo
 from srunner.scenarios.signalized_junction_left_turn import SignalizedJunctionLeftTurn
 from srunner.scenarios.signalized_junction_right_turn import SignalizedJunctionRightTurn
 from srunner.scenarios.opposite_vehicle_taking_priority import OppositeVehicleRunningRedLight
+from srunner.scenarios.traffic_complexity import TrafficComplexity
 from srunner.scenarios.background_activity import BackgroundActivity
 
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTest,
@@ -66,7 +67,8 @@ NUMBER_CLASS_TRANSLATION = {
     "Scenario7": OppositeVehicleRunningRedLight,
     "Scenario8": SignalizedJunctionLeftTurn,
     "Scenario9": SignalizedJunctionRightTurn,
-    "Scenario10": NoSignalJunctionCrossingRoute
+    "Scenario10": NoSignalJunctionCrossingRoute,
+    "Scenario11": TrafficComplexity
 }
 
 
@@ -84,10 +86,47 @@ def convert_json_to_actor(actor_dict):
     Convert a JSON string to an ActorConfigurationData dictionary
     """
     node = ET.Element('waypoint')
-    node.set('x', actor_dict['x'])
-    node.set('y', actor_dict['y'])
-    node.set('z', actor_dict['z'])
-    node.set('yaw', actor_dict['yaw'])
+    
+    # AutoHive: Handled the case where the following attributes are not provided
+    try:
+        node.set('x', actor_dict['x'])
+    except KeyError:
+        print("Warning: Actor is missing x coordinate")
+    try:
+        node.set('y', actor_dict['y'])
+    except KeyError:
+        print("Warning: Actor is missing y coordinate")
+    try:
+        node.set('z', actor_dict['z'])
+    except KeyError:
+        print("Warning: Actor is missing z coordinate")
+    try:
+        node.set('yaw', actor_dict['yaw'])
+    except KeyError:
+        print("Warning: Actor is missing yaw coordinate")
+
+    # AutoHive: Loading custom attributes
+    try:
+        node.set('model', actor_dict['model'])
+    except KeyError:
+        print("Warning: Actor is missing model attribute")
+    try:
+        node.set('lane', actor_dict['lane'])
+    except KeyError:
+        print("Warning: Actor is missing lane attribute")
+    try:
+        node.set('role', actor_dict['role'])
+    except KeyError:
+        print("Warning: Actor is missing role attribute")
+    try:
+        node.set('vehicle_offset', actor_dict['vehicle_offset'])
+    except KeyError:
+        print("Warning: Actor is missing vehicle_offset attribute")
+    try:
+        node.set('speed', actor_dict['speed'])
+    except KeyError:
+        print("Warning: Actor is missing speed attribute")
+
 
     return ActorConfigurationData.parse_from_node(node, 'simulation')
 
@@ -148,7 +187,7 @@ class RouteScenario(BasicScenario):
     along which several smaller scenarios are triggered
     """
 
-    def __init__(self, world, config, debug_mode=False, criteria_enable=True, timeout=300):
+    def __init__(self, world, config, debug_mode=False, criteria_enable=True, timeout=300, background_activity=False):
         """
         Setup all relevant parameters and create scenarios along route
         """
@@ -167,9 +206,9 @@ class RouteScenario(BasicScenario):
                                                              scenarios_per_tick=5,
                                                              timeout=self.timeout,
                                                              debug_mode=debug_mode)
-
-        self.list_scenarios.append(BackgroundActivity(
-            world, self.ego_vehicle, self.config, self.route, timeout=self.timeout))
+        if background_activity:
+            self.list_scenarios.append(BackgroundActivity(
+                world, self.ego_vehicle, self.config, self.route, timeout=self.timeout))
 
         super(RouteScenario, self).__init__(name=config.name,
                                             ego_vehicles=[self.ego_vehicle],
@@ -430,9 +469,8 @@ class RouteScenario(BasicScenario):
                                                                           'hero')]
             route_var_name = "ScenarioRouteNumber{}".format(scenario_number)
             scenario_configuration.route_var_name = route_var_name
-
             try:
-                scenario_instance = scenario_class(world, [ego_vehicle], scenario_configuration,
+                scenario_instance = scenario_class(world=world, ego_vehicles=[ego_vehicle], config=scenario_configuration,
                                                    criteria_enable=False, timeout=timeout)
                 # Do a tick every once in a while to avoid spawning everything at the same time
                 if scenario_number % scenarios_per_tick == 0:
@@ -467,16 +505,8 @@ class RouteScenario(BasicScenario):
 
             return sublist_of_actors
 
-        list_of_actors = []
-        # Parse vehicles to the left
-        if 'front' in list_of_antagonist_actors:
-            list_of_actors += get_actors_from_list(list_of_antagonist_actors['front'])
-
-        if 'left' in list_of_antagonist_actors:
-            list_of_actors += get_actors_from_list(list_of_antagonist_actors['left'])
-
-        if 'right' in list_of_antagonist_actors:
-            list_of_actors += get_actors_from_list(list_of_antagonist_actors['right'])
+        # Custom AutoHive Implementation: parse all the vehicles
+        list_of_actors = get_actors_from_list(list_of_antagonist_actors)
 
         return list_of_actors
 
@@ -580,7 +610,7 @@ class RouteScenario(BasicScenario):
 
         route_criterion = InRouteTest(self.ego_vehicles[0],
                                       route=route,
-                                      offroad_max=30,
+                                      offroad_max=50,
                                       terminate_on_failure=True)
 
         completion_criterion = RouteCompletionTest(self.ego_vehicles[0], route=route)
