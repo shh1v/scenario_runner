@@ -14,18 +14,39 @@
                             },
                             "other_actors": [
                                 {
-                                    "model": "vehicle.volkswagen.t2",
+                                    "model": "vehicle.ford.mustang",
                                     "lane": "same",
                                     "role": "relevant",
-                                    "vehicle_offset": "222.2224",
-                                    "speed": "80"
+                                    "vehicle_offset": "55.56",
+                                    "speed": "100"
                                 },
                                 {
-                                    "model": "vehicle.volkswagen.t2",
+                                    "model": "vehicle.dodge.charger_police_2020",
                                     "lane": "left",
                                     "role": "notrelevant",
-                                    "vehicle_offset": "-1133.3322",
-                                    "speed": "120"
+                                    "vehicle_offset": "-10.0",
+                                    "speed": "100"
+                                },
+                                {
+                                    "model": "vehicle.lincoln.mkz_2017",
+                                    "lane": "left",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "-30.0",
+                                    "speed": "100"
+                                },
+                                {
+                                    "model": "vehicle.mercedes.coupe",
+                                    "lane": "left",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "-50.0",
+                                    "speed": "100"
+                                },
+                                {
+                                    "model": "vehicle.nissan.patrol_2021",
+                                    "lane": "left",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "-70.0",
+                                    "speed": "100"
                                 }
                             ]
                         }

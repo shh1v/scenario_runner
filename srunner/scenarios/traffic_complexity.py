@@ -56,7 +56,8 @@ class TrafficComplexity(BasicScenario):
         self._actor_transforms = [] # This will be used to store the correct transforms of the actors to be spawned for the scenario
         self._actor_velocities = [] # This will be used to store the correct velocities of the actors to be spawned for the scenario
 
-        print(self._config.trigger_points[0])
+        # Storing the No interference transform. NOTE: This is only for town04 and is hardcoded. This needs to be changed for other towns
+        self.no_interference_transform = carla.Transform(carla.Location(x=-314.248413, y=-39.597336, z=12.272047), carla.Rotation())
         # Call constructor of BasicScenario
         super(TrafficComplexity, self).__init__(
           "TrafficComplexity",
@@ -74,6 +75,8 @@ class TrafficComplexity(BasicScenario):
         # NOTE: Spawn the vehicle either in the lane specified or exact opposite lane
         inverse = random.choice([True, False])
 
+        # Offset for storing how below ground the vehicle should be spawned initially
+        offset = 200
         # Spawn all the other vehicle in their respective locations
         for actor in config.other_actors:
             # Figure out on which lane the vehicle must be spawned
@@ -94,24 +97,25 @@ class TrafficComplexity(BasicScenario):
                 raise RuntimeError(f"No spawn point found for {actor.model} on {actor.lane} at {actor.vehicle_offset}. Difference: {abs(waypoint_distance) - abs(actor.vehicle_offset)}")
             
             # Append the above ground vehicle transform and velocity to the list
-            vehicle_above_transform = carla.Transform(
+            vehicle_scenario_transform = carla.Transform(
                 carla.Location(vehicle_waypoint.transform.location.x,
                                vehicle_waypoint.transform.location.y,
-                               vehicle_waypoint.transform.location.z + 5),
+                               vehicle_waypoint.transform.location.z + 1.0),
                 vehicle_waypoint.transform.rotation)
-            self._actor_transforms.append(vehicle_above_transform)
+            self._actor_transforms.append(vehicle_scenario_transform)
             # NOTE: The speed is in km/h and needs to be converted to m/s
             self._actor_velocities.append(actor.speed * 5/18)
 
             # Manipulating the waypoint transform's z value to spawn in below ground
-            vehicle_below_transform = carla.Transform(
-                carla.Location(vehicle_waypoint.transform.location.x,
-                               vehicle_waypoint.transform.location.y,
-                               vehicle_waypoint.transform.location.z - 500),
-                vehicle_waypoint.transform.rotation)
+            vehicle_init_transform = carla.Transform(
+                carla.Location(self.no_interference_transform.location.x,
+                               self.no_interference_transform.location.y,
+                               self.no_interference_transform.location.z - offset),
+                self.no_interference_transform.rotation)
+            offset += 50 # Increment the offset for the next vehicle
 
             # Spawn the vehicle at a random location
-            vehicle = CarlaDataProvider.request_new_actor(actor.model, vehicle_below_transform)
+            vehicle = CarlaDataProvider.request_new_actor(actor.model, vehicle_init_transform)
             vehicle.set_simulate_physics(enabled=False)
 
             # Add the vehicle to the actor list
@@ -139,7 +143,7 @@ class TrafficComplexity(BasicScenario):
         """
 
         # Now build the behaviour tree
-        root = py_trees.composites.Parallel("Parallel Behavior", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ALL)
+        root = py_trees.composites.Parallel("Parallel Behavior", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
         # Setting all the actors transform and  velocity using sequence composite
         for _, (vehicle, vehicle_transform, vehicle_velocity) in enumerate(zip(self._other_actors, self._actor_transforms, self._actor_velocities)):

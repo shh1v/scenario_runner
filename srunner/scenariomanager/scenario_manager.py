@@ -212,7 +212,8 @@ class ScenarioManager(object):
             if self._agent is not None:
                 # print(f"Ego action for {self.ego_vehicles[0]} (1 of {len(self.ego_vehicles)}): {ego_action}")
                 self.ego_vehicles[0].apply_control(ego_action)
-
+                # print(f"Ego applied for {self.ego_vehicles[0]} (1 of {len(self.ego_vehicles)}): {self.ego_vehicles[0].get_control()}")
+                
             # Tick scenario
             self.scenario_tree.tick_once()
 
