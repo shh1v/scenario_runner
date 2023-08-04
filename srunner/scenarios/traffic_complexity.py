@@ -10,6 +10,7 @@
 
 import random
 import py_trees
+import json
 import carla
 
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
@@ -53,7 +54,7 @@ class TrafficComplexity(BasicScenario):
         self._lead_vehicle = None # This will be to used for the trigger condition
         self._other_actors = [] # This will be used to store all the other actors spawned in the scenario
         self._actor_transforms = [] # This will be used to store the correct transforms of the actors to be spawned for the scenario
-        self._actor_velocities = [] # This will be used to store the correct velocities of the actors to be spawned for the scenario
+        self._actor_init_speeds = [] # This will be used to store the correct velocities of the actors to be spawned for the scenario
 
         # Storing the No interference transform. NOTE: This is only for town04 and is hardcoded. This needs to be changed for other towns
         self.no_interference_transform = carla.Transform(carla.Location(x=-314.248413, y=-39.597336, z=12.272047), carla.Rotation())
@@ -79,7 +80,7 @@ class TrafficComplexity(BasicScenario):
         # Spawn all the other vehicle in their respective locations
         for actor in config.other_actors:
             # Figure out on which lane the vehicle must be spawned
-            print("Spawning underground {} on {} at {}".format(actor.model, actor.lane, str(actor.vehicle_offset)))
+            print("Spawning vehicle {} underground".format(actor.model)
 
             lane = actor.lane
             if lane not in ["left", "right", "same"]:
@@ -99,11 +100,12 @@ class TrafficComplexity(BasicScenario):
             vehicle_scenario_transform = carla.Transform(
                 carla.Location(vehicle_waypoint.transform.location.x,
                                vehicle_waypoint.transform.location.y,
-                               vehicle_waypoint.transform.location.z + 1.0),
+                               vehicle_waypoint.transform.location.z + 0.2),
                 vehicle_waypoint.transform.rotation)
             self._actor_transforms.append(vehicle_scenario_transform)
+
             # NOTE: The speed is in km/h and needs to be converted to m/s
-            self._actor_velocities.append(actor.init_speed * 5/18)
+            self._actor_init_speeds.append(actor.init_speed * 5/18)
 
             # Manipulating the waypoint transform's z value to spawn in below ground
             vehicle_init_transform = carla.Transform(
@@ -113,8 +115,11 @@ class TrafficComplexity(BasicScenario):
                 self.no_interference_transform.rotation)
             offset += 50 # Increment the offset for the next vehicle
 
+            # Set the rolename to store all the information regarding its behaviour
+            rolename_dict = {"class": "AutoHive", "init_speed": actor.init_speed, "final_speed": actor.final_speed}
+            
             # Spawn the vehicle at a random location
-            vehicle = CarlaDataProvider.request_new_actor(actor.model, vehicle_init_transform)
+            vehicle = CarlaDataProvider.request_new_actor(model=actor.model, spawn_point=vehicle_init_transform, rolename=json.dumps(rolename_dict))
             vehicle.set_simulate_physics(enabled=False)
 
             # Add the vehicle to the actor list
@@ -125,7 +130,7 @@ class TrafficComplexity(BasicScenario):
                 self._lead_vehicle = vehicle
 
             # Sanity check if values were added to all the three lists
-            if not (len(self._other_actors) == len(self._actor_transforms) == len(self._actor_velocities)):
+            if not (len(self._other_actors) == len(self._actor_transforms) == len(self._actor_init_speeds)):
                 raise RuntimeError("Error in adding the actor to the list")
 
         # Make sure that the lead vehicle is spawned
@@ -145,8 +150,8 @@ class TrafficComplexity(BasicScenario):
         root = py_trees.composites.Parallel("Parallel Behavior", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
         # Setting all the actors transform and  velocity using sequence composite
-        for _, (vehicle, vehicle_transform, vehicle_velocity) in enumerate(zip(self._other_actors, self._actor_transforms, self._actor_velocities)):
-            print("Pytrees: Will Set the transform of {} to {} with speed {} m/s".format(vehicle, vehicle_transform, vehicle_velocity))
+        for _, (vehicle, vehicle_transform, vehicle_velocity) in enumerate(zip(self._other_actors, self._actor_transforms, self._actor_init_speeds)):
+            print("Pytrees: [Vehicle: {}; Transform: {}; Velocity: {} m/s]".format(vehicle, vehicle_transform, vehicle_velocity))
 
             # Creating a sequence tree for each vehicle params
             vehicle_params_setter = py_trees.composites.Sequence(f"Vehicle Parameters Setter: for vehicle id: {vehicle}")
