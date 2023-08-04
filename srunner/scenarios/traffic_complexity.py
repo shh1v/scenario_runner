@@ -15,8 +15,7 @@ import carla
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (SetInitSpeed,
                                                                       ActorTransformSetter,
-                                                                      WaypointFollower,
-                                                                      Idle)
+                                                                      WaypointFollower)
 from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import InTriggerDistanceToVehicle
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.scenario_helper import get_waypoint_in_distance
@@ -167,19 +166,6 @@ class TrafficComplexity(BasicScenario):
 
             # Lastly, add the vehicle params setter to the root
             root.add_child(vehicle_params_setter)
-
-
-        # Once the actors are spawned and their velocity is set, add the trigger behaviour
-        # NOTE: The Idle behaviour can also be used instead of trigger behaviour but the time budget as a confounding mught be an issue
-        TOR_trigger_condition = py_trees.composites.Sequence("Take-Over Request Trigger Condition")
-        trigger_distance = 5 # TODO: Set this dynamically based on the speed of the lead vehicle
-        trigger_when_close = InTriggerDistanceToVehicle(self._lead_vehicle, self._ego_vehicles[0], distance=trigger_distance, name="Trigger TOR when close")
-        TOR_trigger_condition.add_child(trigger_when_close)
-
-        # TODO: Once the TOR is triggered, communicate this to CARLA
-
-        # Add the trigger condition to the root
-        root.add_child(TOR_trigger_condition)
 
         # Lastly, return the root
         return root

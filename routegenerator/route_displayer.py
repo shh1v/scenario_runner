@@ -59,7 +59,7 @@ def main(**kargs):
 
         # assuming your xml is in a string, otherwise load it from a file
         xml_data = None
-        with open('routegenerator/route_data/route_final_1.xml', 'r') as file:
+        with open('routegenerator/route_data/route_final_2.xml', 'r') as file:
             xml_data = file.read()
 
         root = ET.fromstring(xml_data)
@@ -76,7 +76,8 @@ def main(**kargs):
                 pitch = waypoint.get('pitch')
                 yaw = waypoint.get('yaw')
                 roll = waypoint.get('roll')
-                world.debug.draw_string(carla.Location(float(x), float(y), float(z)), 'O', draw_shadow=False,
+                carla_waypoint = world.get_map().get_waypoint(carla.Location(float(x), float(y), float(z)))
+                world.debug.draw_string(carla_waypoint.transform.location, f"Point: {carla_waypoint.transform.location}\n{carla_waypoint.transform.rotation}", draw_shadow=False,
                                             color=carla.Color(r=0, g=255, b=0), life_time=300.0,
                                             persistent_lines=True)
 
