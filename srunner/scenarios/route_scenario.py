@@ -123,9 +123,13 @@ def convert_json_to_actor(actor_dict):
     except KeyError:
         print("Warning: Actor is missing vehicle_offset attribute")
     try:
-        node.set('speed', actor_dict['speed'])
+        node.set('init_speed', actor_dict['init_speed'])
     except KeyError:
-        print("Warning: Actor is missing speed attribute")
+        print("Warning: Actor is missing init_speed attribute")
+    try:
+        node.set('final_speed', actor_dict['final_speed'])
+    except KeyError:
+        print("Warning: Actor is missing final_speed attribute")
 
 
     return ActorConfigurationData.parse_from_node(node, 'simulation')

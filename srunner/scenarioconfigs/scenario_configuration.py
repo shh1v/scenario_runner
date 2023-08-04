@@ -18,11 +18,13 @@ class ActorConfigurationData(object):
     This is a configuration base class to hold model and transform attributes
     """
 
-    def __init__(self, model, transform, rolename='other', speed=0, autopilot=False,
+    def __init__(self, model, transform, rolename='other', init_speed=0, final_speed=0, speed=0, autopilot=False,
                  random=False, color=None, category="car", args=None, lane=None, role=None, vehicle_offset=None):
         self.model = model
         self.rolename = rolename
         self.transform = transform
+        self.init_speed = init_speed
+        self.final_speed = final_speed
         self.speed = speed
         self.autopilot = autopilot
         self.random_location = random
@@ -52,7 +54,10 @@ class ActorConfigurationData(object):
 
         rolename = node.attrib.get('rolename', rolename)
 
+
         speed = float(node.attrib.get('speed', 0))
+        init_speed = float(node.attrib.get('init_speed', 0))
+        final_speed = float(node.attrib.get('final_speed', 0))
 
         autopilot = False
         if 'autopilot' in node.keys():
@@ -71,9 +76,9 @@ class ActorConfigurationData(object):
 
         if (lane != None or role != None or vehicle_offset != None or speed != None):
             # This is a vehicle for a take-over scenario
-            return ActorConfigurationData(model, transform, rolename, speed, autopilot, random_location, color, "Car", None, lane, role, vehicle_offset)
+            return ActorConfigurationData(model=model, transform=transform, init_speed=init_speed, final_speed=final_speed, lane=lane, role=role, vehicle_offset=vehicle_offset)
         else:
-            return ActorConfigurationData(model, transform, rolename, speed, autopilot, random_location, color, "Car", None)
+            return ActorConfigurationData(model=model, transform=transform, rolename=rolename, speed=speed, autopilot=autopilot, random=random_location, color=color)
 
 
 class ScenarioConfiguration(object):

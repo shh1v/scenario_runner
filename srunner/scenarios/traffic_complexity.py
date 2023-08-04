@@ -103,7 +103,7 @@ class TrafficComplexity(BasicScenario):
                 vehicle_waypoint.transform.rotation)
             self._actor_transforms.append(vehicle_scenario_transform)
             # NOTE: The speed is in km/h and needs to be converted to m/s
-            self._actor_velocities.append(actor.speed * 5/18)
+            self._actor_velocities.append(actor.init_speed * 5/18)
 
             # Manipulating the waypoint transform's z value to spawn in below ground
             vehicle_init_transform = carla.Transform(
