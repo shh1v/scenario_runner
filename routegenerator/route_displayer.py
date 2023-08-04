@@ -13,8 +13,8 @@ import glob
 import os
 import time
 import sys
-sys.path.append('../../carla/PythonAPI/examples/')
-sys.path.append('../../carla/PythonAPI/experiment/')
+sys.path.append('../carla/PythonAPI/examples/')
+sys.path.append('../carla/PythonAPI/experiment/')
 
 # Local imports
 import carla
@@ -59,7 +59,7 @@ def main(**kargs):
 
         # assuming your xml is in a string, otherwise load it from a file
         xml_data = None
-        with open('route_data/route_5.xml', 'r') as file:
+        with open('routegenerator/route_data/route_final_1.xml', 'r') as file:
             xml_data = file.read()
 
         root = ET.fromstring(xml_data)

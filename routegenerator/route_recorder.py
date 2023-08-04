@@ -20,8 +20,6 @@ sys.path.append('../carla/PythonAPI/experiment/')
 import carla
 from experiment_utils import ExperimentHelper
 from DReyeVR_utils import find_ego_vehicle
-from agents.navigation.basic_agent import BasicAgent
-from agents.navigation.behavior_agent import BehaviorAgent
 
 # Other library imports
 import argparse
@@ -54,7 +52,7 @@ def main(**kargs):
         
         new_transform = None
         old_transform = None
-        with open("routegenerator/raw_waypoints/route_7.txt", "w") as file:
+        with open("routegenerator/raw_waypoints/route_final_1.txt", "w") as file:
             while True:
                 old_transform = new_transform
                 new_transform = DReyeVR_vehicle.get_transform()
