@@ -51,18 +51,18 @@ def main(**kargs):
         world.tick()
         
         new_transform = None
-        old_transform = None
-        with open("routegenerator/raw_waypoints/route_final_1.txt", "w") as file:
+        last_logged_transform = None
+        with open("routegenerator/raw_waypoints/route_final_2.txt", "w") as file:
             while True:
-                old_transform = new_transform
                 new_transform = DReyeVR_vehicle.get_transform()
-                if old_transform is not None and (is_nearly_equal(new_transform.location.x, old_transform.location.x, tolerance=0.01) and is_nearly_equal(new_transform.location.y, old_transform.location.y, tolerance=0.01) and is_nearly_equal(new_transform.location.z, old_transform.location.z, tolerance=0.01)):
-                    # Don't write the same transform twice
+                if  last_logged_transform is not None and last_logged_transform.location.distance(new_transform.location) < 20:
+                    # Don't write transforms that are too close together
                     world.tick()
                     continue
                 file.write(str(new_transform) + "\n")
                 file.flush()  # Force write to disk after each update.
                 os.fsync(file.fileno())  # Ensure it's written to disk.
+                last_logged_transform = new_transform
                 world.tick()
 
     finally:
