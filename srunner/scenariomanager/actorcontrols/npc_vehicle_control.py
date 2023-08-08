@@ -34,15 +34,19 @@ class NpcVehicleControl(BasicControl):
 
     def __init__(self, actor, args=None):
         super(NpcVehicleControl, self).__init__(actor)
-
-        self._local_planner = LocalPlanner(  # pylint: disable=undefined-variable
-            self._actor, opt_dict={
-                'target_speed': self._target_speed * 3.6,
-                'lateral_control_dict': self._args})
+        if args is None:
+            self._local_planner = LocalPlanner(  # pylint: disable=undefined-variable
+                self._actor, opt_dict={
+                    'target_speed': self._target_speed * 3.6,
+                    'lateral_control_dict': self._args})
+        else:
+            # Custom AutoHive implementation
+            if "lateral_control_dict" not in args:
+                args["lateral_control_dict"] = self._args
+            self._local_planner = LocalPlanner(self._actor, opt_dict=args)
 
         if self._waypoints:
             self._update_plan()
-
         self._brake_lights_active = False
 
     def _update_plan(self):

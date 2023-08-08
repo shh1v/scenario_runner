@@ -22,6 +22,7 @@ import os
 import time
 import subprocess
 from bisect import bisect_right
+import inspect
 
 import numpy as np
 from numpy import random
@@ -347,6 +348,16 @@ class ChangeActorControl(AtomicBehavior):
         returns:
             py_trees.common.Status.SUCCESS
         """
+
+        # Get the current frame
+        current_frame = inspect.currentframe()
+        # Get the frame of the caller
+        caller_frame = inspect.getouterframes(current_frame, 2)
+        # Get the name of the caller function, file name, and line number
+        caller_name = caller_frame[1][3]
+        file_name = caller_frame[1][1]
+        line_number = caller_frame[1][2]
+        print(f"Called by {caller_name} from file {file_name} at line {line_number}")
 
         actor_dict = {}
 
