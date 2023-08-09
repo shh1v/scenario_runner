@@ -29,6 +29,7 @@ from numpy import random
 import py_trees
 from py_trees.blackboard import Blackboard
 import networkx
+from importlib import import_module
 
 import carla
 from agents.navigation.basic_agent import BasicAgent
@@ -36,6 +37,7 @@ from agents.navigation.local_planner import RoadOption, LocalPlanner
 from agents.navigation.global_route_planner import GlobalRoutePlanner
 from agents.tools.misc import is_within_distance
 
+from srunner.autoagents.agent_wrapper import AgentWrapper
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.actorcontrols.actor_control import ActorControl
 from srunner.scenariomanager.timer import GameTime
@@ -3137,3 +3139,69 @@ class KeepLongitudinalGap(AtomicBehavior):
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
         return new_status
+
+class ChangeHeroAgent(AtomicBehavior):
+    """
+    Custom AutoHive implementation
+    This is an atomic behavior to change the agent of the hero. It re-instantiates the hero
+    with the new agent and destroys the old one. This gives a way, for example, to change the
+    her actor's agent from basic agent to
+
+    Args:
+        scenario_manager(ScenarioManager): parameter name
+        agent_name(str): python agent file name
+    """
+
+    def __init__(self, ego_vehicle, scenario_manager, agent_name, agent_args={}, name="ChangeHeroAgent"):
+        super(ChangeHeroAgent, self).__init__(name)
+        self.logger.debug("%s.__init__()" % self.__class__.__name__)
+        if scenario_manager is None:
+            raise AttributeError("scenario_manager is not set")
+        
+        self._ego_vehicle = ego_vehicle
+        self._scenario_manager = scenario_manager
+        self._agent_name = agent_name
+        self._agent_args = agent_args
+
+    def update(self):
+        """
+        update value of scenario managers.
+        """
+        if self._scenario_manager._agent is None:
+            print("Scenario manager agent is not set")
+            return py_trees.common.Status.FAILURE
+        
+        if not self._agent_name.endswith('.py'):
+            raise ValueError("Filename must end with '.py'")
+
+        module_name = self._agent_name[:-3]
+        class_name_parts = module_name.split('_')
+        class_name = ''.join(part.title() for part in class_name_parts)
+
+        try:
+            module = import_module(f'srunner.autoagents.{module_name}')
+            # Get the new agent instance
+            agent_instance = getattr(module, class_name)(**self._agent_args)
+
+            # Clean and destroy the old agent
+            self._scenario_manager._agent.cleanup()
+            self._scenario_manager._agent.destroy()
+
+            # Setup the new agent and sensors
+            agent_wrapper = AgentWrapper(agent_instance)
+            agent_wrapper.setup_sensors(self._ego_vehicle)
+
+            # Lastly, set the new agent in the scenario manager
+            self._scenario_manager._agent = agent_wrapper
+
+        except ImportError as e:
+            print(f"An error occurred while importing: {e}")
+            return py_trees.common.Status.FAILURE
+        except AttributeError as e:
+            print(f"Class {class_name} not found in the module: {e}")
+            return py_trees.common.Status.FAILURE
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return py_trees.common.Status.FAILURE
+        
+        return py_trees.common.Status.SUCCESS
