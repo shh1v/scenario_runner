@@ -46,6 +46,7 @@ class TrafficComplexity(BasicScenario):
         Initialize all parameters required for triggerring traffic complexity scenario
         """
         print("Scenario: Initializing Traffic Complexity Scenario")
+        print("Scenario Manager Agent:" + str(config.scenario_manager))
 
         # Some variables helpful for the scenario implementation
         self._world = world

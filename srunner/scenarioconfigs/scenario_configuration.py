@@ -103,3 +103,6 @@ class ScenarioConfiguration(object):
     friction = None
     subtype = None
     route_var_name = None
+
+    # Custom AutoHive attributes
+    scenario_manager = None

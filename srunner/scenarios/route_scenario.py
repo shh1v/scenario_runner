@@ -191,7 +191,7 @@ class RouteScenario(BasicScenario):
     along which several smaller scenarios are triggered
     """
 
-    def __init__(self, world, config, debug_mode=False, criteria_enable=True, timeout=300, background_activity=False):
+    def __init__(self, world, config, debug_mode=False, criteria_enable=True, timeout=300, background_activity=False, scenario_manager=None):
         """
         Setup all relevant parameters and create scenarios along route
         """
@@ -204,12 +204,16 @@ class RouteScenario(BasicScenario):
 
         self.ego_vehicle = self._initialize_ego_vehicle_dreyevr(find_ego_vehicle(world))
 
+        # Custom AutoHive Implementation: add scenario manager
+        self.scenario_manager = scenario_manager
+
         self.list_scenarios = self._build_scenario_instances(world,
                                                              self.ego_vehicle,
                                                              self.sampled_scenarios_definitions,
                                                              scenarios_per_tick=5,
                                                              timeout=self.timeout,
                                                              debug_mode=debug_mode)
+
         if background_activity:
             self.list_scenarios.append(BackgroundActivity(
                 world, self.ego_vehicle, self.config, self.route, timeout=self.timeout))
@@ -473,6 +477,8 @@ class RouteScenario(BasicScenario):
                                                                           'hero')]
             route_var_name = "ScenarioRouteNumber{}".format(scenario_number)
             scenario_configuration.route_var_name = route_var_name
+            # Custom AutoHive Implementation: add scenario manager
+            scenario_configuration.scenario_manager = self.scenario_manager
             try:
                 scenario_instance = scenario_class(world=world, ego_vehicles=[ego_vehicle], config=scenario_configuration,
                                                    criteria_enable=False, timeout=timeout)

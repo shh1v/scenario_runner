@@ -387,10 +387,12 @@ class ScenarioRunner(object):
                                         config_file=self._args.openscenario,
                                         timeout=100000)
             elif self._args.route:
+                # Custom AutoHive change: add background activity and senrario_manager as params
                 scenario = RouteScenario(world=self.world,
                                          config=config,
                                          debug_mode=self._args.debug,
-                                         background_activity=self._args.bg)
+                                         background_activity=self._args.bg,
+                                         scenario_manager=self.manager)
             else:
                 scenario_class = self._get_scenario_class_or_fail(config.type)
                 scenario = scenario_class(self.world,
