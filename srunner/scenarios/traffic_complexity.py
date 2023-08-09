@@ -17,7 +17,7 @@ from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (SetInitSpeed,
                                                                       ActorTransformSetter,
                                                                       WaypointFollower,
-                                                                      ChangeActorTargetSpeed,
+                                                                      ChangeActorControl,
                                                                       ChangeAutoPilot,
                                                                       Idle)
 from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import InTriggerDistanceToVehicle
@@ -183,16 +183,16 @@ class TrafficComplexity(BasicScenario):
             root.add_child(vehicle_params_setter)
 
         # Now, add parallel behaviour for take-over request
-        take_over_executer = py_trees.composites.Sequence("Setting Scenario for TOR")
+        take_over_executer = py_trees.composites.Sequence("Setting Up Scenario for TOR")
 
         # TODO: Create behaviour to send a message to AutoHive for task-interleaving period
 
         # Adding Ideal behaviour for 30 seconds to help driver prepare for TOR
-        idle_for_driver = Idle(duration=30)
+        idle_for_driver = Idle(duration=10)
         take_over_executer.add_child(idle_for_driver)
 
         # Setting a parallel composite to change the speed of all the vehicles and run WaypointFollower
-        change_vehicle_speeds = py_trees.composites.Parallel("Change Scenario-Relevant-Vehicle Speeds", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
+        initialize_take_over = py_trees.composites.Parallel("Execute Scenario and TOR", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
         for vehicle, final_speed in zip(self._other_actors, self._actor_final_speeds):
             # Creating a sequence to set speed and run WaypointFollower
@@ -207,9 +207,7 @@ class TrafficComplexity(BasicScenario):
             change_vehicle_speed.add_child(change_target_speed)
 
             # Lastly, add the change_vehicle_speed to the parallel composite
-            change_vehicle_speeds.add_child(change_vehicle_speed)
-
-        take_over_executer.add_child(change_vehicle_speeds)
+            initialize_take_over.add_child(change_vehicle_speed)
 
         # Setup ego vehicle behaviour for the TOR
         ego_vehicle_behaviour = py_trees.composites.Sequence("Ego Vehicle Behaviour for TOR")
@@ -217,8 +215,11 @@ class TrafficComplexity(BasicScenario):
         # TODO: Add behaviour to send a message to AutoHive for issuing a TOR
 
         # Turning on autopilot for several seconds. NOTE that the automation will turn off if driver gives input
-        post_tor_autopilot_on = ChangeAutoPilot(actor=self._lead_vehicle, activate=True, parameters={"auto_lane_change": False, "ignore_vehicles_percentage": 100, "max_speed": 100})
-        ego_vehicle_behaviour.add_child(post_tor_autopilot_on)
+        # NOTE: In order to do this the ego vehicle control first needs to be set to ExternalControl
+        extenral_control = ChangeActorControl(actor=self.ego_vehicles[0], control_py_module=None, args=None)
+        ego_vehicle_behaviour.add_child(extenral_control)
+        post_tor_autopilot_on = ChangeAutoPilot(actor=self.ego_vehicles[0], activate=True, parameters={"auto_lane_change": False, "ignore_vehicles_percentage": 100, "max_speed": 100})
+        # ego_vehicle_behaviour.add_child(post_tor_autopilot_on)
 
         # Provide automation for several seconds
         wait_for_driver_to_respond = Idle(duration=4)
@@ -229,7 +230,10 @@ class TrafficComplexity(BasicScenario):
         ego_vehicle_behaviour.add_child(post_tor_autopilot_off)
 
         # Now, add the ego vehicle behaviour to take_over_executer parallel composite
-        take_over_executer.add_child(ego_vehicle_behaviour)
+        initialize_take_over.add_child(ego_vehicle_behaviour)
+
+        # Lastly, add the initialize_take_over to the take_over_executer sequence
+        take_over_executer.add_child(initialize_take_over)
 
         # Lastly, add the take over executer to the root
         root.add_child(take_over_executer)
