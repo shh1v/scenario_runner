@@ -19,16 +19,18 @@ from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (SetInitSpe
                                                                       WaypointFollower,
                                                                       ChangeActorControl,
                                                                       ChangeAutoPilot,
+                                                                      ChangeHeroAgent,
                                                                       Idle)
-from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import InTriggerDistanceToVehicle
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.scenario_helper import get_waypoint_in_distance
 
 class TrafficComplexity(BasicScenario):
     """
-    This scenario triggers a pre-alert, and also informs the driver about it.
-    The pre-alert will run for 30 seconds after which a TOR is triggered.
-    Some documentation on NewScenario
+    This scenario set up specifi traffic based on the config file, sets their initial velocity, and issues a pre-alert.
+    After certain time, it triggers a TOR which involves changin the required agents and speed of the vehicles.
+    Throughout, this scenario communicated with the CARLA software to change the visual behaviour of the ego vehicle.
+
+    Some documentation on Traffic Complexity
     :param world is the CARLA world
     :param ego_vehicles is a list of ego vehicles for this scenario
     :param config is the scenario configuration (ScenarioConfiguration)
@@ -63,6 +65,7 @@ class TrafficComplexity(BasicScenario):
 
         # Storing the No interference transform. NOTE: This is only for town04 and is hardcoded. This needs to be changed for other towns
         self.no_interference_transform = carla.Transform(carla.Location(x=-314.248413, y=-39.597336, z=12.272047), carla.Rotation())
+
         # Call constructor of BasicScenario
         super(TrafficComplexity, self).__init__(
           "TrafficComplexity",
@@ -183,17 +186,17 @@ class TrafficComplexity(BasicScenario):
             # Lastly, add the vehicle params setter to the root
             root.add_child(vehicle_params_setter)
 
-        # Now, add parallel behaviour for take-over request
-        take_over_executer = py_trees.composites.Sequence("Setting Up Scenario for TOR")
+        # Now, add the behaviour to setup the scenario for TOR
+        setup_take_over = py_trees.composites.Sequence("Setting Up Scenario for TOR")
 
         # TODO: Create behaviour to send a message to AutoHive for task-interleaving period
 
         # Adding Ideal behaviour for 30 seconds to help driver prepare for TOR
         idle_for_driver = Idle(duration=10)
-        take_over_executer.add_child(idle_for_driver)
+        setup_take_over.add_child(idle_for_driver)
 
         # Setting a parallel composite to change the speed of all the vehicles and run WaypointFollower
-        initialize_take_over = py_trees.composites.Parallel("Execute Scenario and TOR", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
+        run_take_over = py_trees.composites.Parallel("Execute TOR", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
         for vehicle, final_speed in zip(self._other_actors, self._actor_final_speeds):
             # Creating a sequence to set speed and run WaypointFollower
@@ -208,7 +211,7 @@ class TrafficComplexity(BasicScenario):
             change_vehicle_speed.add_child(change_target_speed)
 
             # Lastly, add the change_vehicle_speed to the parallel composite
-            initialize_take_over.add_child(change_vehicle_speed)
+            run_take_over.add_child(change_vehicle_speed)
 
         # Setup ego vehicle behaviour for the TOR
         ego_vehicle_behaviour = py_trees.composites.Sequence("Ego Vehicle Behaviour for TOR")
@@ -216,28 +219,28 @@ class TrafficComplexity(BasicScenario):
         # TODO: Add behaviour to send a message to AutoHive for issuing a TOR
 
         # Turning on autopilot for several seconds. NOTE that the automation will turn off if driver gives input
-        # NOTE: In order to do this the ego vehicle control first needs to be set to ExternalControl
-        extenral_control = ChangeActorControl(actor=self.ego_vehicles[0], control_py_module=None, args=None)
-        ego_vehicle_behaviour.add_child(extenral_control)
+        # NOTE: In order to do this the ego vehicle's agent first needs to be set from npc_agent to dummy_agent
+        set_ego_dummy_agent = ChangeHeroAgent(ego_vehicle=self.ego_vehicles[0], scenario_manager=self._config.scenario_manager, agent_args={"path_to_conf_file": ""}, agent_name="dummy_agent.py")
+        ego_vehicle_behaviour.add_child(set_ego_dummy_agent)
         post_tor_autopilot_on = ChangeAutoPilot(actor=self.ego_vehicles[0], activate=True, parameters={"auto_lane_change": False, "ignore_vehicles_percentage": 100, "max_speed": 100})
-        # ego_vehicle_behaviour.add_child(post_tor_autopilot_on)
+        ego_vehicle_behaviour.add_child(post_tor_autopilot_on)
 
         # Provide automation for several seconds
         wait_for_driver_to_respond = Idle(duration=4)
         ego_vehicle_behaviour.add_child(wait_for_driver_to_respond)
 
         # Turn off autopilot after a time limit, if the driver has not responded already
-        post_tor_autopilot_off = ChangeAutoPilot(actor=self._lead_vehicle, activate=False)
+        post_tor_autopilot_off = ChangeAutoPilot(actor=self.ego_vehicles[0], activate=False)
         ego_vehicle_behaviour.add_child(post_tor_autopilot_off)
 
         # Now, add the ego vehicle behaviour to take_over_executer parallel composite
-        initialize_take_over.add_child(ego_vehicle_behaviour)
+        run_take_over.add_child(ego_vehicle_behaviour)
 
         # Lastly, add the initialize_take_over to the take_over_executer sequence
-        take_over_executer.add_child(initialize_take_over)
+        setup_take_over.add_child(run_take_over)
 
         # Lastly, add the take over executer to the root
-        root.add_child(take_over_executer)
+        root.add_child(setup_take_over)
         
         # Lastly, return the root
         return root

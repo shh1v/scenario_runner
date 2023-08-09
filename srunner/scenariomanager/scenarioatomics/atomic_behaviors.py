@@ -3183,9 +3183,8 @@ class ChangeHeroAgent(AtomicBehavior):
             # Get the new agent instance
             agent_instance = getattr(module, class_name)(**self._agent_args)
 
-            # Clean and destroy the old agent
+            # Clean the old agent
             self._scenario_manager._agent.cleanup()
-            self._scenario_manager._agent.destroy()
 
             # Setup the new agent and sensors
             agent_wrapper = AgentWrapper(agent_instance)
