@@ -76,7 +76,7 @@ class NpcAgent(AutonomousAgent):
 
             # Add an agent that follows the route to the ego
             # NOTE: Changed parameters for AutoHive implementation
-            self._agent = BasicAgent(hero_actor, 100, {"max_brake": 0.75, "max_throttle": 0.75, "base_vehicle_threshold": 15.0, "base_tlight_threshold": 20.0})
+            self._agent = BasicAgent(hero_actor, 100, {"max_brake": 0.75, "max_throttle": 0.75, "base_vehicle_threshold": 15.0, "base_tlight_threshold": 20.0, "ignore_vehicles": True})
 
             plan = []
             prev_wp = None
