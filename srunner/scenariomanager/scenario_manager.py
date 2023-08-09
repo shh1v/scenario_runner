@@ -117,10 +117,6 @@ class ScenarioManager(object):
         if self._agent is not None:
             self._agent.setup_sensors(self.ego_vehicles[0], self._debug_mode)
 
-        if route_id is not None:
-            self.route_id = route_id
-            self.load_dreyevr_signs()
-
     def load_dreyevr_signs(self):
         """
         retrieve and place direction signs for route if they exist
