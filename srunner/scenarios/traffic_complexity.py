@@ -159,7 +159,7 @@ class TrafficComplexity(BasicScenario):
         """
 
         # Now build the behaviour tree
-        root = py_trees.composites.Parallel("Parallel Behavior", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ALL)
+        root = py_trees.composites.Parallel("Parallel Behavior", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
         # Setting all the actors transform and  velocity using sequence composite
         for _, (vehicle, vehicle_transform, vehicle_velocity) in enumerate(zip(self._other_actors, self._actor_transforms, self._actor_init_speeds)):
@@ -192,7 +192,7 @@ class TrafficComplexity(BasicScenario):
         # TODO: Create behaviour to send a message to AutoHive for task-interleaving period
 
         # Adding Ideal behaviour for 30 seconds to help driver prepare for TOR
-        idle_for_driver = Idle(duration=10)
+        idle_for_driver = Idle(duration=20)
         setup_take_over.add_child(idle_for_driver)
 
         # Setting a parallel composite to change the speed of all the vehicles and run WaypointFollower
@@ -250,4 +250,10 @@ class TrafficComplexity(BasicScenario):
         Setup the evaluation criteria for triggerring traffic complexity scenario
         """
         # Test if all the vehicles are spawned
+        pass
+
+    def remove_all_actors(self):
+        """
+        Overriding this method to not remove all the actors.
+        """
         pass
