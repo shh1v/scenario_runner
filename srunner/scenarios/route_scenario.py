@@ -646,8 +646,14 @@ class RouteScenario(BasicScenario):
 
         return criteria
 
-    def __del__(self):
+    def post_scenario_behaviour(self):
         """
-        Remove all actors upon deletion
+        Override this method to add post scenario behaviour to the actors
         """
-        self.remove_all_actors()
+        pass
+    
+    def remove_all_actors(self):
+        """
+        Overriding this method to not remove all the actors.
+        """
+        pass

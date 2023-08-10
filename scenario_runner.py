@@ -423,6 +423,10 @@ class ScenarioRunner(object):
 
             # Remove all actors, stop the recorder and save all criterias (if needed)
             scenario.remove_all_actors()
+
+            if callable(getattr(scenario, "post_scenario_behaviour", None)):
+                scenario.post_scenario_behaviour()
+
             if self._args.record:
                 self.client.stop_recorder()
                 self._record_criteria(self.manager.scenario.get_criteria(), recorder_name)
