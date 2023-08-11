@@ -162,7 +162,7 @@ class TrafficComplexity(BasicScenario):
         root = py_trees.composites.Parallel("Parallel Behavior", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
         # Setting all the actors transform and  velocity using sequence composite
-        for _, (vehicle, vehicle_transform, vehicle_velocity) in enumerate(zip(self._other_actors, self._actor_transforms, self._actor_init_speeds)):
+        for vehicle, vehicle_transform, vehicle_velocity in zip(self._other_actors, self._actor_transforms, self._actor_init_speeds):
             print("Pytrees: [Vehicle: {}; Transform: {}; Velocity: {} m/s]".format(vehicle, vehicle_transform, vehicle_velocity))
 
             # Creating a sequence tree for each vehicle params
@@ -177,10 +177,7 @@ class TrafficComplexity(BasicScenario):
             vehicle_params_setter.add_child(set_init_velocity)
 
             # Now, set the auto agent for the vehicles so they can drive by themselves
-            # NOTE: Using WaypointFollower is not ideal as we want something that immediately returns SUCCESS
-            # NOTE: control_py_module=None will return NPC agent's local planner control module
             set_agent = WaypointFollower(actor=vehicle, target_speed=vehicle_velocity, name=f"Initial Waypoint Follower for {vehicle.id}")
-            # set_agent = ChangeActorControl(actor=vehicle, control_py_module=None, args={"target_speed": vehicle_velocity, "max_throttle": 0.75, "max_brake": 0.75})
             vehicle_params_setter.add_child(set_agent)
 
             # Lastly, add the vehicle params setter to the root
@@ -214,27 +211,32 @@ class TrafficComplexity(BasicScenario):
             run_take_over.add_child(change_vehicle_speed)
 
         # Setup ego vehicle behaviour for the TOR
-        ego_vehicle_behaviour = py_trees.composites.Sequence("Ego Vehicle Behaviour for TOR")
+        ego_and_post_scenario_vehicle_behaviour = py_trees.composites.Sequence("Ego Vehicle Behaviour for TOR")
 
         # TODO: Add behaviour to send a message to AutoHive for issuing a TOR
 
         # Turning on autopilot for several seconds. NOTE that the automation will turn off if driver gives input
         # NOTE: In order to do this the ego vehicle's agent first needs to be set from npc_agent to dummy_agent
         set_ego_dummy_agent = ChangeHeroAgent(ego_vehicle=self.ego_vehicles[0], scenario_manager=self._config.scenario_manager, agent_args={"path_to_conf_file": ""}, agent_name="dummy_agent.py")
-        ego_vehicle_behaviour.add_child(set_ego_dummy_agent)
+        ego_and_post_scenario_vehicle_behaviour.add_child(set_ego_dummy_agent)
         post_tor_autopilot_on = ChangeAutoPilot(actor=self.ego_vehicles[0], activate=True, parameters={"auto_lane_change": False, "ignore_vehicles_percentage": 100, "max_speed": 100})
-        ego_vehicle_behaviour.add_child(post_tor_autopilot_on)
+        ego_and_post_scenario_vehicle_behaviour.add_child(post_tor_autopilot_on)
 
         # Provide automation for several seconds
         wait_for_driver_to_respond = Idle(duration=4)
-        ego_vehicle_behaviour.add_child(wait_for_driver_to_respond)
+        ego_and_post_scenario_vehicle_behaviour.add_child(wait_for_driver_to_respond)
 
         # Turn off autopilot after a time limit, if the driver has not responded already
         post_tor_autopilot_off = ChangeAutoPilot(actor=self.ego_vehicles[0], activate=False)
-        ego_vehicle_behaviour.add_child(post_tor_autopilot_off)
+        ego_and_post_scenario_vehicle_behaviour.add_child(post_tor_autopilot_off)
+
+        # Now, terminate WaypointFollower and turn on autopilot for other vehicles
+        for vehicle, final_speed in zip(self._other_actors, self._actor_final_speeds):
+            turn_on_autopilot = ChangeAutoPilot(actor=vehicle, activate=True, parameters={"auto_lane_change": False, "max_speed": final_speed})
+            ego_and_post_scenario_vehicle_behaviour.add_child(turn_on_autopilot)
 
         # Now, add the ego vehicle behaviour to take_over_executer parallel composite
-        run_take_over.add_child(ego_vehicle_behaviour)
+        run_take_over.add_child(ego_and_post_scenario_vehicle_behaviour)
 
         # Lastly, add the initialize_take_over to the take_over_executer sequence
         setup_take_over.add_child(run_take_over)

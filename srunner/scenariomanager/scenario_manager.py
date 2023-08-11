@@ -94,8 +94,8 @@ class ScenarioManager(object):
         if self._agent is not None:
             self._agent.cleanup()
             self._agent = None
-
-        CarlaDataProvider.cleanup()
+        # AutoHive Impelementation: Do not destroy the actors and post scenario behaviour is setup for actors
+        # CarlaDataProvider.cleanup()
 
     def load_scenario(self, scenario, agent=None, route_id=None):
         """
