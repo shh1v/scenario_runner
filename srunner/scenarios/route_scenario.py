@@ -28,7 +28,7 @@ from examples.DReyeVR_utils import find_ego_vehicle
 from srunner.scenarioconfigs.scenario_configuration import ScenarioConfiguration, ActorConfigurationData
 # pylint: enable=line-too-long
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
-from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle, ScenarioTriggerer
+from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle, ScenarioTriggerer, SendVehicleStatus
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.route_parser import RouteParser, TRIGGER_THRESHOLD, TRIGGER_ANGLE_THRESHOLD
 from srunner.tools.route_manipulation import interpolate_trajectory
@@ -601,7 +601,11 @@ class RouteScenario(BasicScenario):
             repeat_scenarios=False
         )
 
+        # Add behaviour to send signal for ego vehicle tunring on autopilot
+        send_autopilot_signal = SendVehicleStatus(vehicle_status="AutoPilot")
+
         subbehavior.add_child(scenario_triggerer)  # make ScenarioTriggerer the first thing to be checked
+        subbehavior.add_child(send_autopilot_signal)
         subbehavior.add_children(scenario_behaviors)
         subbehavior.add_child(Idle())  # The behaviours cannot make the route scenario stop
         behavior.add_child(subbehavior)

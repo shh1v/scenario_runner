@@ -17,7 +17,7 @@ from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (SetInitSpeed,
                                                                       ActorTransformSetter,
                                                                       WaypointFollower,
-                                                                      ChangeActorControl,
+                                                                      SendVehicleStatus,
                                                                       ChangeAutoPilot,
                                                                       ChangeHeroAgent,
                                                                       Idle)
@@ -187,6 +187,8 @@ class TrafficComplexity(BasicScenario):
         setup_take_over = py_trees.composites.Sequence("Setting Up Scenario for TOR")
 
         # TODO: Create behaviour to send a message to AutoHive for task-interleaving period
+        send_interleaving_status = SendVehicleStatus(vehicle_status="PreAlertAutopilot")
+        setup_take_over.add_child(send_interleaving_status)
 
         # Adding Ideal behaviour for 30 seconds to help driver prepare for TOR
         idle_for_driver = Idle(duration=20)
@@ -195,16 +197,16 @@ class TrafficComplexity(BasicScenario):
         # Setting a parallel composite to change the speed of all the vehicles and run WaypointFollower
         run_take_over = py_trees.composites.Parallel("Execute TOR", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
-        for vehicle, final_speed in zip(self._other_actors, self._actor_final_speeds):
+        for vehicle, init_speed in zip(self._other_actors, self._actor_final_speeds):
             # Creating a sequence to set speed and run WaypointFollower
             change_vehicle_speed = py_trees.composites.Sequence(f"Change Speed for {vehicle.id}")
 
             # Change the speed instantly first
-            change_speed = SetInitSpeed(vehicle, final_speed)
+            change_speed = SetInitSpeed(vehicle, init_speed)
             change_vehicle_speed.add_child(change_speed)
 
             # Now, change the current agent's target speed by cleverly using WaypointFollower
-            change_target_speed = WaypointFollower(actor=vehicle, target_speed=final_speed, name=f"Scenario Waypoint Follower for {vehicle.id}")
+            change_target_speed = WaypointFollower(actor=vehicle, target_speed=init_speed, name=f"Scenario Waypoint Follower for {vehicle.id}")
             change_vehicle_speed.add_child(change_target_speed)
 
             # Lastly, add the change_vehicle_speed to the parallel composite
@@ -214,7 +216,9 @@ class TrafficComplexity(BasicScenario):
         ego_and_post_scenario_vehicle_behaviour = py_trees.composites.Sequence("Ego Vehicle Behaviour for TOR")
 
         # TODO: Add behaviour to send a message to AutoHive for issuing a TOR
-
+        send_tor_status = SendVehicleStatus(vehicle_status="TakeOver")
+        ego_and_post_scenario_vehicle_behaviour.add_child(send_tor_status)
+        
         # Turning on autopilot for several seconds. NOTE that the automation will turn off if driver gives input
         # NOTE: In order to do this the ego vehicle's agent first needs to be set from npc_agent to dummy_agent
         set_ego_dummy_agent = ChangeHeroAgent(ego_vehicle=self.ego_vehicles[0], scenario_manager=self._config.scenario_manager, agent_args={"path_to_conf_file": ""}, agent_name="dummy_agent.py")
@@ -222,17 +226,9 @@ class TrafficComplexity(BasicScenario):
         post_tor_autopilot_on = ChangeAutoPilot(actor=self.ego_vehicles[0], activate=True, parameters={"auto_lane_change": False, "ignore_vehicles_percentage": 100, "max_speed": 100})
         ego_and_post_scenario_vehicle_behaviour.add_child(post_tor_autopilot_on)
 
-        # Provide automation for several seconds
-        wait_for_driver_to_respond = Idle(duration=4)
-        ego_and_post_scenario_vehicle_behaviour.add_child(wait_for_driver_to_respond)
-
-        # Turn off autopilot after a time limit, if the driver has not responded already
-        post_tor_autopilot_off = ChangeAutoPilot(actor=self.ego_vehicles[0], activate=False)
-        ego_and_post_scenario_vehicle_behaviour.add_child(post_tor_autopilot_off)
-
-        # Now, terminate WaypointFollower and turn on autopilot for other vehicles
+        # Now, WaypointFollower wiill be terminated after scenario completion. So, turn on autopilot for other vehicles
         for vehicle, final_speed in zip(self._other_actors, self._actor_final_speeds):
-            turn_on_autopilot = ChangeAutoPilot(actor=vehicle, activate=True, parameters={"auto_lane_change": False, "max_speed": final_speed})
+            turn_on_autopilot = ChangeAutoPilot(actor=vehicle, activate=True, parameters={"max_speed": final_speed*3.6})
             ego_and_post_scenario_vehicle_behaviour.add_child(turn_on_autopilot)
 
         # Now, add the ego vehicle behaviour to take_over_executer parallel composite

@@ -23,6 +23,7 @@ import time
 import subprocess
 from bisect import bisect_right
 import inspect
+import datetime
 
 import numpy as np
 from numpy import random
@@ -30,6 +31,7 @@ import py_trees
 from py_trees.blackboard import Blackboard
 import networkx
 from importlib import import_module
+import zmq
 
 import carla
 from agents.navigation.basic_agent import BasicAgent
@@ -1552,7 +1554,7 @@ class ChangeAutoPilot(AtomicBehavior):
     def update(self):
         """
         De/activate autopilot
-        """    
+        """
         self._actor.set_autopilot(self._activate, CarlaDataProvider.get_traffic_manager_port())
         if self._parameters is not None:
             if "auto_lane_change" in self._parameters:
@@ -3203,3 +3205,54 @@ class ChangeHeroAgent(AtomicBehavior):
             return py_trees.common.Status.FAILURE
         
         return py_trees.common.Status.SUCCESS
+    
+class SendVehicleStatus(AtomicBehavior):
+    """
+    Custom AutoHive implementation
+    This behaviour will send a singal to Carla's PythonAPI script running parallely.
+    This vehicle status can then be used to manipulate HUD behaviour.
+    Args:
+        scenario_manager(ScenarioManager): parameter name
+        agent_name(str): python agent file name
+    """
+
+    def __init__(self, vehicle_status="Unknown", name="SendVehicleStatus"):
+        super(SendVehicleStatus, self).__init__(name)
+        self.logger.debug("%s.__init__()" % self.__class__.__name__)
+        if vehicle_status not in ["ManualDrive", "AutoPilot", "PreAlertAutopilot", "TakeOver", "TakeOverManual", "Unknown"]:
+            raise Exception("Invalid signal. Permission denied.")
+        self._vehicle_status = vehicle_status
+
+def update(self):
+    """
+    Send the signal to Carla's PythonAPI script with instant Success/Failure.
+    """
+    publisher_context = None
+    publisher_socket = None
+    
+    try:
+        publisher_context = zmq.Context()
+        publisher_socket = publisher_context.socket(zmq.PUB)
+        publisher_socket.bind("tcp://*:5557")
+
+        # Send vehicle status
+        message = {
+            "from": "client",
+            "timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")[:-3],
+            "vehicle_status": self._vehicle_status
+        }
+
+        publisher_socket.send_json(message)
+        return py_trees.common.Status.SUCCESS
+
+    except Exception as e:
+        # Optionally log or print the exception for debugging purposes
+        print(f"Error encountered: {e}")
+        return py_trees.common.Status.FAILURE
+
+    finally:
+        # Ensure all network resources are closed and cleaned up
+        if publisher_socket:
+            publisher_socket.close()
+        if publisher_context:
+            publisher_context.term()
