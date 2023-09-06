@@ -17,7 +17,7 @@ from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (SetInitSpeed,
                                                                       ActorTransformSetter,
                                                                       WaypointFollower,
-                                                                      SendVehicleStatus,
+                                                                      ChangeVehicleStatus,
                                                                       ChangeAutoPilot,
                                                                       ChangeHeroAgent,
                                                                       Idle)
@@ -187,11 +187,11 @@ class TrafficComplexity(BasicScenario):
         setup_take_over = py_trees.composites.Sequence("Setting Up Scenario for TOR")
 
         # TODO: Create behaviour to send a message to AutoHive for task-interleaving period
-        send_interleaving_status = SendVehicleStatus(vehicle_status="PreAlertAutopilot")
-        setup_take_over.add_child(send_interleaving_status)
+        change_to_interleaving_status = ChangeVehicleStatus(vehicle_status="PreAlertAutopilot", name="Change Vehicle Status to PreAlertAutopilot")
+        setup_take_over.add_child(change_to_interleaving_status)
 
         # Adding Ideal behaviour for 30 seconds to help driver prepare for TOR
-        idle_for_driver = Idle(duration=20)
+        idle_for_driver = Idle(duration=30)
         setup_take_over.add_child(idle_for_driver)
 
         # Setting a parallel composite to change the speed of all the vehicles and run WaypointFollower
@@ -216,8 +216,8 @@ class TrafficComplexity(BasicScenario):
         ego_and_post_scenario_vehicle_behaviour = py_trees.composites.Sequence("Ego Vehicle Behaviour for TOR")
 
         # TODO: Add behaviour to send a message to AutoHive for issuing a TOR
-        send_tor_status = SendVehicleStatus(vehicle_status="TakeOver")
-        ego_and_post_scenario_vehicle_behaviour.add_child(send_tor_status)
+        change_to_tor_status = ChangeVehicleStatus(vehicle_status="TakeOver", name="Change Vehicle Status to TakeOver")
+        ego_and_post_scenario_vehicle_behaviour.add_child(change_to_tor_status)
         
         # Turning on autopilot for several seconds. NOTE that the automation will turn off if driver gives input
         # NOTE: In order to do this the ego vehicle's agent first needs to be set from npc_agent to dummy_agent
@@ -226,10 +226,11 @@ class TrafficComplexity(BasicScenario):
         post_tor_autopilot_on = ChangeAutoPilot(actor=self.ego_vehicles[0], activate=True, parameters={"auto_lane_change": False, "ignore_vehicles_percentage": 100, "max_speed": 100})
         ego_and_post_scenario_vehicle_behaviour.add_child(post_tor_autopilot_on)
 
-        # Now, WaypointFollower wiill be terminated after scenario completion. So, turn on autopilot for other vehicles
+        # Now, WaypointFollower will be terminated after scenario completion. So, turn on autopilot for other vehicles
         for vehicle, final_speed in zip(self._other_actors, self._actor_final_speeds):
             turn_on_autopilot = ChangeAutoPilot(actor=vehicle, activate=True, parameters={"max_speed": final_speed*3.6})
             ego_and_post_scenario_vehicle_behaviour.add_child(turn_on_autopilot)
+
 
         # Now, add the ego vehicle behaviour to take_over_executer parallel composite
         run_take_over.add_child(ego_and_post_scenario_vehicle_behaviour)
