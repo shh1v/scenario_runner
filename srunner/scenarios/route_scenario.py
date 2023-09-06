@@ -28,7 +28,7 @@ from examples.DReyeVR_utils import find_ego_vehicle
 from srunner.scenarioconfigs.scenario_configuration import ScenarioConfiguration, ActorConfigurationData
 # pylint: enable=line-too-long
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
-from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle, ScenarioTriggerer
+from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle, ScenarioTriggerer, SendVehicleStatus, ChangeVehicleStatus
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.route_parser import RouteParser, TRIGGER_THRESHOLD, TRIGGER_ANGLE_THRESHOLD
 from srunner.tools.route_manipulation import interpolate_trajectory
@@ -123,9 +123,13 @@ def convert_json_to_actor(actor_dict):
     except KeyError:
         print("Warning: Actor is missing vehicle_offset attribute")
     try:
-        node.set('speed', actor_dict['speed'])
+        node.set('init_speed', actor_dict['init_speed'])
     except KeyError:
-        print("Warning: Actor is missing speed attribute")
+        print("Warning: Actor is missing init_speed attribute")
+    try:
+        node.set('final_speed', actor_dict['final_speed'])
+    except KeyError:
+        print("Warning: Actor is missing final_speed attribute")
 
 
     return ActorConfigurationData.parse_from_node(node, 'simulation')
@@ -187,7 +191,7 @@ class RouteScenario(BasicScenario):
     along which several smaller scenarios are triggered
     """
 
-    def __init__(self, world, config, debug_mode=False, criteria_enable=True, timeout=300, background_activity=False):
+    def __init__(self, world, config, debug_mode=False, criteria_enable=True, timeout=300, background_activity=False, scenario_manager=None):
         """
         Setup all relevant parameters and create scenarios along route
         """
@@ -200,12 +204,16 @@ class RouteScenario(BasicScenario):
 
         self.ego_vehicle = self._initialize_ego_vehicle_dreyevr(find_ego_vehicle(world))
 
+        # Custom AutoHive Implementation: add scenario manager
+        self.scenario_manager = scenario_manager
+
         self.list_scenarios = self._build_scenario_instances(world,
                                                              self.ego_vehicle,
                                                              self.sampled_scenarios_definitions,
                                                              scenarios_per_tick=5,
                                                              timeout=self.timeout,
                                                              debug_mode=debug_mode)
+
         if background_activity:
             self.list_scenarios.append(BackgroundActivity(
                 world, self.ego_vehicle, self.config, self.route, timeout=self.timeout))
@@ -469,6 +477,8 @@ class RouteScenario(BasicScenario):
                                                                           'hero')]
             route_var_name = "ScenarioRouteNumber{}".format(scenario_number)
             scenario_configuration.route_var_name = route_var_name
+            # Custom AutoHive Implementation: add scenario manager
+            scenario_configuration.scenario_manager = self.scenario_manager
             try:
                 scenario_instance = scenario_class(world=world, ego_vehicles=[ego_vehicle], config=scenario_configuration,
                                                    criteria_enable=False, timeout=timeout)
@@ -594,8 +604,16 @@ class RouteScenario(BasicScenario):
         subbehavior.add_child(scenario_triggerer)  # make ScenarioTriggerer the first thing to be checked
         subbehavior.add_children(scenario_behaviors)
         subbehavior.add_child(Idle())  # The behaviours cannot make the route scenario stop
-        behavior.add_child(subbehavior)
 
+        # Add behaviour to send the vehicle status in parallel to the scenario behaviour
+        send_vehicle_status = SendVehicleStatus()
+        subbehavior.add_child(send_vehicle_status)
+
+        # Add behaviour to send signal for ego vehicle tunring on autopilot
+        change_to_autopilot_status = ChangeVehicleStatus(vehicle_status="AutoPilot")
+        subbehavior.add_child(change_to_autopilot_status)
+        
+        behavior.add_child(subbehavior)
         return behavior
 
     def _create_test_criteria(self):
@@ -610,7 +628,7 @@ class RouteScenario(BasicScenario):
 
         route_criterion = InRouteTest(self.ego_vehicles[0],
                                       route=route,
-                                      offroad_max=50,
+                                      offroad_max=100,
                                       terminate_on_failure=True)
 
         completion_criterion = RouteCompletionTest(self.ego_vehicles[0], route=route)
@@ -636,8 +654,14 @@ class RouteScenario(BasicScenario):
 
         return criteria
 
-    def __del__(self):
+    def post_scenario_behaviour(self):
         """
-        Remove all actors upon deletion
+        Override this method to add post scenario behaviour to the actors
         """
-        self.remove_all_actors()
+        pass
+    
+    def remove_all_actors(self):
+        """
+        Overriding this method to not remove all the actors.
+        """
+        pass

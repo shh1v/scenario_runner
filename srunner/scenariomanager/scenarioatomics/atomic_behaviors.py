@@ -22,12 +22,16 @@ import os
 import time
 import subprocess
 from bisect import bisect_right
+import inspect
+import datetime
 
 import numpy as np
 from numpy import random
 import py_trees
 from py_trees.blackboard import Blackboard
 import networkx
+from importlib import import_module
+import zmq
 
 import carla
 from agents.navigation.basic_agent import BasicAgent
@@ -35,6 +39,7 @@ from agents.navigation.local_planner import RoadOption, LocalPlanner
 from agents.navigation.global_route_planner import GlobalRoutePlanner
 from agents.tools.misc import is_within_distance
 
+from srunner.autoagents.agent_wrapper import AgentWrapper
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.actorcontrols.actor_control import ActorControl
 from srunner.scenariomanager.timer import GameTime
@@ -347,6 +352,16 @@ class ChangeActorControl(AtomicBehavior):
         returns:
             py_trees.common.Status.SUCCESS
         """
+
+        # Get the current frame
+        current_frame = inspect.currentframe()
+        # Get the frame of the caller
+        caller_frame = inspect.getouterframes(current_frame, 2)
+        # Get the name of the caller function, file name, and line number
+        caller_name = caller_frame[1][3]
+        file_name = caller_frame[1][1]
+        line_number = caller_frame[1][2]
+        print(f"Called by {caller_name} from file {file_name} at line {line_number}")
 
         actor_dict = {}
 
@@ -1541,7 +1556,6 @@ class ChangeAutoPilot(AtomicBehavior):
         De/activate autopilot
         """
         self._actor.set_autopilot(self._activate, CarlaDataProvider.get_traffic_manager_port())
-
         if self._parameters is not None:
             if "auto_lane_change" in self._parameters:
                 lane_change = self._parameters["auto_lane_change"]
@@ -1934,28 +1948,27 @@ class WaypointFollower(AtomicBehavior):
         """
         Delayed one-time initialization
 
-        Checks if another WaypointFollower behavior is already running for this actor.
-        If this is the case, a termination signal is sent to the running behavior.
+        Replaces the existing WaypointFollower behavior for this actor with the new instance.
+        Clears any previous termination signals for this actor.
         """
         super(WaypointFollower, self).initialise()
         self._unique_id = int(round(time.time() * 1e9))
+
         try:
-            # check whether WF for this actor is already running and add new WF to running_WF list
-            check_attr = operator.attrgetter("running_WF_actor_{}".format(self._actor.id))
-            running = check_attr(py_trees.blackboard.Blackboard())
-            active_wf = copy.copy(running)
-            active_wf.append(self._unique_id)
-            py_trees.blackboard.Blackboard().set(
-                "running_WF_actor_{}".format(self._actor.id), active_wf, overwrite=True)
+            # check whether WF for this actor is already running and replace with new WF
+            check_attr = operator.attrgetter("running_WF_actor_{}".format(self._actor.id)) # This will throw an AttributeError if the WF is not running
+            py_trees.blackboard.Blackboard().set("running_WF_actor_{}".format(self._actor.id), [self._unique_id], overwrite=True)
+            # Clear any previous termination requests for this actor
+            py_trees.blackboard.Blackboard().set("terminate_WF_actor_{}".format(self._actor.id), [], overwrite=True)
         except AttributeError:
             # no WF is active for this actor
             py_trees.blackboard.Blackboard().set("terminate_WF_actor_{}".format(self._actor.id), [], overwrite=True)
-            py_trees.blackboard.Blackboard().set(
-                "running_WF_actor_{}".format(self._actor.id), [self._unique_id], overwrite=True)
+            py_trees.blackboard.Blackboard().set("running_WF_actor_{}".format(self._actor.id), [self._unique_id], overwrite=True)
 
         for actor in self._actor_dict:
             self._apply_local_planner(actor)
         return True
+
 
     def _apply_local_planner(self, actor):
         """
@@ -3127,3 +3140,150 @@ class KeepLongitudinalGap(AtomicBehavior):
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
         return new_status
+
+class ChangeHeroAgent(AtomicBehavior):
+    """
+    Custom AutoHive implementation
+    This is an atomic behavior to change the agent of the hero. It re-instantiates the hero
+    with the new agent and destroys the old one. This gives a way, for example, to change the
+    her actor's agent from basic agent to
+
+    Args:
+        scenario_manager(ScenarioManager): parameter name
+        agent_name(str): python agent file name
+    """
+
+    def __init__(self, ego_vehicle, scenario_manager, agent_name, agent_args={}, name="ChangeHeroAgent"):
+        super(ChangeHeroAgent, self).__init__(name)
+        self.logger.debug("%s.__init__()" % self.__class__.__name__)
+        if scenario_manager is None:
+            raise AttributeError("scenario_manager is not set")
+        
+        self._ego_vehicle = ego_vehicle
+        self._scenario_manager = scenario_manager
+        self._agent_name = agent_name
+        self._agent_args = agent_args
+
+    def update(self):
+        """
+        update value of scenario managers.
+        """
+        if self._scenario_manager._agent is None:
+            print("Scenario manager agent is not set")
+            return py_trees.common.Status.FAILURE
+        
+        if not self._agent_name.endswith('.py'):
+            raise ValueError("Filename must end with '.py'")
+
+        module_name = self._agent_name[:-3]
+        class_name_parts = module_name.split('_')
+        class_name = ''.join(part.title() for part in class_name_parts)
+
+        try:
+            module = import_module(f'srunner.autoagents.{module_name}')
+            # Get the new agent instance
+            agent_instance = getattr(module, class_name)(**self._agent_args)
+
+            # Clean the old agent
+            self._scenario_manager._agent.cleanup()
+
+            # Setup the new agent and sensors
+            agent_wrapper = AgentWrapper(agent_instance)
+            agent_wrapper.setup_sensors(self._ego_vehicle)
+
+            # Lastly, set the new agent in the scenario manager
+            self._scenario_manager._agent = agent_wrapper
+
+        except ImportError as e:
+            print(f"An error occurred while importing: {e}")
+            return py_trees.common.Status.FAILURE
+        except AttributeError as e:
+            print(f"Class {class_name} not found in the module: {e}")
+            return py_trees.common.Status.FAILURE
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return py_trees.common.Status.FAILURE
+        
+        return py_trees.common.Status.SUCCESS
+    
+class ChangeVehicleStatus(AtomicBehavior):
+    """
+    Custom AutoHive implementation
+    This behaviour will set the static vehicle status variable which will be used by other atomic behaviours.
+    Args:
+        vehicle_status(str): vehicle status in string format
+    """
+    global_vehicle_status = "Unknown"
+    ordered_vehicle_status = ["Unknown", "ManualDrive", "AutoPilot", "PreAlertAutopilot", "TakeOver", "TakeOverManual"]
+    def __init__(self, vehicle_status="Unknown", name="ChangeVehicleStatus"):
+        super(ChangeVehicleStatus, self).__init__(name)
+        self.logger.debug("%s.__init__()" % self.__class__.__name__)
+        if vehicle_status not in ChangeVehicleStatus.ordered_vehicle_status:
+            raise Exception("Invalid signal. Permission denied.")
+        self._vehicle_status = vehicle_status
+
+    def update(self):
+        """
+        Set the global vehicle status variable and return success.
+        """
+        # Change the vehicle status only if the new status is a higher priority than the current status
+        if ChangeVehicleStatus.ordered_vehicle_status.index(self._vehicle_status) > ChangeVehicleStatus.ordered_vehicle_status.index(ChangeVehicleStatus.global_vehicle_status):
+            ChangeVehicleStatus.global_vehicle_status = self._vehicle_status
+        return py_trees.common.Status.SUCCESS
+
+class SendVehicleStatus(AtomicBehavior):
+    """
+    Custom AutoHive implementation
+    This behaviour will send a singal to Carla's PythonAPI script running parallely.
+    This vehicle status can then be used to manipulate HUD behaviour.
+    Args:
+    """
+    def __init__(self, name="SendVehicleStatus"):
+        super(SendVehicleStatus, self).__init__(name)
+        self.logger.debug("%s.__init__()" % self.__class__.__name__)
+        self.publisher_context = None
+        self.publisher_socket = None
+        try:
+            self.publisher_context = zmq.Context()
+            self.publisher_socket = self.publisher_context.socket(zmq.PUB)
+            self.publisher_socket.bind("tcp://*:5557")
+        except Exception as e:
+            # Optionally log or print the exception for debugging purposes
+            print(f"Error encountered: {e}")
+
+    def update(self):
+        """
+        Send the signal to Carla's PythonAPI script with instant Success/Failure.
+        """
+        if self.publisher_socket is None or self.publisher_context is None:
+            return py_trees.common.Status.FAILURE
+        try:
+            # Send vehicle status
+            message = {
+                "from": "client",
+                "timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")[:-3],
+                "vehicle_status": ChangeVehicleStatus.global_vehicle_status
+            }
+
+            self.publisher_socket.send_json(message)
+            print("Sent vehicle status by scenario runner: {}".format(ChangeVehicleStatus.global_vehicle_status))
+
+        except Exception as e:
+            # Optionally log or print the exception for debugging purposes
+            print(f"Error encountered: {e}")
+            return py_trees.common.Status.FAILURE
+        
+        if ChangeVehicleStatus.global_vehicle_status == "TakeOver":
+            if not hasattr(self, "last_status_send_counter"):
+                self.last_status_send_counter = 1
+                
+            if self.last_status_send_counter < 10:
+                self.last_status_send_counter += 1
+            else:
+                self.publisher_socket.close()
+                self.publisher_context.term()
+                self.publisher_socket = None
+                self.publisher_context = None
+                return py_trees.common.Status.SUCCESS
+
+        return py_trees.common.Status.RUNNING

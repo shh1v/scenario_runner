@@ -67,12 +67,15 @@ class ActorControl(object):
         # use importlib to import the control module
         if not control_py_module:
             if isinstance(actor, carla.Walker):
-                self.control_instance = PedestrianControl(actor)
+                self.control_instance = PedestrianControl(actor, args)
             elif isinstance(actor, carla.Vehicle):
-                self.control_instance = NpcVehicleControl(actor)
+                # self.control_instance = NpcVehicleControl(actor, args)
+                # AutoHive change: use ExternalControl for all vehicles to handle all actors the same way
+                self.control_instance = ExternalControl(actor)
+                print("AutoHive: Using ExternalControl for all vehicles")
             else:
                 # use ExternalControl for all misc objects to handle all actors the same way
-                self.control_instance = ExternalControl(actor)
+                self.control_instance = ExternalControl(actor, args)
         else:
             if scenario_file_path:
                 sys.path.append(scenario_file_path)

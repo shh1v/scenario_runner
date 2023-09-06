@@ -91,11 +91,12 @@ class AutonomousAgent(object):
         timestamp = GameTime.get_time()
         wallclock = GameTime.get_wallclocktime()
 
-        # Commenting it out as it is annoying
+        # Commenting it out if it is annoying
         # print('======[Agent] Wallclock_time = {} / Sim_time = {}'.format(wallclock, timestamp))
 
         control = self.run_step(input_data, timestamp)
-        control.manual_gear_shift = False
+        if control is not None:
+            control.manual_gear_shift = False
 
         return control
 

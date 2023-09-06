@@ -59,8 +59,8 @@ class ScenarioRunner(object):
     ego_vehicles = []
 
     # Tunable parameters
-    client_timeout = 10.0  # in seconds
-    wait_for_world = 20.0  # in seconds
+    client_timeout = 5.0  # in seconds
+    wait_for_world = 5.0  # in seconds
     frame_rate = 20.0      # in Hz
 
     # CARLA world and scenario handlers
@@ -185,15 +185,17 @@ class ScenarioRunner(object):
 
         self.manager.cleanup()
 
-        CarlaDataProvider.cleanup()
+        # AutoHive Impelementation: Do not destroy the actors and post scenario behaviour is setup for actors
 
-        for i, _ in enumerate(self.ego_vehicles):
-            if self.ego_vehicles[i]:
-                if not self._args.waitForEgo and self.ego_vehicles[i] is not None and self.ego_vehicles[i].is_alive:
-                    print("Destroying ego vehicle {}".format(self.ego_vehicles[i].id))
-                    self.ego_vehicles[i].destroy()
-                self.ego_vehicles[i] = None
-        self.ego_vehicles = []
+        # CarlaDataProvider.cleanup()
+
+        # for i, _ in enumerate(self.ego_vehicles):
+        #     if self.ego_vehicles[i]:
+        #         if not self._args.waitForEgo and self.ego_vehicles[i] is not None and self.ego_vehicles[i].is_alive:
+        #             print("Destroying ego vehicle {}".format(self.ego_vehicles[i].id))
+        #             self.ego_vehicles[i].destroy()
+        #         self.ego_vehicles[i] = None
+        # self.ego_vehicles = []
 
         if self.agent_instance:
             self.agent_instance.destroy()
@@ -387,10 +389,12 @@ class ScenarioRunner(object):
                                         config_file=self._args.openscenario,
                                         timeout=100000)
             elif self._args.route:
+                # Custom AutoHive change: add background activity and senrario_manager as params
                 scenario = RouteScenario(world=self.world,
                                          config=config,
                                          debug_mode=self._args.debug,
-                                         background_activity=self._args.bg)
+                                         background_activity=self._args.bg,
+                                         scenario_manager=self.manager)
             else:
                 scenario_class = self._get_scenario_class_or_fail(config.type)
                 scenario = scenario_class(self.world,
@@ -421,6 +425,10 @@ class ScenarioRunner(object):
 
             # Remove all actors, stop the recorder and save all criterias (if needed)
             scenario.remove_all_actors()
+
+            if callable(getattr(scenario, "post_scenario_behaviour", None)):
+                scenario.post_scenario_behaviour()
+
             if self._args.record:
                 self.client.stop_recorder()
                 self._record_criteria(self.manager.scenario.get_criteria(), recorder_name)

@@ -11,9 +11,9 @@
 import re
 from lxml.etree import Element, SubElement, tostring, ElementTree
 
-# Configs
-input_file = 'raw_waypoints/route_6.txt'
-output_file = 'route_data/route_6.xml'
+# Change the parameters appropriately for your use case
+input_file = 'routegenerator/raw_waypoints/route_final_2.txt'
+output_file = 'routegenerator/route_data/route_final_2.xml'
 route_id = 0
 town = "Town04"
 
