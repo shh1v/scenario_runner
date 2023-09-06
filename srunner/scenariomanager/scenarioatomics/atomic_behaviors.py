@@ -3206,53 +3206,84 @@ class ChangeHeroAgent(AtomicBehavior):
         
         return py_trees.common.Status.SUCCESS
     
+class ChangeVehicleStatus(AtomicBehavior):
+    """
+    Custom AutoHive implementation
+    This behaviour will set the static vehicle status variable which will be used by other atomic behaviours.
+    Args:
+        vehicle_status(str): vehicle status in string format
+    """
+    global_vehicle_status = "Unknown"
+    ordered_vehicle_status = ["Unknown", "ManualDrive", "AutoPilot", "PreAlertAutopilot", "TakeOver", "TakeOverManual"]
+    def __init__(self, vehicle_status="Unknown", name="ChangeVehicleStatus"):
+        super(ChangeVehicleStatus, self).__init__(name)
+        self.logger.debug("%s.__init__()" % self.__class__.__name__)
+        if vehicle_status not in ChangeVehicleStatus.ordered_vehicle_status:
+            raise Exception("Invalid signal. Permission denied.")
+        self._vehicle_status = vehicle_status
+
+    def update(self):
+        """
+        Set the global vehicle status variable and return success.
+        """
+        # Change the vehicle status only if the new status is a higher priority than the current status
+        if ChangeVehicleStatus.ordered_vehicle_status.index(self._vehicle_status) > ChangeVehicleStatus.ordered_vehicle_status.index(ChangeVehicleStatus.global_vehicle_status):
+            ChangeVehicleStatus.global_vehicle_status = self._vehicle_status
+        return py_trees.common.Status.SUCCESS
+
 class SendVehicleStatus(AtomicBehavior):
     """
     Custom AutoHive implementation
     This behaviour will send a singal to Carla's PythonAPI script running parallely.
     This vehicle status can then be used to manipulate HUD behaviour.
     Args:
-        scenario_manager(ScenarioManager): parameter name
-        agent_name(str): python agent file name
     """
-
-    def __init__(self, vehicle_status="Unknown", name="SendVehicleStatus"):
+    def __init__(self, name="SendVehicleStatus"):
         super(SendVehicleStatus, self).__init__(name)
         self.logger.debug("%s.__init__()" % self.__class__.__name__)
-        if vehicle_status not in ["ManualDrive", "AutoPilot", "PreAlertAutopilot", "TakeOver", "TakeOverManual", "Unknown"]:
-            raise Exception("Invalid signal. Permission denied.")
-        self._vehicle_status = vehicle_status
+        self.publisher_context = None
+        self.publisher_socket = None
+        try:
+            self.publisher_context = zmq.Context()
+            self.publisher_socket = self.publisher_context.socket(zmq.PUB)
+            self.publisher_socket.bind("tcp://*:5557")
+        except Exception as e:
+            # Optionally log or print the exception for debugging purposes
+            print(f"Error encountered: {e}")
 
-def update(self):
-    """
-    Send the signal to Carla's PythonAPI script with instant Success/Failure.
-    """
-    publisher_context = None
-    publisher_socket = None
-    
-    try:
-        publisher_context = zmq.Context()
-        publisher_socket = publisher_context.socket(zmq.PUB)
-        publisher_socket.bind("tcp://*:5557")
+    def update(self):
+        """
+        Send the signal to Carla's PythonAPI script with instant Success/Failure.
+        """
+        if self.publisher_socket is None or self.publisher_context is None:
+            return py_trees.common.Status.FAILURE
+        try:
+            # Send vehicle status
+            message = {
+                "from": "client",
+                "timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")[:-3],
+                "vehicle_status": ChangeVehicleStatus.global_vehicle_status
+            }
 
-        # Send vehicle status
-        message = {
-            "from": "client",
-            "timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")[:-3],
-            "vehicle_status": self._vehicle_status
-        }
+            self.publisher_socket.send_json(message)
+            print("Sent vehicle status by scenario runner: {}".format(ChangeVehicleStatus.global_vehicle_status))
 
-        publisher_socket.send_json(message)
-        return py_trees.common.Status.SUCCESS
+        except Exception as e:
+            # Optionally log or print the exception for debugging purposes
+            print(f"Error encountered: {e}")
+            return py_trees.common.Status.FAILURE
+        
+        if ChangeVehicleStatus.global_vehicle_status == "TakeOver":
+            if not hasattr(self, "last_status_send_counter"):
+                self.last_status_send_counter = 1
+                
+            if self.last_status_send_counter < 10:
+                self.last_status_send_counter += 1
+            else:
+                self.publisher_socket.close()
+                self.publisher_context.term()
+                self.publisher_socket = None
+                self.publisher_context = None
+                return py_trees.common.Status.SUCCESS
 
-    except Exception as e:
-        # Optionally log or print the exception for debugging purposes
-        print(f"Error encountered: {e}")
-        return py_trees.common.Status.FAILURE
-
-    finally:
-        # Ensure all network resources are closed and cleaned up
-        if publisher_socket:
-            publisher_socket.close()
-        if publisher_context:
-            publisher_context.term()
+        return py_trees.common.Status.RUNNING
