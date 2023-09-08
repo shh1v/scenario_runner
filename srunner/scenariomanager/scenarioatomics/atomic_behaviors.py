@@ -24,6 +24,7 @@ import subprocess
 from bisect import bisect_right
 import inspect
 import datetime
+import traceback
 
 import numpy as np
 from numpy import random
@@ -3255,8 +3256,10 @@ class SendVehicleStatus(AtomicBehavior):
         """
         Send the signal to Carla's PythonAPI script with instant Success/Failure.
         """
-        if self.publisher_socket is None or self.publisher_context is None:
-            return py_trees.common.Status.FAILURE
+        if self.publisher_socket is None and self.publisher_context is None:
+            # This is the case where we have already sent the signal and closed the socket
+            # To gracefully exit the behaviour, we return success
+            return py_trees.common.Status.SUCCESS
         try:
             # Send vehicle status
             message = {
@@ -3266,11 +3269,10 @@ class SendVehicleStatus(AtomicBehavior):
             }
 
             self.publisher_socket.send_json(message)
-            print("Sent vehicle status by scenario runner: {}".format(ChangeVehicleStatus.global_vehicle_status))
 
         except Exception as e:
             # Optionally log or print the exception for debugging purposes
-            print(f"Error encountered: {e}")
+            print(f"Warning: {e}", traceback.print_exc(e))
             return py_trees.common.Status.FAILURE
         
         if ChangeVehicleStatus.global_vehicle_status == "TakeOver":
