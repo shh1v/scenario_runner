@@ -1540,22 +1540,23 @@ class ChangeAutoPilot(AtomicBehavior):
 
     The behavior terminates after changing the autopilot state
     """
+    _tm = None
 
-    def __init__(self, actor, activate, parameters=None, name="ChangeAutoPilot"):
+    def __init__(self, actor, traffic_manager=None, activate=True, parameters=None, name="ChangeAutoPilot"):
         """
         Setup parameters
         """
         super(ChangeAutoPilot, self).__init__(name, actor)
         self.logger.debug("%s.__init__()" % (self.__class__.__name__))
         self._activate = activate
-        self._tm = CarlaDataProvider.get_client().get_trafficmanager(
-            CarlaDataProvider.get_traffic_manager_port())
+        self._tm = traffic_manager
         self._parameters = parameters
 
     def update(self):
         """
         De/activate autopilot
         """
+        print("Changing autopilot to %s for %s" % ("On" if self._activate else "Off", self._actor.id))
         self._actor.set_autopilot(self._activate, CarlaDataProvider.get_traffic_manager_port())
         if self._parameters is not None:
             if "auto_lane_change" in self._parameters:
@@ -1584,8 +1585,6 @@ class ChangeAutoPilot(AtomicBehavior):
                 self._tm.ignore_vehicles_percentage(self._actor, ignore_vehicles)
 
         new_status = py_trees.common.Status.SUCCESS
-
-        self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
         return new_status
 
 
@@ -1949,27 +1948,29 @@ class WaypointFollower(AtomicBehavior):
         """
         Delayed one-time initialization
 
-        Replaces the existing WaypointFollower behavior for this actor with the new instance.
-        Clears any previous termination signals for this actor.
+        Checks if another WaypointFollower behavior is already running for this actor.
+        If this is the case, a termination signal is sent to the running behavior.
         """
         super(WaypointFollower, self).initialise()
+        self._start_time = GameTime.get_time()
         self._unique_id = int(round(time.time() * 1e9))
-
         try:
-            # check whether WF for this actor is already running and replace with new WF
-            check_attr = operator.attrgetter("running_WF_actor_{}".format(self._actor.id)) # This will throw an AttributeError if the WF is not running
-            py_trees.blackboard.Blackboard().set("running_WF_actor_{}".format(self._actor.id), [self._unique_id], overwrite=True)
-            # Clear any previous termination requests for this actor
-            py_trees.blackboard.Blackboard().set("terminate_WF_actor_{}".format(self._actor.id), [], overwrite=True)
+            # check whether WF for this actor is already running and add new WF to running_WF list
+            check_attr = operator.attrgetter("running_WF_actor_{}".format(self._actor.id))
+            running = check_attr(py_trees.blackboard.Blackboard())
+            active_wf = copy.copy(running)
+            active_wf.append(self._unique_id)
+            py_trees.blackboard.Blackboard().set(
+                "running_WF_actor_{}".format(self._actor.id), active_wf, overwrite=True)
         except AttributeError:
             # no WF is active for this actor
             py_trees.blackboard.Blackboard().set("terminate_WF_actor_{}".format(self._actor.id), [], overwrite=True)
-            py_trees.blackboard.Blackboard().set("running_WF_actor_{}".format(self._actor.id), [self._unique_id], overwrite=True)
+            py_trees.blackboard.Blackboard().set(
+                "running_WF_actor_{}".format(self._actor.id), [self._unique_id], overwrite=True)
 
         for actor in self._actor_dict:
             self._apply_local_planner(actor)
         return True
-
 
     def _apply_local_planner(self, actor):
         """
