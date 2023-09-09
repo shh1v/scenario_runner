@@ -191,11 +191,11 @@ class TrafficComplexity(BasicScenario):
         setup_take_over.add_child(change_to_interleaving_status)
 
         # Adding Ideal behaviour for 30 seconds to help driver prepare for TOR
-        idle_for_driver = Idle(duration=30)
+        idle_for_driver = Idle(duration=20)
         setup_take_over.add_child(idle_for_driver)
 
         # Setting a parallel composite to change the speed of all the vehicles and run WaypointFollower
-        run_take_over = py_trees.composites.Parallel("Execute TOR", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
+        run_take_over = py_trees.composites.Parallel("Execute TOR", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ALL)
 
         for vehicle, init_speed in zip(self._other_actors, self._actor_final_speeds):
             # Creating a sequence to set speed and run WaypointFollower
@@ -223,12 +223,12 @@ class TrafficComplexity(BasicScenario):
         # NOTE: In order to do this the ego vehicle's agent first needs to be set from npc_agent to dummy_agent
         set_ego_dummy_agent = ChangeHeroAgent(ego_vehicle=self.ego_vehicles[0], scenario_manager=self._config.scenario_manager, agent_args={"path_to_conf_file": ""}, agent_name="dummy_agent.py")
         ego_and_post_scenario_vehicle_behaviour.add_child(set_ego_dummy_agent)
-        post_tor_autopilot_on = ChangeAutoPilot(actor=self.ego_vehicles[0], activate=True, parameters={"auto_lane_change": False, "ignore_vehicles_percentage": 100, "max_speed": 100})
+        post_tor_autopilot_on = ChangeAutoPilot(actor=self.ego_vehicles[0], traffic_manager=self._config.traffic_manager, activate=True, parameters={"auto_lane_change": False, "ignore_vehicles_percentage": 100, "max_speed": 100})
         ego_and_post_scenario_vehicle_behaviour.add_child(post_tor_autopilot_on)
 
-        # Now, WaypointFollower will be terminated after scenario completion. So, turn on autopilot for other vehicles
+        # # Now, WaypointFollower will be terminated after scenario completion. So, turn on autopilot for other vehicles
         for vehicle, final_speed in zip(self._other_actors, self._actor_final_speeds):
-            turn_on_autopilot = ChangeAutoPilot(actor=vehicle, activate=True, parameters={"max_speed": final_speed*3.6})
+            turn_on_autopilot = ChangeAutoPilot(actor=vehicle, traffic_manager=self._config.traffic_manager, activate=True, parameters={"max_speed": final_speed*3.6})
             ego_and_post_scenario_vehicle_behaviour.add_child(turn_on_autopilot)
 
 

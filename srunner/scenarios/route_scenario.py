@@ -191,7 +191,7 @@ class RouteScenario(BasicScenario):
     along which several smaller scenarios are triggered
     """
 
-    def __init__(self, world, config, debug_mode=False, criteria_enable=True, timeout=300, background_activity=False, scenario_manager=None):
+    def __init__(self, world, config, debug_mode=False, criteria_enable=True, timeout=300, background_activity=False, scenario_manager=None, traffic_manager=None):
         """
         Setup all relevant parameters and create scenarios along route
         """
@@ -206,6 +206,7 @@ class RouteScenario(BasicScenario):
 
         # Custom AutoHive Implementation: add scenario manager
         self.scenario_manager = scenario_manager
+        self.traffic_manager = traffic_manager
 
         self.list_scenarios = self._build_scenario_instances(world,
                                                              self.ego_vehicle,
@@ -479,6 +480,7 @@ class RouteScenario(BasicScenario):
             scenario_configuration.route_var_name = route_var_name
             # Custom AutoHive Implementation: add scenario manager
             scenario_configuration.scenario_manager = self.scenario_manager
+            scenario_configuration.traffic_manager = self.traffic_manager
             try:
                 scenario_instance = scenario_class(world=world, ego_vehicles=[ego_vehicle], config=scenario_configuration,
                                                    criteria_enable=False, timeout=timeout)
@@ -629,7 +631,7 @@ class RouteScenario(BasicScenario):
         route_criterion = InRouteTest(self.ego_vehicles[0],
                                       route=route,
                                       offroad_max=100,
-                                      terminate_on_failure=True)
+                                      terminate_on_failure=False)
 
         completion_criterion = RouteCompletionTest(self.ego_vehicles[0], route=route)
 
