@@ -1540,9 +1540,8 @@ class ChangeAutoPilot(AtomicBehavior):
 
     The behavior terminates after changing the autopilot state
     """
-    _tm = None
 
-    def __init__(self, actor, traffic_manager=None, activate=True, parameters=None, name="ChangeAutoPilot"):
+    def __init__(self, actor, traffic_manager, activate=True, parameters=None, name="ChangeAutoPilot"):
         """
         Setup parameters
         """
@@ -1556,7 +1555,6 @@ class ChangeAutoPilot(AtomicBehavior):
         """
         De/activate autopilot
         """
-        print("Changing autopilot to %s for %s" % ("On" if self._activate else "Off", self._actor.id))
         self._actor.set_autopilot(self._activate, CarlaDataProvider.get_traffic_manager_port())
         if self._parameters is not None:
             if "auto_lane_change" in self._parameters:
@@ -1583,7 +1581,8 @@ class ChangeAutoPilot(AtomicBehavior):
             if "ignore_vehicles_percentage" in self._parameters:
                 ignore_vehicles = self._parameters["ignore_vehicles_percentage"]
                 self._tm.ignore_vehicles_percentage(self._actor, ignore_vehicles)
-
+                
+        print("Changing autopilot to %s for %s" % ("On" if self._activate else "Off", self._actor.id))
         new_status = py_trees.common.Status.SUCCESS
         return new_status
 
@@ -1948,29 +1947,27 @@ class WaypointFollower(AtomicBehavior):
         """
         Delayed one-time initialization
 
-        Checks if another WaypointFollower behavior is already running for this actor.
-        If this is the case, a termination signal is sent to the running behavior.
+        Replaces the existing WaypointFollower behavior for this actor with the new instance.
+        Clears any previous termination signals for this actor.
         """
         super(WaypointFollower, self).initialise()
-        self._start_time = GameTime.get_time()
         self._unique_id = int(round(time.time() * 1e9))
+
         try:
-            # check whether WF for this actor is already running and add new WF to running_WF list
-            check_attr = operator.attrgetter("running_WF_actor_{}".format(self._actor.id))
-            running = check_attr(py_trees.blackboard.Blackboard())
-            active_wf = copy.copy(running)
-            active_wf.append(self._unique_id)
-            py_trees.blackboard.Blackboard().set(
-                "running_WF_actor_{}".format(self._actor.id), active_wf, overwrite=True)
+            # check whether WF for this actor is already running and replace with new WF
+            check_attr = operator.attrgetter("running_WF_actor_{}".format(self._actor.id)) # This will throw an AttributeError if the WF is not running
+            py_trees.blackboard.Blackboard().set("running_WF_actor_{}".format(self._actor.id), [self._unique_id], overwrite=True)
+            # Clear any previous termination requests for this actor
+            py_trees.blackboard.Blackboard().set("terminate_WF_actor_{}".format(self._actor.id), [], overwrite=True)
         except AttributeError:
             # no WF is active for this actor
             py_trees.blackboard.Blackboard().set("terminate_WF_actor_{}".format(self._actor.id), [], overwrite=True)
-            py_trees.blackboard.Blackboard().set(
-                "running_WF_actor_{}".format(self._actor.id), [self._unique_id], overwrite=True)
+            py_trees.blackboard.Blackboard().set("running_WF_actor_{}".format(self._actor.id), [self._unique_id], overwrite=True)
 
         for actor in self._actor_dict:
             self._apply_local_planner(actor)
         return True
+
 
     def _apply_local_planner(self, actor):
         """
@@ -3154,58 +3151,68 @@ class ChangeHeroAgent(AtomicBehavior):
         scenario_manager(ScenarioManager): parameter name
         agent_name(str): python agent file name
     """
+    # NOTE: We also store the previous agent so that it can be reused again if needed through the reuse_old flag
+    previous_agent = None
 
-    def __init__(self, ego_vehicle, scenario_manager, agent_name, agent_args={}, name="ChangeHeroAgent"):
+    def __init__(self, ego_vehicle, scenario_manager, agent_name=None, agent_args={}, reuse_old=False, name="ChangeHeroAgent"):
         super(ChangeHeroAgent, self).__init__(name)
         self.logger.debug("%s.__init__()" % self.__class__.__name__)
         if scenario_manager is None:
             raise AttributeError("scenario_manager is not set")
+        if agent_name is not None and reuse_old:
+            raise AttributeError("Cannot reuse old agent and provide a new agent name")
         
-        self._ego_vehicle = ego_vehicle
         self._scenario_manager = scenario_manager
+        self._ego_vehicle = ego_vehicle
         self._agent_name = agent_name
         self._agent_args = agent_args
+        self._reuse_old = reuse_old
 
     def update(self):
         """
         update value of scenario managers.
         """
-        if self._scenario_manager._agent is None:
-            print("Scenario manager agent is not set")
-            return py_trees.common.Status.FAILURE
-        
-        if not self._agent_name.endswith('.py'):
-            raise ValueError("Filename must end with '.py'")
+        print("Changing hero agent for vehicle: ", self._ego_vehicle.id)
+        if self._reuse_old:
+            if ChangeHeroAgent.previous_agent is None:
+                print("Previous agent is not set")
+                return py_trees.common.Status.FAILURE
+            self._scenario_manager._agent = ChangeHeroAgent.previous_agent
+        else:
+            if self._scenario_manager._agent is None:
+                print("Scenario manager agent is not set")
+                return py_trees.common.Status.FAILURE
+            
+            if not self._agent_name.endswith('.py'):
+                raise ValueError("Filename must end with '.py'")
 
-        module_name = self._agent_name[:-3]
-        class_name_parts = module_name.split('_')
-        class_name = ''.join(part.title() for part in class_name_parts)
+            module_name = self._agent_name[:-3]
+            class_name_parts = module_name.split('_')
+            class_name = ''.join(part.title() for part in class_name_parts)
 
-        try:
-            module = import_module(f'srunner.autoagents.{module_name}')
-            # Get the new agent instance
-            agent_instance = getattr(module, class_name)(**self._agent_args)
+            try:
+                module = import_module(f'srunner.autoagents.{module_name}')
+                # Get the new agent instance
+                agent_instance = getattr(module, class_name)(**self._agent_args)
 
-            # Clean the old agent
-            self._scenario_manager._agent.cleanup()
+                # Setup the new agent and sensors
+                agent_wrapper = AgentWrapper(agent_instance)
+                agent_wrapper.setup_sensors(self._ego_vehicle)
 
-            # Setup the new agent and sensors
-            agent_wrapper = AgentWrapper(agent_instance)
-            agent_wrapper.setup_sensors(self._ego_vehicle)
+                # Lastly, set the new agent in the scenario manager and store the previous agent
+                ChangeHeroAgent.previous_agent = self._scenario_manager._agent
+                self._scenario_manager._agent = agent_wrapper
 
-            # Lastly, set the new agent in the scenario manager
-            self._scenario_manager._agent = agent_wrapper
-
-        except ImportError as e:
-            print(f"An error occurred while importing: {e}")
-            return py_trees.common.Status.FAILURE
-        except AttributeError as e:
-            print(f"Class {class_name} not found in the module: {e}")
-            return py_trees.common.Status.FAILURE
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return py_trees.common.Status.FAILURE
-        
+            except ImportError as e:
+                print(f"An error occurred while importing: {e}")
+                return py_trees.common.Status.FAILURE
+            except AttributeError as e:
+                print(f"Class {class_name} not found in the module: {e}")
+                return py_trees.common.Status.FAILURE
+            except Exception as e:
+                print(f"An error occurred: {e}")
+                return py_trees.common.Status.FAILURE
+            
         return py_trees.common.Status.SUCCESS
     
 class ChangeVehicleStatus(AtomicBehavior):
