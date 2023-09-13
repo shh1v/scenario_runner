@@ -18,9 +18,9 @@ from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (SetInitSpe
                                                                       ActorTransformSetter,
                                                                       WaypointFollower,
                                                                       ChangeVehicleStatus,
-                                                                      ChangeAutoPilot,
                                                                       ChangeHeroAgent,
                                                                       Idle)
+from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import WaitForManualIntervenation
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.scenario_helper import get_waypoint_in_distance
 
@@ -215,22 +215,29 @@ class TrafficComplexity(BasicScenario):
         # Setup ego vehicle behaviour for the TOR
         ego_and_post_scenario_vehicle_behaviour = py_trees.composites.Sequence("Ego Vehicle Behaviour for TOR")
 
-        # TODO: Add behaviour to send a message to AutoHive for issuing a TOR
+        # Send a message to AutoHive for issuing a TOR
         change_to_tor_status = ChangeVehicleStatus(vehicle_status="TakeOver", name="Change Vehicle Status to TakeOver")
         ego_and_post_scenario_vehicle_behaviour.add_child(change_to_tor_status)
         
-        # Turning on autopilot for several seconds. NOTE that the automation will turn off if driver gives input
-        # NOTE: In order to do this the ego vehicle's agent first needs to be set from npc_agent to dummy_agent
+        # Wait for manual intervention from the driver to then record the driving performance.
+        wait_for_manual_intervention = WaitForManualIntervenation()
+        ego_and_post_scenario_vehicle_behaviour.add_child(wait_for_manual_intervention)
+
+        # Change the hero agent from npc_agent to dummy_agent so the only the driver can control the vehicle.
         set_ego_dummy_agent = ChangeHeroAgent(ego_vehicle=self.ego_vehicles[0], scenario_manager=self._config.scenario_manager, agent_args={"path_to_conf_file": ""}, agent_name="dummy_agent.py")
         ego_and_post_scenario_vehicle_behaviour.add_child(set_ego_dummy_agent)
-        post_tor_autopilot_on = ChangeAutoPilot(actor=self.ego_vehicles[0], traffic_manager=self._config.traffic_manager, activate=True, parameters={"auto_lane_change": False, "ignore_vehicles_percentage": 100, "max_speed": 100})
-        ego_and_post_scenario_vehicle_behaviour.add_child(post_tor_autopilot_on)
 
-        # # Now, WaypointFollower will be terminated after scenario completion. So, turn on autopilot for other vehicles
-        for vehicle, final_speed in zip(self._other_actors, self._actor_final_speeds):
-            turn_on_autopilot = ChangeAutoPilot(actor=vehicle, traffic_manager=self._config.traffic_manager, activate=True, parameters={"max_speed": final_speed*3.6})
-            ego_and_post_scenario_vehicle_behaviour.add_child(turn_on_autopilot)
+        # Once the hero agent is changed, let the driver drive the vehicle for 15 seconds.
+        let_driver_drive = Idle(duration=20)
+        ego_and_post_scenario_vehicle_behaviour.add_child(let_driver_drive)
 
+        # Now, set resume automated vehicle mode. TODO: Create a new signal for this "ResumedAutoPilot"
+        # send_resume_auto_pilot = ChangeVehicleStatus(vehicle_status="ResumedAutoPilot", name="Change Vehicle Status to ResumeAutoPilot")
+        # ego_and_post_scenario_vehicle_behaviour.add_child(send_resume_auto_pilot)
+
+        # Now, let the previous agent take control of the vehicle again and let is drive to the end of the route.
+        revert_hero_agent = ChangeHeroAgent(ego_vehicle=self.ego_vehicles[0], scenario_manager=self._config.scenario_manager, reuse_old=True)
+        ego_and_post_scenario_vehicle_behaviour.add_child(revert_hero_agent)
 
         # Now, add the ego vehicle behaviour to take_over_executer parallel composite
         run_take_over.add_child(ego_and_post_scenario_vehicle_behaviour)
@@ -256,9 +263,10 @@ class TrafficComplexity(BasicScenario):
         Override this method to add post scenario behaviour to the actors
         """
         pass
-    
-    def remove_all_actors(self):
-        """
-        Overriding this method to not remove all the actors.
-        """
-        pass
+
+    # NOTE: This method is commented out so that the actors are removed after the scenario is over.
+    # def remove_all_actors(self):
+    #     """
+    #     Overriding this method to not remove all the actors.
+    #     """
+    #     pass
