@@ -47,8 +47,6 @@ class TrafficComplexity(BasicScenario):
         """
         Initialize all parameters required for triggerring traffic complexity scenario
         """
-        print("Scenario: Initializing Traffic Complexity Scenario")
-        print("Scenario Manager Agent:" + str(config.scenario_manager))
 
         # Some variables helpful for the scenario implementation
         self._world = world
@@ -87,8 +85,6 @@ class TrafficComplexity(BasicScenario):
         offset = 200
         # Spawn all the other vehicle in their respective locations
         for actor in config.other_actors:
-            print(f"Spawning vehicle {actor.model} underground")
-            
             # Figure out on which lane the vehicle must be spawned
             lane = actor.lane
             if lane not in ["left", "right", "same"]:
@@ -163,8 +159,6 @@ class TrafficComplexity(BasicScenario):
 
         # Setting all the actors transform and  velocity using sequence composite
         for vehicle, vehicle_transform, vehicle_velocity in zip(self._other_actors, self._actor_transforms, self._actor_init_speeds):
-            print("Pytrees: [Vehicle: {}; Transform: {}; Velocity: {} m/s]".format(vehicle, vehicle_transform, vehicle_velocity))
-
             # Creating a sequence tree for each vehicle params
             vehicle_params_setter = py_trees.composites.Sequence(f"Vehicle Parameters Setter: for vehicle id: {vehicle}")
 
@@ -190,12 +184,12 @@ class TrafficComplexity(BasicScenario):
         change_to_interleaving_status = ChangeVehicleStatus(vehicle_status="PreAlertAutopilot", name="Change Vehicle Status to PreAlertAutopilot")
         setup_take_over.add_child(change_to_interleaving_status)
 
-        # Adding Ideal behaviour for 30 seconds to help driver prepare for TOR
-        idle_for_driver = Idle(duration=20)
+        # Adding Ideal behaviour for 20 seconds to help driver prepare for TOR
+        idle_for_driver = Idle(duration=30)
         setup_take_over.add_child(idle_for_driver)
 
         # Setting a parallel composite to change the speed of all the vehicles and run WaypointFollower
-        run_take_over = py_trees.composites.Parallel("Execute TOR", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ALL)
+        run_take_over = py_trees.composites.Parallel("Execute TOR", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
         for vehicle, init_speed in zip(self._other_actors, self._actor_final_speeds):
             # Creating a sequence to set speed and run WaypointFollower
@@ -228,7 +222,7 @@ class TrafficComplexity(BasicScenario):
         ego_and_post_scenario_vehicle_behaviour.add_child(set_ego_dummy_agent)
 
         # Once the hero agent is changed, let the driver drive the vehicle for 15 seconds.
-        let_driver_drive = Idle(duration=20)
+        let_driver_drive = Idle(duration=20, name="Let the driver drive the ego vehicle")
         ego_and_post_scenario_vehicle_behaviour.add_child(let_driver_drive)
 
         # Now, set resume automated vehicle mode. TODO: Create a new signal for this "ResumedAutoPilot"

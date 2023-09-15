@@ -1294,11 +1294,13 @@ class WaitForManualIntervenation(AtomicCondition):
         Setup parameters
         """
         super(WaitForManualIntervenation, self).__init__(name)
-        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+        # Nothing to do here.
+
+    def initialise(self):
         self._subscriber_context = zmq.Context()
         self._subscriber_socket = self._subscriber_context.socket(zmq.SUB)
         self._subscriber_socket.setsockopt_string(zmq.SUBSCRIBE, "")
-        self._subscriber_socket.setsockopt(zmq.RCVTIMEO, 1)  # 1 ms timeout
+        self._subscriber_socket.setsockopt(zmq.RCVTIMEO, 1) # 1 ms timeout
         self._subscriber_socket.connect("tcp://localhost:5556")
 
     def update(self):
@@ -1308,13 +1310,19 @@ class WaitForManualIntervenation(AtomicCondition):
         new_status = py_trees.common.Status.RUNNING
 
         try:
+            # NOTE: The following is a very sloppy way of doing this; however, accurate detection of
+            # manual intervention is not required for the challenge. 
             message = self._subscriber_socket.recv()
             message_dict = json.loads(message)
+
             if message_dict["vehicle_status"] == "TakeOverManual":
+                print("Manual override by the driver detected.")
                 new_status = py_trees.common.Status.SUCCESS
         except zmq.Again:
+            print("Waiting for manual intervention.")
             pass # This means that no message was received
         except Exception:
+            print("Error while waiting for manual intervention.")
             print(traceback.format_exc())
 
         return new_status
