@@ -19,6 +19,7 @@ from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (SetInitSpe
                                                                       WaypointFollower,
                                                                       ChangeVehicleStatus,
                                                                       ChangeHeroAgent,
+                                                                      ForceScenarioFailure,
                                                                       Idle)
 from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import WaitForManualIntervenation
 from srunner.scenarios.basic_scenario import BasicScenario
@@ -184,7 +185,7 @@ class TrafficComplexity(BasicScenario):
         change_to_interleaving_status = ChangeVehicleStatus(vehicle_status="PreAlertAutopilot", name="Change Vehicle Status to PreAlertAutopilot")
         setup_take_over.add_child(change_to_interleaving_status)
 
-        # Adding Ideal behaviour for 20 seconds to help driver prepare for TOR
+        # Adding Ideal behaviour for 30 seconds to help driver prepare for TOR
         idle_for_driver = Idle(duration=30)
         setup_take_over.add_child(idle_for_driver)
 
@@ -214,24 +215,28 @@ class TrafficComplexity(BasicScenario):
         ego_and_post_scenario_vehicle_behaviour.add_child(change_to_tor_status)
         
         # Wait for manual intervention from the driver to then record the driving performance.
-        wait_for_manual_intervention = WaitForManualIntervenation()
+        wait_for_manual_intervention = WaitForManualIntervenation(name="Wait for the driver to take control")
         ego_and_post_scenario_vehicle_behaviour.add_child(wait_for_manual_intervention)
 
         # Change the hero agent from npc_agent to dummy_agent so the only the driver can control the vehicle.
-        set_ego_dummy_agent = ChangeHeroAgent(ego_vehicle=self.ego_vehicles[0], scenario_manager=self._config.scenario_manager, agent_args={"path_to_conf_file": ""}, agent_name="dummy_agent.py")
+        set_ego_dummy_agent = ChangeHeroAgent(ego_vehicle=self.ego_vehicles[0], scenario_manager=self._config.scenario_manager, agent_args={"path_to_conf_file": ""}, agent_name="dummy_agent.py", name="Change Hero Agent to Dummy Agent")
         ego_and_post_scenario_vehicle_behaviour.add_child(set_ego_dummy_agent)
 
-        # Once the hero agent is changed, let the driver drive the vehicle for 15 seconds.
+        # Once the hero agent is changed, let the driver drive the vehicle for 20 seconds.
         let_driver_drive = Idle(duration=20, name="Let the driver drive the ego vehicle")
         ego_and_post_scenario_vehicle_behaviour.add_child(let_driver_drive)
 
-        # Now, set resume automated vehicle mode. TODO: Create a new signal for this "ResumedAutoPilot"
-        # send_resume_auto_pilot = ChangeVehicleStatus(vehicle_status="ResumedAutoPilot", name="Change Vehicle Status to ResumeAutoPilot")
-        # ego_and_post_scenario_vehicle_behaviour.add_child(send_resume_auto_pilot)
+        # Now, set resume automated vehicle mode. TODO: Create a new signal for this "ResumedAutopilot"
+        send_resume_auto_pilot = ChangeVehicleStatus(vehicle_status="ResumedAutopilot", name="Change Vehicle Status to ResumedAutopilot")
+        ego_and_post_scenario_vehicle_behaviour.add_child(send_resume_auto_pilot)
 
-        # Now, let the previous agent take control of the vehicle again and let is drive to the end of the route.
-        revert_hero_agent = ChangeHeroAgent(ego_vehicle=self.ego_vehicles[0], scenario_manager=self._config.scenario_manager, reuse_old=True)
-        ego_and_post_scenario_vehicle_behaviour.add_child(revert_hero_agent)
+        # Idle for 1 second to let the vehicle status be sent to AutoHive
+        idle_for_autohive = Idle(duration=1, name="Idle for 1 second to let the vehicle status be sent to AutoHive")
+        ego_and_post_scenario_vehicle_behaviour.add_child(idle_for_autohive)
+
+        # TODO: Force scenario failue so that route scenario fails and autopitlot can be turned on.
+        force_scenario_failure = ForceScenarioFailure(name="Exit Scenario Runner as it is not needed anymore.")
+        ego_and_post_scenario_vehicle_behaviour.add_child(force_scenario_failure)
 
         # Now, add the ego vehicle behaviour to take_over_executer parallel composite
         run_take_over.add_child(ego_and_post_scenario_vehicle_behaviour)
@@ -258,9 +263,9 @@ class TrafficComplexity(BasicScenario):
         """
         pass
 
-    # NOTE: This method is commented out so that the actors are removed after the scenario is over.
-    # def remove_all_actors(self):
-    #     """
-    #     Overriding this method to not remove all the actors.
-    #     """
-    #     pass
+    # NOTE: Remove all the actors after the scenario is over so that general traffic can be introduced.
+    def __del__(self):
+        """
+        Remove all actors upon deletion
+        """
+        self.remove_all_actors()

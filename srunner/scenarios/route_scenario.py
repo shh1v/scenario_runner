@@ -661,9 +661,9 @@ class RouteScenario(BasicScenario):
         Override this method to add post scenario behaviour to the actors
         """
         pass
-    
-    def remove_all_actors(self):
-        """
-        Overriding this method to not remove all the actors.
-        """
-        pass
+    # NOTE: This method is not overridden to avoid removing the actors
+    # def remove_all_actors(self):
+    #     """
+    #     Overriding this method to not remove all the actors.
+    #     """
+    #     pass

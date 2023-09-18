@@ -185,17 +185,15 @@ class ScenarioRunner(object):
 
         self.manager.cleanup()
 
-        # AutoHive Impelementation: Do not destroy the actors and post scenario behaviour is setup for actors
+        CarlaDataProvider.cleanup()
 
-        # CarlaDataProvider.cleanup()
-
-        # for i, _ in enumerate(self.ego_vehicles):
-        #     if self.ego_vehicles[i]:
-        #         if not self._args.waitForEgo and self.ego_vehicles[i] is not None and self.ego_vehicles[i].is_alive:
-        #             print("Destroying ego vehicle {}".format(self.ego_vehicles[i].id))
-        #             self.ego_vehicles[i].destroy()
-        #         self.ego_vehicles[i] = None
-        # self.ego_vehicles = []
+        for i, _ in enumerate(self.ego_vehicles):
+            if self.ego_vehicles[i]:
+                if not self._args.waitForEgo and self.ego_vehicles[i] is not None and self.ego_vehicles[i].is_alive:
+                    print("Destroying ego vehicle {}".format(self.ego_vehicles[i].id))
+                    self.ego_vehicles[i].destroy()
+                self.ego_vehicles[i] = None
+        self.ego_vehicles = []
 
         if self.agent_instance:
             self.agent_instance.destroy()
