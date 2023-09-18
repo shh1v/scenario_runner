@@ -3151,69 +3151,56 @@ class ChangeHeroAgent(AtomicBehavior):
         scenario_manager(ScenarioManager): parameter name
         agent_name(str): python agent file name
     """
-    # NOTE: We also store the previous agent so that it can be reused again if needed through the reuse_old flag
-    previous_agent = None
-
-    def __init__(self, ego_vehicle, scenario_manager, agent_name=None, agent_args={}, reuse_old=False, name="ChangeHeroAgent"):
+    def __init__(self, ego_vehicle, scenario_manager, agent_name=None, agent_args={}, name="ChangeHeroAgent"):
         super(ChangeHeroAgent, self).__init__(name)
         self.logger.debug("%s.__init__()" % self.__class__.__name__)
         if scenario_manager is None:
             raise AttributeError("scenario_manager is not set")
-        if agent_name is not None and reuse_old:
-            raise AttributeError("Cannot reuse old agent and provide a new agent name")
         
         self._scenario_manager = scenario_manager
         self._ego_vehicle = ego_vehicle
         self._agent_name = agent_name
         self._agent_args = agent_args
-        self._reuse_old = reuse_old
 
     def update(self):
         """
-        update value of scenario managers.
+        update value of scenario manager's agent variable
         """
-        print("Changing hero agent for vehicle: ", self._ego_vehicle.id)
-        if self._reuse_old:
-            if ChangeHeroAgent.previous_agent is None:
-                print("Previous agent is not set")
-                return py_trees.common.Status.FAILURE
-            self._scenario_manager._agent = ChangeHeroAgent.previous_agent
-        else:
-            if self._scenario_manager._agent is None:
-                print("Scenario manager agent is not set")
-                return py_trees.common.Status.FAILURE
-            
-            if not self._agent_name.endswith('.py'):
-                raise ValueError("Filename must end with '.py'")
+        if self._scenario_manager._agent is None:
+            print("Scenario manager agent is not set")
+            return py_trees.common.Status.FAILURE
+        
+        if not self._agent_name.endswith('.py'):
+            print("Filename must end with '.py'")
+            return py_trees.common.Status.FAILURE
 
-            module_name = self._agent_name[:-3]
-            class_name_parts = module_name.split('_')
-            class_name = ''.join(part.title() for part in class_name_parts)
+        module_name = self._agent_name[:-3]
+        class_name_parts = module_name.split('_')
+        class_name = ''.join(part.title() for part in class_name_parts)
 
-            try:
-                module = import_module(f'srunner.autoagents.{module_name}')
-                # Get the new agent instance
-                agent_instance = getattr(module, class_name)(**self._agent_args)
+        try:
+            module = import_module(f'srunner.autoagents.{module_name}')
+            # Get the new agent instance
+            agent_instance = getattr(module, class_name)(**self._agent_args)
 
-                # Setup the new agent and sensors
-                agent_wrapper = AgentWrapper(agent_instance)
-                agent_wrapper.setup_sensors(self._ego_vehicle)
+            # Setup the new agent and sensors
+            agent_wrapper = AgentWrapper(agent_instance)
+            agent_wrapper.setup_sensors(self._ego_vehicle)
 
-                # Lastly, set the new agent in the scenario manager and store the previous agent
-                ChangeHeroAgent.previous_agent = self._scenario_manager._agent
-                self._scenario_manager._agent = agent_wrapper
-
-            except ImportError as e:
-                print(f"An error occurred while importing: {e}")
-                return py_trees.common.Status.FAILURE
-            except AttributeError as e:
-                print(f"Class {class_name} not found in the module: {e}")
-                return py_trees.common.Status.FAILURE
-            except Exception as e:
-                print(f"An error occurred: {e}")
-                return py_trees.common.Status.FAILURE
-            
-        return py_trees.common.Status.SUCCESS
+            # Lastly, set the new agent in the scenario manager and store the previous agent
+            ChangeHeroAgent.previous_agent = self._scenario_manager._agent
+            self._scenario_manager._agent = agent_wrapper
+            return py_trees.common.Status.SUCCESS
+        except ImportError as e:
+            print(f"An error occurred while importing: {e}")
+            return py_trees.common.Status.FAILURE
+        except AttributeError as e:
+            print(f"Class {class_name} not found in the module: {e}")
+            return py_trees.common.Status.FAILURE
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return py_trees.common.Status.FAILURE
+        
     
 class ChangeVehicleStatus(AtomicBehavior):
     """
@@ -3223,7 +3210,7 @@ class ChangeVehicleStatus(AtomicBehavior):
         vehicle_status(str): vehicle status in string format
     """
     global_vehicle_status = "Unknown"
-    ordered_vehicle_status = ["Unknown", "ManualDrive", "AutoPilot", "PreAlertAutopilot", "TakeOver", "TakeOverManual"]
+    ordered_vehicle_status = ["Unknown", "ManualDrive", "AutoPilot", "PreAlertAutopilot", "TakeOver", "TakeOverManual", "ResumedAutopilot"]
     def __init__(self, vehicle_status="Unknown", name="ChangeVehicleStatus"):
         super(ChangeVehicleStatus, self).__init__(name)
         self.logger.debug("%s.__init__()" % self.__class__.__name__)
@@ -3275,7 +3262,6 @@ class SendVehicleStatus(AtomicBehavior):
                 "timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")[:-3],
                 "vehicle_status": ChangeVehicleStatus.global_vehicle_status
             }
-
             self.publisher_socket.send_json(message)
 
         except Exception as e:
@@ -3283,7 +3269,8 @@ class SendVehicleStatus(AtomicBehavior):
             print(f"Warning: {e}", traceback.print_exc(e))
             return py_trees.common.Status.FAILURE
         
-        if ChangeVehicleStatus.global_vehicle_status == "TakeOver":
+        # Note: This is required to make sure that the vehicle status is received by the PythonAPI script/CARLA.
+        if ChangeVehicleStatus.global_vehicle_status == "ResumedAutopilot":
             if not hasattr(self, "last_status_send_counter"):
                 self.last_status_send_counter = 1
                 
@@ -3297,3 +3284,18 @@ class SendVehicleStatus(AtomicBehavior):
                 return py_trees.common.Status.SUCCESS
 
         return py_trees.common.Status.RUNNING
+    
+class ForceScenarioFailure(AtomicBehavior):
+    """
+    Custom AutoHive implementation
+    This behaviour will terminate the scenario runner by throwing py_trees.common.Status.FAILURE.
+    """
+    def __init__(self, name="ForceScenarioFailure"):
+        super(ForceScenarioFailure, self).__init__(name)
+        self.logger.debug("%s.__init__()" % self.__class__.__name__)
+
+    def update(self):
+        """
+        Terminate the scenario runner by throwing py_trees.common.Status.FAILURE.
+        """
+        return py_trees.common.Status.FAILURE
