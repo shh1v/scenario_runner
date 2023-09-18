@@ -185,17 +185,15 @@ class ScenarioRunner(object):
 
         self.manager.cleanup()
 
-        # AutoHive Impelementation: Do not destroy the actors and post scenario behaviour is setup for actors
+        CarlaDataProvider.cleanup()
 
-        # CarlaDataProvider.cleanup()
-
-        # for i, _ in enumerate(self.ego_vehicles):
-        #     if self.ego_vehicles[i]:
-        #         if not self._args.waitForEgo and self.ego_vehicles[i] is not None and self.ego_vehicles[i].is_alive:
-        #             print("Destroying ego vehicle {}".format(self.ego_vehicles[i].id))
-        #             self.ego_vehicles[i].destroy()
-        #         self.ego_vehicles[i] = None
-        # self.ego_vehicles = []
+        for i, _ in enumerate(self.ego_vehicles):
+            if self.ego_vehicles[i]:
+                if not self._args.waitForEgo and self.ego_vehicles[i] is not None and self.ego_vehicles[i].is_alive:
+                    print("Destroying ego vehicle {}".format(self.ego_vehicles[i].id))
+                    self.ego_vehicles[i].destroy()
+                self.ego_vehicles[i] = None
+        self.ego_vehicles = []
 
         if self.agent_instance:
             self.agent_instance.destroy()
@@ -389,12 +387,13 @@ class ScenarioRunner(object):
                                         config_file=self._args.openscenario,
                                         timeout=100000)
             elif self._args.route:
-                # Custom AutoHive change: add background activity and senrario_manager as params
+                # Custom AutoHive change: add background activity,  scenario runner and traffic manager objects as params
                 scenario = RouteScenario(world=self.world,
                                          config=config,
                                          debug_mode=self._args.debug,
                                          background_activity=self._args.bg,
-                                         scenario_manager=self.manager)
+                                         scenario_manager=self.manager,
+                                         traffic_manager=tm)
             else:
                 scenario_class = self._get_scenario_class_or_fail(config.type)
                 scenario = scenario_class(self.world,

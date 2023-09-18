@@ -24,6 +24,7 @@ import subprocess
 from bisect import bisect_right
 import inspect
 import datetime
+import traceback
 
 import numpy as np
 from numpy import random
@@ -1540,15 +1541,14 @@ class ChangeAutoPilot(AtomicBehavior):
     The behavior terminates after changing the autopilot state
     """
 
-    def __init__(self, actor, activate, parameters=None, name="ChangeAutoPilot"):
+    def __init__(self, actor, traffic_manager, activate=True, parameters=None, name="ChangeAutoPilot"):
         """
         Setup parameters
         """
         super(ChangeAutoPilot, self).__init__(name, actor)
         self.logger.debug("%s.__init__()" % (self.__class__.__name__))
         self._activate = activate
-        self._tm = CarlaDataProvider.get_client().get_trafficmanager(
-            CarlaDataProvider.get_traffic_manager_port())
+        self._tm = traffic_manager
         self._parameters = parameters
 
     def update(self):
@@ -1581,10 +1581,9 @@ class ChangeAutoPilot(AtomicBehavior):
             if "ignore_vehicles_percentage" in self._parameters:
                 ignore_vehicles = self._parameters["ignore_vehicles_percentage"]
                 self._tm.ignore_vehicles_percentage(self._actor, ignore_vehicles)
-
+                
+        print("Changing autopilot to %s for %s" % ("On" if self._activate else "Off", self._actor.id))
         new_status = py_trees.common.Status.SUCCESS
-
-        self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
         return new_status
 
 
@@ -3152,28 +3151,28 @@ class ChangeHeroAgent(AtomicBehavior):
         scenario_manager(ScenarioManager): parameter name
         agent_name(str): python agent file name
     """
-
-    def __init__(self, ego_vehicle, scenario_manager, agent_name, agent_args={}, name="ChangeHeroAgent"):
+    def __init__(self, ego_vehicle, scenario_manager, agent_name=None, agent_args={}, name="ChangeHeroAgent"):
         super(ChangeHeroAgent, self).__init__(name)
         self.logger.debug("%s.__init__()" % self.__class__.__name__)
         if scenario_manager is None:
             raise AttributeError("scenario_manager is not set")
         
-        self._ego_vehicle = ego_vehicle
         self._scenario_manager = scenario_manager
+        self._ego_vehicle = ego_vehicle
         self._agent_name = agent_name
         self._agent_args = agent_args
 
     def update(self):
         """
-        update value of scenario managers.
+        update value of scenario manager's agent variable
         """
         if self._scenario_manager._agent is None:
             print("Scenario manager agent is not set")
             return py_trees.common.Status.FAILURE
         
         if not self._agent_name.endswith('.py'):
-            raise ValueError("Filename must end with '.py'")
+            print("Filename must end with '.py'")
+            return py_trees.common.Status.FAILURE
 
         module_name = self._agent_name[:-3]
         class_name_parts = module_name.split('_')
@@ -3184,16 +3183,14 @@ class ChangeHeroAgent(AtomicBehavior):
             # Get the new agent instance
             agent_instance = getattr(module, class_name)(**self._agent_args)
 
-            # Clean the old agent
-            self._scenario_manager._agent.cleanup()
-
             # Setup the new agent and sensors
             agent_wrapper = AgentWrapper(agent_instance)
             agent_wrapper.setup_sensors(self._ego_vehicle)
 
-            # Lastly, set the new agent in the scenario manager
+            # Lastly, set the new agent in the scenario manager and store the previous agent
+            ChangeHeroAgent.previous_agent = self._scenario_manager._agent
             self._scenario_manager._agent = agent_wrapper
-
+            return py_trees.common.Status.SUCCESS
         except ImportError as e:
             print(f"An error occurred while importing: {e}")
             return py_trees.common.Status.FAILURE
@@ -3204,7 +3201,6 @@ class ChangeHeroAgent(AtomicBehavior):
             print(f"An error occurred: {e}")
             return py_trees.common.Status.FAILURE
         
-        return py_trees.common.Status.SUCCESS
     
 class ChangeVehicleStatus(AtomicBehavior):
     """
@@ -3214,7 +3210,7 @@ class ChangeVehicleStatus(AtomicBehavior):
         vehicle_status(str): vehicle status in string format
     """
     global_vehicle_status = "Unknown"
-    ordered_vehicle_status = ["Unknown", "ManualDrive", "AutoPilot", "PreAlertAutopilot", "TakeOver", "TakeOverManual"]
+    ordered_vehicle_status = ["Unknown", "ManualDrive", "AutoPilot", "PreAlertAutopilot", "TakeOver", "TakeOverManual", "ResumedAutopilot"]
     def __init__(self, vehicle_status="Unknown", name="ChangeVehicleStatus"):
         super(ChangeVehicleStatus, self).__init__(name)
         self.logger.debug("%s.__init__()" % self.__class__.__name__)
@@ -3255,8 +3251,10 @@ class SendVehicleStatus(AtomicBehavior):
         """
         Send the signal to Carla's PythonAPI script with instant Success/Failure.
         """
-        if self.publisher_socket is None or self.publisher_context is None:
-            return py_trees.common.Status.FAILURE
+        if self.publisher_socket is None and self.publisher_context is None:
+            # This is the case where we have already sent the signal and closed the socket
+            # To gracefully exit the behaviour, we return success
+            return py_trees.common.Status.SUCCESS
         try:
             # Send vehicle status
             message = {
@@ -3264,16 +3262,15 @@ class SendVehicleStatus(AtomicBehavior):
                 "timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")[:-3],
                 "vehicle_status": ChangeVehicleStatus.global_vehicle_status
             }
-
             self.publisher_socket.send_json(message)
-            print("Sent vehicle status by scenario runner: {}".format(ChangeVehicleStatus.global_vehicle_status))
 
         except Exception as e:
             # Optionally log or print the exception for debugging purposes
-            print(f"Error encountered: {e}")
+            print(f"Warning: {e}", traceback.print_exc(e))
             return py_trees.common.Status.FAILURE
         
-        if ChangeVehicleStatus.global_vehicle_status == "TakeOver":
+        # Note: This is required to make sure that the vehicle status is received by the PythonAPI script/CARLA.
+        if ChangeVehicleStatus.global_vehicle_status == "ResumedAutopilot":
             if not hasattr(self, "last_status_send_counter"):
                 self.last_status_send_counter = 1
                 
@@ -3287,3 +3284,18 @@ class SendVehicleStatus(AtomicBehavior):
                 return py_trees.common.Status.SUCCESS
 
         return py_trees.common.Status.RUNNING
+    
+class ForceScenarioFailure(AtomicBehavior):
+    """
+    Custom AutoHive implementation
+    This behaviour will terminate the scenario runner by throwing py_trees.common.Status.FAILURE.
+    """
+    def __init__(self, name="ForceScenarioFailure"):
+        super(ForceScenarioFailure, self).__init__(name)
+        self.logger.debug("%s.__init__()" % self.__class__.__name__)
+
+    def update(self):
+        """
+        Terminate the scenario runner by throwing py_trees.common.Status.FAILURE.
+        """
+        return py_trees.common.Status.FAILURE

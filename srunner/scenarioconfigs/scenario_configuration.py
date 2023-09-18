@@ -106,3 +106,4 @@ class ScenarioConfiguration(object):
 
     # Custom AutoHive attributes
     scenario_manager = None
+    traffic_manager = None

@@ -94,8 +94,8 @@ class ScenarioManager(object):
         if self._agent is not None:
             self._agent.cleanup()
             self._agent = None
-        # AutoHive Impelementation: Do not destroy the actors and post scenario behaviour is setup for actors
-        # CarlaDataProvider.cleanup()
+        
+        CarlaDataProvider.cleanup()
 
     def load_scenario(self, scenario, agent=None, route_id=None):
         """
@@ -112,7 +112,7 @@ class ScenarioManager(object):
         self.other_actors = scenario.other_actors
 
         # To print the scenario tree uncomment the next line
-        # py_trees.display.render_dot_tree(self.scenario_tree)
+        py_trees.display.render_dot_tree(self.scenario_tree)
 
         if self._agent is not None:
             self._agent.setup_sensors(self.ego_vehicles[0], self._debug_mode)
@@ -206,7 +206,6 @@ class ScenarioManager(object):
                 ego_action = self._agent()  # pylint: disable=not-callable
 
             if self._agent is not None and ego_action is not None:
-                # print(f"Ego action for {self.ego_vehicles[0]} (1 of {len(self.ego_vehicles)}): {ego_action}")
                 self.ego_vehicles[0].apply_control(ego_action)
                 # print(f"Ego applied for {self.ego_vehicles[0]} (1 of {len(self.ego_vehicles)}): {self.ego_vehicles[0].get_control()}")
             else:
