@@ -3210,7 +3210,7 @@ class ChangeVehicleStatus(AtomicBehavior):
         vehicle_status(str): vehicle status in string format
     """
     global_vehicle_status = "Unknown"
-    ordered_vehicle_status = ["Unknown", "ManualDrive", "AutoPilot", "PreAlertAutopilot", "TakeOver", "TakeOverManual", "ResumedAutopilot"]
+    ordered_vehicle_status = ["Unknown", "ManualDrive", "Autopilot", "PreAlertAutopilot", "TakeOver", "TakeOverManual", "ResumedAutopilot"]
     def __init__(self, vehicle_status="Unknown", name="ChangeVehicleStatus"):
         super(ChangeVehicleStatus, self).__init__(name)
         self.logger.debug("%s.__init__()" % self.__class__.__name__)

@@ -181,8 +181,10 @@ class ScenarioManager(object):
                         print_failure_reasons(child, indent + 2)
 
         if self.scenario_tree.status == py_trees.common.Status.FAILURE:
-            print("ScenarioManager: Terminated due to failure")
-            print_failure_reasons(self.scenario_tree)
+            # Commething this out becasuse there are certain components in AutoHive that are expected to fail
+            # print("ScenarioManager: Terminated due to failure")
+            # print_failure_reasons(self.scenario_tree)
+            pass
 
     def _tick_scenario(self, timestamp):
         """

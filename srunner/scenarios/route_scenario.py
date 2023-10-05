@@ -88,48 +88,49 @@ def convert_json_to_actor(actor_dict):
     node = ET.Element('waypoint')
     
     # AutoHive: Handled the case where the following attributes are not provided
+    # NOTE: Instead of pass, we can also print a warning message
     try:
         node.set('x', actor_dict['x'])
     except KeyError:
-        print("Warning: Actor is missing x coordinate")
+        pass
     try:
         node.set('y', actor_dict['y'])
     except KeyError:
-        print("Warning: Actor is missing y coordinate")
+        pass
     try:
         node.set('z', actor_dict['z'])
     except KeyError:
-        print("Warning: Actor is missing z coordinate")
+        pass
     try:
         node.set('yaw', actor_dict['yaw'])
     except KeyError:
-        print("Warning: Actor is missing yaw coordinate")
+        pass
 
     # AutoHive: Loading custom attributes
     try:
         node.set('model', actor_dict['model'])
     except KeyError:
-        print("Warning: Actor is missing model attribute")
+        pass
     try:
         node.set('lane', actor_dict['lane'])
     except KeyError:
-        print("Warning: Actor is missing lane attribute")
+        pass
     try:
         node.set('role', actor_dict['role'])
     except KeyError:
-        print("Warning: Actor is missing role attribute")
+        pass
     try:
         node.set('vehicle_offset', actor_dict['vehicle_offset'])
     except KeyError:
-        print("Warning: Actor is missing vehicle_offset attribute")
+        pass
     try:
         node.set('init_speed', actor_dict['init_speed'])
     except KeyError:
-        print("Warning: Actor is missing init_speed attribute")
+        pass
     try:
         node.set('final_speed', actor_dict['final_speed'])
     except KeyError:
-        print("Warning: Actor is missing final_speed attribute")
+        pass
 
 
     return ActorConfigurationData.parse_from_node(node, 'simulation')
@@ -389,7 +390,8 @@ class RouteScenario(BasicScenario):
             else:
                 continue
             sign_type: str = f"static.prop.{dreyevr_sign_type}"
-            print(f"Spawning ({sign_type}) sign {i} at {sign_transform}")
+            # Commented out to avoid log spam
+            # print(f"Spawning ({sign_type}) sign {i} at {sign_transform}")
             CarlaDataProvider.request_new_actor(sign_type, sign_transform,
                                                 rolename='navigation_sign')
         # plot the final goal waypoint (at the end)
@@ -612,7 +614,7 @@ class RouteScenario(BasicScenario):
         subbehavior.add_child(send_vehicle_status)
 
         # Add behaviour to send signal for ego vehicle tunring on autopilot
-        change_to_autopilot_status = ChangeVehicleStatus(vehicle_status="AutoPilot")
+        change_to_autopilot_status = ChangeVehicleStatus(vehicle_status="Autopilot")
         subbehavior.add_child(change_to_autopilot_status)
         
         behavior.add_child(subbehavior)
