@@ -7,7 +7,8 @@ srunner/scenarios/*.pyc
 srunner/scenarios/__pycache__/
 srunner/utilities/*.pyc
 srunner/utilities/__pycache__/
-PerformanceData/
+DrivingData/
+EyeData/
 results*.txt
 *.log
 .project
