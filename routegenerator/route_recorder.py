@@ -48,6 +48,10 @@ def main(**kargs):
                     # Don't write transforms that are too close together
                     world.tick()
                     continue
+                world.debug.draw_string(new_transform.location, f"[000]\n[000]", draw_shadow=False,
+                            color=carla.Color(r=255, g=0, b=0), life_time=10000.0,
+                            persistent_lines=True)
+
                 file.write(str(new_transform) + "\n")
                 file.flush()  # Force write to disk after each update.
                 os.fsync(file.fileno())  # Ensure it's written to disk.
