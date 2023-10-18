@@ -33,7 +33,7 @@ def main(**kargs):
     
     try:
         # Simulation Synchronization
-        ExperimentHelper.set_synchronous_mode(world)
+        ExperimentHelper.set_simulation_mode(client, synchronous_mode=True, tm_synchronous_mode=True, tm_port=8000, fixed_delta_seconds=0.05)
 
         # Setting actors starting position to the start of the route
         DReyeVR_vehicle = find_ego_vehicle(world)
@@ -41,7 +41,7 @@ def main(**kargs):
         
         new_transform = None
         last_logged_transform = None
-        with open("routegenerator/raw_waypoints/route_final_2.txt", "w") as file:
+        with open("routegenerator/raw_waypoints/study_route_2.txt", "w") as file:
             while True:
                 new_transform = DReyeVR_vehicle.get_transform()
                 if last_logged_transform is not None and last_logged_transform.location.distance(new_transform.location) < 20:
@@ -54,7 +54,7 @@ def main(**kargs):
                 last_logged_transform = new_transform
                 world.tick()
     finally:
-        ExperimentHelper.set_asynchronous_mode(world)
+        ExperimentHelper.set_simulation_mode(client, synchronous_mode=False, tm_synchronous_mode=False)
 
 
 if __name__ == '__main__':

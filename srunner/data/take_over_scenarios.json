@@ -7,10 +7,66 @@
                         {
                             "transform": {
                                 "pitch": "0.0",
-                                "x": "-446.44",
-                                "y": "16.13",
-                                "yaw": "-195.91",
+                                "x": "-506.41",
+                                "y": "88.80",
+                                "yaw": "-265.03",
                                 "z": "0.0"
+                            },
+                            "other_actors": [
+                                {
+                                    "model": "vehicle.ford.mustang",
+                                    "lane": "same",
+                                    "role": "relevant",
+                                    "vehicle_offset": "55.56",
+                                    "init_speed": "100",
+                                    "final_speed": "80"
+                                },
+                                {
+                                    "model": "vehicle.dodge.charger_police_2020",
+                                    "lane": "left",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "-20.0",
+                                    "init_speed": "100",
+                                    "final_speed": "160"
+                                },
+                                {
+                                    "model": "vehicle.lincoln.mkz_2017",
+                                    "lane": "left",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "-50.0",
+                                    "init_speed": "100",
+                                    "final_speed": "160"
+                                },
+                                {
+                                    "model": "vehicle.mercedes.coupe",
+                                    "lane": "left",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "-80.0",
+                                    "init_speed": "100",
+                                    "final_speed": "160"
+                                },
+                                {
+                                    "model": "vehicle.nissan.patrol_2021",
+                                    "lane": "left",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "-110.0",
+                                    "init_speed": "100",
+                                    "final_speed": "160"
+                                }
+                            ]
+                        }
+                    ],
+                    "scenario_type": "Scenario11"
+                },
+                {
+                    "available_event_configurations": [
+                        {
+                            "transform": {
+                                "pitch": "360.00",
+                                "x": "16.78",
+                                "y": "34.15",
+                                "yaw": "0.23",
+                                "z": "11.0"
                             },
                             "other_actors": [
                                 {
