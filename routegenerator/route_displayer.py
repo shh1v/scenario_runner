@@ -35,7 +35,7 @@ def main(**kargs):
     client.set_timeout(10.0)
     
     # Change this to the route xml file you want to display
-    file_name = 'routegenerator/route_data/route_final_2.xml'
+    file_name = 'routegenerator/route_data/study_route_2.xml'
 
     try:
         world = client.get_world()
@@ -54,9 +54,10 @@ def main(**kargs):
         # Run the simulation in synchronous mode with fixed time
         # step when not recording driving performance or running any traffic scenarios
 
+        ExperimentHelper.set_simulation_mode(client, synchronous_mode=False, tm_synchronous_mode=False)
+
         # Setting actors starting position to the start of the route
         DReyeVR_vehicle = find_ego_vehicle(world)
-        DReyeVR_vehicle.set_transform(carla.Transform(carla.Location(8.5, 19.3, 0), carla.Rotation(0, -90.3, 0)))
         world.tick()
 
         # assuming your xml is in a string, otherwise load it from a file
@@ -65,20 +66,27 @@ def main(**kargs):
             xml_data = file.read()
 
         root = ET.fromstring(xml_data)
-
+        isFirst = True
         for route in root.findall('route'):
             route_id = route.get('id')
             town = route.get('town')
             print(f'Route ID: {route_id}, Town: {town}')
             
             for waypoint in route.findall('waypoint'):
+                if isFirst:
+                    DReyeVR_vehicle.set_transform(carla.Transform(carla.Location(float(waypoint.get('x')), float(waypoint.get('y')), float(waypoint.get('z'))), carla.Rotation(float(waypoint.get('pitch')), float(waypoint.get('yaw')), float(waypoint.get('roll')))))
+                    isFirst = False
                 x = waypoint.get('x')
                 y = waypoint.get('y')
                 z = waypoint.get('z')
+                # world.debug.draw_string(carla_waypoint.transform.location, f"[0]", draw_shadow=False,
+                #                             color=carla.Color(r=0, g=255, b=0), life_time=300.0,
+                #                             persistent_lines=True)
+                ################################### OR #########################################
                 carla_waypoint = world.get_map().get_waypoint(carla.Location(float(x), float(y), float(z)))
                 world.debug.draw_string(carla_waypoint.transform.location, f"[*] {carla_waypoint.transform.location}\n{carla_waypoint.transform.rotation}", draw_shadow=False,
-                                            color=carla.Color(r=255, g=0, b=0), life_time=300.0,
-                                            persistent_lines=True)
+                            color=carla.Color(r=255, g=0, b=0), life_time=300.0,
+                            persistent_lines=True)
 
     finally:
         pass
