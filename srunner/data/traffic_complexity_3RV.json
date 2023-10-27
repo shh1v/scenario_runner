@@ -1,0 +1,48 @@
+{
+    "available_scenarios": [
+        {
+            "Town04": [
+                {
+                    "available_event_configurations": [
+                        {
+                            "transform": {
+                                "pitch": "0.0",
+                                "x": "-506.41",
+                                "y": "88.80",
+                                "yaw": "-265.03",
+                                "z": "0.0"
+                            },
+                            "other_actors": [
+                                {
+                                    "model": "vehicle.ford.mustang",
+                                    "lane": "same",
+                                    "role": "relevant",
+                                    "vehicle_offset": "55.56",
+                                    "init_speed": "100",
+                                    "final_speed": "80"
+                                },
+                                {
+                                    "model": "vehicle.dodge.charger_police_2020",
+                                    "lane": "left",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "50.0",
+                                    "init_speed": "100",
+                                    "final_speed": "80"
+                                },
+                                {
+                                    "model": "vehicle.lincoln.mkz_2017",
+                                    "lane": "right",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "-20.0",
+                                    "init_speed": "100",
+                                    "final_speed": "160"
+                                }
+                            ]
+                        }
+                    ],
+                    "scenario_type": "Scenario11"
+                }
+            ]
+        }
+    ]
+}
