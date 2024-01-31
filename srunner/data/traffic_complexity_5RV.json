@@ -30,7 +30,7 @@
                                     "final_speed": "80"
                                 },
                                 {
-                                    "model": "vehicle.lincoln.mkz_2017",
+                                    "model": "vehicle.dodge.charger_2020",
                                     "lane": "left",
                                     "role": "relevant",
                                     "vehicle_offset": "10",
@@ -38,7 +38,7 @@
                                     "final_speed": "80"
                                 },
                                 {
-                                    "model": "vehicle.lincoln.mkz_2017",
+                                    "model": "vehicle.dodge.charger_police_2020",
                                     "lane": "right",
                                     "role": "relevant",
                                     "vehicle_offset": "35",
@@ -46,7 +46,7 @@
                                     "final_speed": "160"
                                 },
                                 {
-                                    "model": "vehicle.mercedes.coupe",
+                                    "model": "vehicle.ford.mustang",
                                     "lane": "right",
                                     "role": "relevant",
                                     "vehicle_offset": "5.0",

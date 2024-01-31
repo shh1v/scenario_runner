@@ -22,7 +22,7 @@
                                     "final_speed": "80"
                                 },
                                 {
-                                    "model": "vehicle.dodge.charger_police_2020",
+                                    "model": "vehicle.dodge.charger_2020",
                                     "lane": "left",
                                     "role": "notrelevant",
                                     "vehicle_offset": "50.0",
@@ -30,7 +30,7 @@
                                     "final_speed": "80"
                                 },
                                 {
-                                    "model": "vehicle.lincoln.mkz_2017",
+                                    "model": "vehicle.dodge.charger_2020",
                                     "lane": "right",
                                     "role": "notrelevant",
                                     "vehicle_offset": "-20.0",
