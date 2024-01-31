@@ -9,6 +9,7 @@ srunner/utilities/*.pyc
 srunner/utilities/__pycache__/
 DrivingData/
 EyeData/
+IntervalData/
 results*.txt
 *.log
 .project

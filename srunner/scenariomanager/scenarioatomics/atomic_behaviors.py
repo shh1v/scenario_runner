@@ -2304,20 +2304,30 @@ class ActorTransformSetter(AtomicBehavior):
     Therefore: calculate_distance(actor, transform) < 1 meter
     """
 
-    def __init__(self, actor, transform, physics=True, name="ActorTransformSetter"):
+    def __init__(self, actor, transform, physics=True, speed=None, name="ActorTransformSetter"):
         """
         Init
         """
         super(ActorTransformSetter, self).__init__(name, actor)
         self._transform = transform
         self._physics = physics
+        self._speed = speed
         self.logger.debug("%s.__init__()" % (self.__class__.__name__))
 
     def initialise(self):
         if self._actor.is_alive:
-            self._actor.set_target_velocity(carla.Vector3D(0, 0, 0))
-            self._actor.set_target_angular_velocity(carla.Vector3D(0, 0, 0))
+            # Set the transform first
             self._actor.set_transform(self._transform)
+            # Compute velocity vector and set new actor velocity
+            if self._speed is not None:
+                actor_yaw = self._actor.get_transform().rotation.yaw * (math.pi / 180)
+                actor_vx = math.cos(actor_yaw) * self._speed
+                actor_vy = math.sin(actor_yaw) * self._speed
+                self._actor.enable_constant_velocity(carla.Vector3D(actor_vx, actor_vy, 0))
+            else:
+                self._actor.set_target_velocity(carla.Vector3D(0, 0, 0))
+            # Lastly, set the angular velocity
+            # self._actor.set_target_angular_velocity(carla.Vector3D(0, 0, 0))
         super(ActorTransformSetter, self).initialise()
 
     def update(self):
@@ -2329,9 +2339,14 @@ class ActorTransformSetter(AtomicBehavior):
         if not self._actor.is_alive:
             new_status = py_trees.common.Status.FAILURE
 
+        # This will allow the vehicle to drop to the ground
         if calculate_distance(self._actor.get_location(), self._transform.location) < 1.0:
             if self._physics:
                 self._actor.set_simulate_physics(enabled=True)
+
+        # To ensure the velocity is set when the vehicle is on the ground and not mid-air
+        if abs(self._actor.get_location().z - CarlaDataProvider.get_map().get_waypoint(self._actor.get_location()).transform.location.z) < 0.1:
+            self._actor.disable_constant_velocity()
             new_status = py_trees.common.Status.SUCCESS
 
         return new_status

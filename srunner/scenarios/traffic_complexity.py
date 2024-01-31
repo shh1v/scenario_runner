@@ -159,20 +159,16 @@ class TrafficComplexity(BasicScenario):
         root = py_trees.composites.Parallel("Parallel Behavior", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
         # Setting all the actors transform and  velocity using sequence composite
-        for vehicle, vehicle_transform, vehicle_velocity in zip(self._other_actors, self._actor_transforms, self._actor_init_speeds):
+        for vehicle, vehicle_transform, vehicle_speed in zip(self._other_actors, self._actor_transforms, self._actor_init_speeds):
             # Creating a sequence tree for each vehicle params
             vehicle_params_setter = py_trees.composites.Sequence(f"Vehicle Parameters Setter: for vehicle id: {vehicle}")
 
-            # Setting the transform
-            set_above_transform = ActorTransformSetter(vehicle, vehicle_transform) # Set the transform of the vehicle above ground
-            vehicle_params_setter.add_child(set_above_transform)
-
-            # Setting the velocity
-            set_init_velocity = SetInitSpeed(vehicle, vehicle_velocity) # Set the target speed immediately
-            vehicle_params_setter.add_child(set_init_velocity)
+            # Setting the transform and it's respective initial speeds
+            set_transform_and_speed = ActorTransformSetter(vehicle, vehicle_transform, speed=vehicle_speed) # Set the transform of the vehicle above ground
+            vehicle_params_setter.add_child(set_transform_and_speed)
 
             # Now, set the auto agent for the vehicles so they can drive by themselves
-            set_agent = WaypointFollower(actor=vehicle, target_speed=vehicle_velocity, name=f"Initial Waypoint Follower for {vehicle.id}")
+            set_agent = WaypointFollower(actor=vehicle, target_speed=vehicle_speed, name=f"Initial Waypoint Follower for {vehicle.id}")
             vehicle_params_setter.add_child(set_agent)
 
             # Lastly, add the vehicle params setter to the root
