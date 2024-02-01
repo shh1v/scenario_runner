@@ -17,41 +17,33 @@
                                     "model": "vehicle.ford.mustang",
                                     "lane": "same",
                                     "role": "relevant",
-                                    "vehicle_offset": "55.56",
+                                    "vehicle_offset": "50.0",
                                     "init_speed": "100",
-                                    "final_speed": "60"
+                                    "final_speed": "70"
                                 },
                                 {
                                     "model": "vehicle.dodge.charger_police_2020",
                                     "lane": "left",
                                     "role": "notrelevant",
-                                    "vehicle_offset": "-20.0",
+                                    "vehicle_offset": "40.0",
                                     "init_speed": "100",
-                                    "final_speed": "160"
+                                    "final_speed": "70"
                                 },
                                 {
                                     "model": "vehicle.dodge.charger_police_2020",
                                     "lane": "left",
                                     "role": "notrelevant",
-                                    "vehicle_offset": "-50.0",
+                                    "vehicle_offset": "20.0",
                                     "init_speed": "100",
-                                    "final_speed": "160"
+                                    "final_speed": "70"
                                 },
                                 {
                                     "model": "vehicle.dodge.charger_2020",
                                     "lane": "left",
                                     "role": "notrelevant",
-                                    "vehicle_offset": "-80.0",
+                                    "vehicle_offset": "0.0",
                                     "init_speed": "100",
-                                    "final_speed": "160"
-                                },
-                                {
-                                    "model": "vehicle.dodge.charger_2020",
-                                    "lane": "left",
-                                    "role": "notrelevant",
-                                    "vehicle_offset": "-110.0",
-                                    "init_speed": "100",
-                                    "final_speed": "160"
+                                    "final_speed": "70"
                                 }
                             ]
                         }

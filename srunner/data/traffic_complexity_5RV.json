@@ -17,9 +17,9 @@
                                     "model": "vehicle.ford.mustang",
                                     "lane": "same",
                                     "role": "relevant",
-                                    "vehicle_offset": "55.56",
+                                    "vehicle_offset": "50.0",
                                     "init_speed": "100",
-                                    "final_speed": "60"
+                                    "final_speed": "70"
                                 },
                                 {
                                     "model": "vehicle.dodge.charger_police_2020",
@@ -27,21 +27,21 @@
                                     "role": "relevant",
                                     "vehicle_offset": "40.0",
                                     "init_speed": "100",
-                                    "final_speed": "80"
+                                    "final_speed": "70"
                                 },
                                 {
                                     "model": "vehicle.dodge.charger_2020",
                                     "lane": "left",
                                     "role": "relevant",
-                                    "vehicle_offset": "10",
+                                    "vehicle_offset": "5.0",
                                     "init_speed": "100",
-                                    "final_speed": "80"
+                                    "final_speed": "70"
                                 },
                                 {
                                     "model": "vehicle.dodge.charger_police_2020",
                                     "lane": "right",
                                     "role": "relevant",
-                                    "vehicle_offset": "35",
+                                    "vehicle_offset": "35.0",
                                     "init_speed": "100",
                                     "final_speed": "160"
                                 },
@@ -49,7 +49,7 @@
                                     "model": "vehicle.ford.mustang",
                                     "lane": "right",
                                     "role": "relevant",
-                                    "vehicle_offset": "5.0",
+                                    "vehicle_offset": "10.0",
                                     "init_speed": "100",
                                     "final_speed": "160"
                                 }
