@@ -182,7 +182,8 @@ class TrafficComplexity(BasicScenario):
         setup_take_over.add_child(change_to_interleaving_status)
 
         # Adding Ideal behaviour for 30 seconds to help driver prepare for TOR
-        idle_for_driver = Idle(duration=30)
+        # NOTE: Because of game/system time difference, 40 seconds is 30 seconds in real time
+        idle_for_driver = Idle(duration=40)
         setup_take_over.add_child(idle_for_driver)
 
         # Setting a parallel composite to change the speed of all the vehicles and run WaypointFollower
@@ -219,7 +220,7 @@ class TrafficComplexity(BasicScenario):
         ego_and_post_scenario_vehicle_behaviour.add_child(set_ego_dummy_agent)
 
         # Once the hero agent is changed, let the driver drive the vehicle for 20 seconds.
-        let_driver_drive = Idle(duration=20, name="Let the driver drive the ego vehicle")
+        let_driver_drive = Idle(duration=30, name="Let the driver drive the ego vehicle")
         ego_and_post_scenario_vehicle_behaviour.add_child(let_driver_drive)
 
         # Now, set resume automated vehicle mode. TODO: Create a new signal for this "ResumedAutopilot"

@@ -19,7 +19,7 @@
                                     "role": "relevant",
                                     "vehicle_offset": "55.56",
                                     "init_speed": "100",
-                                    "final_speed": "80"
+                                    "final_speed": "60"
                                 },
                                 {
                                     "model": "vehicle.dodge.charger_2020",
