@@ -7,11 +7,19 @@
                                     {
                                         "transform": {
                                             "pitch": "0.0",
-                                            "x": "151.4",
-                                            "y": "-26.2",
-                                            "yaw": "88.0",
-                                            "z": "0.0"
+                                            "x": "-164",
+                                            "y": "-95",
+                                            "yaw": "-179",
+                                            "z": "0"
                                         },
+                                        "transform": {
+                                            "pitch": "0.0",
+                                            "x": "-184",
+                                            "y": "-95",
+                                            "yaw": "176",
+                                            "z": "0"
+                                        }
+                                    ,
                                     "other_actors": [
                                                                     {
                                                                         "model": "vehicle.ford.mustang",
