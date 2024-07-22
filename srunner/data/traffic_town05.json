@@ -1,0 +1,56 @@
+{
+    "available_scenarios": [
+        {  
+            "Town05": [
+                            {
+                                "available_event_configurations": [
+                                    {
+                                        "transform": {
+                                            "pitch": "0.0",
+                                            "x": "151.4",
+                                            "y": "-26.2",
+                                            "yaw": "88.0",
+                                            "z": "0.0"
+                                        },
+                                    "other_actors": [
+                                                                    {
+                                                                        "model": "vehicle.ford.mustang",
+                                                                        "lane": "same",
+                                                                        "role": "relevant",
+                                                                        "vehicle_offset": "50.0",
+                                                                        "init_speed": "100",
+                                                                        "final_speed": "70"
+                                                                    },
+                                                                    {
+                                                                        "model": "vehicle.dodge.charger_police_2020",
+                                                                        "lane": "left",
+                                                                        "role": "notrelevant",
+                                                                        "vehicle_offset": "40.0",
+                                                                        "init_speed": "100",
+                                                                        "final_speed": "70"
+                                                                    },
+                                                                    {
+                                                                        "model": "vehicle.dodge.charger_police_2020",
+                                                                        "lane": "left",
+                                                                        "role": "notrelevant",
+                                                                        "vehicle_offset": "20.0",
+                                                                        "init_speed": "100",
+                                                                        "final_speed": "70"
+                                                                    },
+                                                                    {
+                                                                        "model": "vehicle.dodge.charger_2020",
+                                                                        "lane": "left",
+                                                                        "role": "notrelevant",
+                                                                        "vehicle_offset": "0.0",
+                                                                        "init_speed": "100",
+                                                                        "final_speed": "70"
+                                                                    }
+                                                                ]
+                        }
+                    ],
+                    "scenario_type": "Scenario11"
+                }
+            ]
+        }
+    ]
+}
