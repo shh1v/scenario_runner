@@ -41,7 +41,7 @@ def main(**kargs):
 
     client = carla.Client(kargs['host'], kargs['port'])
     client.set_timeout(10.0)
-    world = client.get_world()
+    world = client.load_world("Town05")
     
     try:
         # Setting actors starting position to the start of the route
@@ -50,7 +50,7 @@ def main(**kargs):
         
         new_transform = None
         last_logged_transform = None
-        with open("routegenerator/route_data/raw_waypoints/study_route_1.txt", "w") as file:
+        with open("routegenerator/route_data/raw_waypoints/study_route_1_town05.txt", "w") as file:
             while True:
                 new_transform = DReyeVR_vehicle.get_transform()
                 if last_logged_transform is not None and last_logged_transform.location.distance(new_transform.location) < 20:
