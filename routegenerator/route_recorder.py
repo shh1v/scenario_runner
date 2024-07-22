@@ -15,14 +15,26 @@ import time
 import sys
 
 # Local imports
-sys.path.append('../carla/PythonAPI/examples/')
-sys.path.append('../carla/PythonAPI/experiment/')
 import carla
-from experiment_utils import ExperimentHelper
 from DReyeVR_utils import find_ego_vehicle
 
 # Other library imports
 import logging
+
+def set_simulation_mode(client, synchronous_mode=True, tm_synchronous_mode=True, tm_port=8000, fixed_delta_seconds=0.05):
+    # Setting simulation mode
+    settings = client.get_world().get_settings()
+    if synchronous_mode:
+        settings.synchronous_mode = True
+        settings.fixed_delta_seconds = fixed_delta_seconds # 20 Hz
+    else:
+        settings.synchronous_mode = False
+        settings.fixed_delta_seconds = None
+    client.get_world().apply_settings(settings)
+
+    # Setting Traffic Manager parameters
+    traffic_manager = client.get_trafficmanager(tm_port)
+    traffic_manager.set_synchronous_mode(tm_synchronous_mode)
 
 def main(**kargs):
     logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
@@ -32,16 +44,13 @@ def main(**kargs):
     world = client.get_world()
     
     try:
-        # Simulation Synchronization
-        ExperimentHelper.set_simulation_mode(client, synchronous_mode=True, tm_synchronous_mode=True, tm_port=8000, fixed_delta_seconds=0.05)
-
         # Setting actors starting position to the start of the route
         DReyeVR_vehicle = find_ego_vehicle(world)
         world.tick()
         
         new_transform = None
         last_logged_transform = None
-        with open("routegenerator/raw_waypoints/study_route_2.txt", "w") as file:
+        with open("routegenerator/route_data/raw_waypoints/study_route_1.txt", "w") as file:
             while True:
                 new_transform = DReyeVR_vehicle.get_transform()
                 if last_logged_transform is not None and last_logged_transform.location.distance(new_transform.location) < 20:
@@ -58,7 +67,8 @@ def main(**kargs):
                 last_logged_transform = new_transform
                 world.tick()
     finally:
-        ExperimentHelper.set_simulation_mode(client, synchronous_mode=False, tm_synchronous_mode=False)
+        # Ensure world is again in stand alone
+        set_simulation_mode(client, synchronous_mode=False, tm_synchronous_mode=False)
 
 
 if __name__ == '__main__':
@@ -66,4 +76,3 @@ if __name__ == '__main__':
         main(host='127.0.0.1', port=2000, tm_port=8000)
     except KeyboardInterrupt:
         print('\ndone.')
-

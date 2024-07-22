@@ -1,0 +1,1 @@
+python scenario_runner.py --route srunner/data/take_over_routes_debug.xml srunner/data/traffic_complexity_1RV.json 0 --agent srunner/autoagents/npc_agent.py --timeout 20 --sync --output

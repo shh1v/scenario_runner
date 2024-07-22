@@ -8,24 +8,12 @@
 
 """Script used to display the route xml file in the simulation that was generated."""
 
-# Standard library imports
-import glob
-import os
-import time
-import sys
-sys.path.append('../carla/PythonAPI/examples/')
-sys.path.append('../carla/PythonAPI/experiment/')
-
 # Local imports
 import carla
-from experiment_utils import ExperimentHelper
 from DReyeVR_utils import find_ego_vehicle
-from agents.navigation.basic_agent import BasicAgent
-from agents.navigation.behavior_agent import BehaviorAgent
 
 # Other library imports
 import xml.etree.ElementTree as ET
-import argparse
 import logging
 
 def main(**kargs):
@@ -35,7 +23,7 @@ def main(**kargs):
     client.set_timeout(10.0)
     
     # Change this to the route xml file you want to display
-    file_name = 'routegenerator/route_data/study_route_2.xml'
+    file_name = 'routegenerator/route_data/study_route_1.xml'
 
     try:
         world = client.get_world()
@@ -53,8 +41,6 @@ def main(**kargs):
         #
         # Run the simulation in synchronous mode with fixed time
         # step when not recording driving performance or running any traffic scenarios
-
-        ExperimentHelper.set_simulation_mode(client, synchronous_mode=False, tm_synchronous_mode=False)
 
         # Setting actors starting position to the start of the route
         DReyeVR_vehicle = find_ego_vehicle(world)

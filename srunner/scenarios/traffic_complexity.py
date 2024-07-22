@@ -177,10 +177,6 @@ class TrafficComplexity(BasicScenario):
         # Now, add the behaviour to setup the scenario for TOR
         setup_take_over = py_trees.composites.Sequence("Setting Up Scenario for TOR")
 
-        # TODO: Create behaviour to send a message to AutoHive for task-interleaving period
-        change_to_interleaving_status = ChangeVehicleStatus(vehicle_status="PreAlertAutopilot", name="Change Vehicle Status to PreAlertAutopilot")
-        setup_take_over.add_child(change_to_interleaving_status)
-
         # Adding Ideal behaviour for 30 seconds to help driver prepare for TOR
         # NOTE: Because of game/system time difference, 40 seconds is 30 seconds in real time
         idle_for_driver = Idle(duration=40)
@@ -203,40 +199,6 @@ class TrafficComplexity(BasicScenario):
 
             # Lastly, add the change_vehicle_speed to the parallel composite
             run_take_over.add_child(change_vehicle_speed)
-
-        # Setup ego vehicle behaviour for the TOR
-        ego_and_post_scenario_vehicle_behaviour = py_trees.composites.Sequence("Ego Vehicle Behaviour for TOR")
-
-        # Send a message to AutoHive for issuing a TOR
-        change_to_tor_status = ChangeVehicleStatus(vehicle_status="TakeOver", name="Change Vehicle Status to TakeOver")
-        ego_and_post_scenario_vehicle_behaviour.add_child(change_to_tor_status)
-        
-        # Wait for manual intervention from the driver to then record the driving performance.
-        wait_for_manual_intervention = WaitForManualIntervenation(name="Wait for the driver to take control")
-        ego_and_post_scenario_vehicle_behaviour.add_child(wait_for_manual_intervention)
-
-        # Change the hero agent from npc_agent to dummy_agent so the only the driver can control the vehicle.
-        set_ego_dummy_agent = ChangeHeroAgent(ego_vehicle=self.ego_vehicles[0], scenario_manager=self._config.scenario_manager, agent_args={"path_to_conf_file": ""}, agent_name="dummy_agent.py", name="Change Hero Agent to Dummy Agent")
-        ego_and_post_scenario_vehicle_behaviour.add_child(set_ego_dummy_agent)
-
-        # Once the hero agent is changed, let the driver drive the vehicle for 20 seconds.
-        let_driver_drive = Idle(duration=30, name="Let the driver drive the ego vehicle")
-        ego_and_post_scenario_vehicle_behaviour.add_child(let_driver_drive)
-
-        # Now, set resume automated vehicle mode. TODO: Create a new signal for this "ResumedAutopilot"
-        send_resume_auto_pilot = ChangeVehicleStatus(vehicle_status="ResumedAutopilot", name="Change Vehicle Status to ResumedAutopilot")
-        ego_and_post_scenario_vehicle_behaviour.add_child(send_resume_auto_pilot)
-
-        # Idle for 1 second to let the vehicle status be sent to AutoHive
-        idle_for_autohive = Idle(duration=1, name="Idle for 1 second to let the vehicle status be sent to AutoHive")
-        ego_and_post_scenario_vehicle_behaviour.add_child(idle_for_autohive)
-
-        # TODO: Force scenario failue so that route scenario fails and autopitlot can be turned on.
-        force_scenario_failure = ForceScenarioFailure(name="Exit Scenario Runner as it is not needed anymore.")
-        ego_and_post_scenario_vehicle_behaviour.add_child(force_scenario_failure)
-
-        # Now, add the ego vehicle behaviour to take_over_executer parallel composite
-        run_take_over.add_child(ego_and_post_scenario_vehicle_behaviour)
 
         # Lastly, add the initialize_take_over to the take_over_executer sequence
         setup_take_over.add_child(run_take_over)
