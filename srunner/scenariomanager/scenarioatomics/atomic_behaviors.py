@@ -1875,8 +1875,8 @@ class Idle(AtomicBehavior):
         Keep running until termination condition is satisfied
         """
         new_status = py_trees.common.Status.RUNNING
-
-        ChangeVehicleStatus.global_timer = str(round(self._duration - (GameTime.get_time() - self._start_time)))
+        if not math.isinf(self._duration):
+            ChangeVehicleStatus.global_timer = str(round(self._duration - (GameTime.get_time() - self._start_time)))
 
         if GameTime.get_time() - self._start_time > self._duration:
             new_status = py_trees.common.Status.SUCCESS
