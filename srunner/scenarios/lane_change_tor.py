@@ -228,8 +228,8 @@ class LaneChangeTOR(BasicScenario):
         send_resume_auto_pilot = ChangeVehicleStatus(vehicle_status="ResumedAutopilot", name="Change Vehicle Status to ResumedAutopilot")
         ego_and_post_scenario_vehicle_behaviour.add_child(send_resume_auto_pilot)
 
-        # Idle for 1 second to let the vehicle status be sent to FordDReyeVR
-        idle_for_FordDReyeVR = Idle(duration=1, name="Idle for 1 second to let the vehicle status be sent to FordDReyeVR")
+        # Idle for 2 second to let the vehicle status be sent to FordDReyeVR
+        idle_for_FordDReyeVR = Idle(duration=2, name="Idle for 1 second to let the vehicle status be sent to FordDReyeVR")
         ego_and_post_scenario_vehicle_behaviour.add_child(idle_for_FordDReyeVR)
 
         # TODO: Force scenario failure so that route scenario fails and autopilot can be turned on.
