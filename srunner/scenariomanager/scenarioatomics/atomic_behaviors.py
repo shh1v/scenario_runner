@@ -1876,6 +1876,8 @@ class Idle(AtomicBehavior):
         """
         new_status = py_trees.common.Status.RUNNING
 
+        ChangeVehicleStatus.global_timer = str(round(self._duration - (GameTime.get_time() - self._start_time)))
+
         if GameTime.get_time() - self._start_time > self._duration:
             new_status = py_trees.common.Status.SUCCESS
 
@@ -3225,8 +3227,9 @@ class ChangeVehicleStatus(AtomicBehavior):
         vehicle_status(str): vehicle status in string format
     """
     global_vehicle_status = "Unknown"
+    global_timer = "0"
     ordered_vehicle_status = ["Unknown", "ManualDrive", "Autopilot", "PreAlertAutopilot", "TakeOver", "TakeOverManual", "ResumedAutopilot"]
-    def __init__(self, vehicle_status="Unknown", name="ChangeVehicleStatus"):
+    def __init__(self, vehicle_status="Unknown", timer="0", name="ChangeVehicleStatus"):
         super(ChangeVehicleStatus, self).__init__(name)
         self.logger.debug("%s.__init__()" % self.__class__.__name__)
         if vehicle_status not in ChangeVehicleStatus.ordered_vehicle_status:
@@ -3275,7 +3278,8 @@ class SendVehicleStatus(AtomicBehavior):
             message = {
                 "from": "client",
                 "timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")[:-3],
-                "vehicle_status": ChangeVehicleStatus.global_vehicle_status
+                "vehicle_status": ChangeVehicleStatus.global_vehicle_status,
+                "time_data": ChangeVehicleStatus.global_timer
             }
             self.publisher_socket.send_json(message)
 
@@ -3289,7 +3293,7 @@ class SendVehicleStatus(AtomicBehavior):
             if not hasattr(self, "last_status_send_counter"):
                 self.last_status_send_counter = 1
                 
-            if self.last_status_send_counter < 10:
+            if self.last_status_send_counter < 20:
                 self.last_status_send_counter += 1
             else:
                 self.publisher_socket.close()
