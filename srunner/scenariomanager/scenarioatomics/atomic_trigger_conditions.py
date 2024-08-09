@@ -1316,7 +1316,7 @@ class WaitForManualIntervenation(AtomicCondition):
             message_dict = json.loads(message)
 
             if message_dict["vehicle_status"] == "TakeOverManual":
-                # print("Manual override by the driver detected.")
+                print("Manual override by the driver detected.")
                 new_status = py_trees.common.Status.SUCCESS
         except zmq.Again:
             # print("Waiting for manual intervention.")

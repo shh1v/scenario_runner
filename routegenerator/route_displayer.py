@@ -18,7 +18,6 @@ sys.path.append('../carla/PythonAPI/experiment/')
 
 # Local imports
 import carla
-from experiment_utils import ExperimentHelper
 from DReyeVR_utils import find_ego_vehicle
 from agents.navigation.basic_agent import BasicAgent
 from agents.navigation.behavior_agent import BehaviorAgent
@@ -35,7 +34,7 @@ def main(**kargs):
     client.set_timeout(10.0)
     
     # Change this to the route xml file you want to display
-    file_name = 'routegenerator/route_data/study_route_2.xml'
+    file_name = 'routegenerator/route_data/take_over_routes_short.xml'
 
     try:
         world = client.get_world()
@@ -46,6 +45,8 @@ def main(**kargs):
         traffic_manager.set_hybrid_physics_mode(True) # TODO: Set DReyeVR's role to hero
         traffic_manager.set_hybrid_physics_radius(70.0)
 
+        client.reload_world()
+
         # Simulation Syncronization
         #
         # Run the simulation in asynchronous mode with variable time (default)
@@ -54,11 +55,8 @@ def main(**kargs):
         # Run the simulation in synchronous mode with fixed time
         # step when not recording driving performance or running any traffic scenarios
 
-        ExperimentHelper.set_simulation_mode(client, synchronous_mode=False, tm_synchronous_mode=False)
-
         # Setting actors starting position to the start of the route
         DReyeVR_vehicle = find_ego_vehicle(world)
-        world.tick()
 
         # assuming your xml is in a string, otherwise load it from a file
         xml_data = None

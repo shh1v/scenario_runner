@@ -639,24 +639,26 @@ class RouteScenario(BasicScenario):
 
         completion_criterion = RouteCompletionTest(self.ego_vehicles[0], route=route)
 
-        outsidelane_criterion = OutsideRouteLanesTest(self.ego_vehicles[0], route=route)
+        # Commeting out unused criterias to get avoid unnecessary return of failure.
 
-        red_light_criterion = RunningRedLightTest(self.ego_vehicles[0])
+        # outsidelane_criterion = OutsideRouteLanesTest(self.ego_vehicles[0], route=route)
 
-        stop_criterion = RunningStopTest(self.ego_vehicles[0])
+        # red_light_criterion = RunningRedLightTest(self.ego_vehicles[0])
 
-        blocked_criterion = ActorSpeedAboveThresholdTest(self.ego_vehicles[0],
-                                                         speed_threshold=0.1,
-                                                         below_threshold_max_time=90.0,
-                                                         terminate_on_failure=True)
+        # stop_criterion = RunningStopTest(self.ego_vehicles[0])
+
+        # blocked_criterion = ActorSpeedAboveThresholdTest(self.ego_vehicles[0],
+        #                                                  speed_threshold=0.1,
+        #                                                  below_threshold_max_time=90.0,
+        #                                                  terminate_on_failure=True)
 
         criteria.append(completion_criterion)
         criteria.append(collision_criterion)
         criteria.append(route_criterion)
-        criteria.append(outsidelane_criterion)
-        criteria.append(red_light_criterion)
-        criteria.append(stop_criterion)
-        criteria.append(blocked_criterion)
+        # criteria.append(outsidelane_criterion)
+        # criteria.append(red_light_criterion)
+        # criteria.append(stop_criterion)
+        # criteria.append(blocked_criterion)
 
         return criteria
 
