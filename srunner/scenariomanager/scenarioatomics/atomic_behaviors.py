@@ -3207,6 +3207,8 @@ class ChangeHeroAgent(AtomicBehavior):
             # Lastly, set the new agent in the scenario manager and store the previous agent
             ChangeHeroAgent.previous_agent = self._scenario_manager._agent
             self._scenario_manager._agent = agent_wrapper
+
+            print("Changed the ego vehicle agent succesfully")
             return py_trees.common.Status.SUCCESS
         except ImportError as e:
             print(f"An error occurred while importing: {e}")
@@ -3218,7 +3220,6 @@ class ChangeHeroAgent(AtomicBehavior):
             print(f"An error occurred: {e}")
             return py_trees.common.Status.FAILURE
         
-    
 class ChangeVehicleStatus(AtomicBehavior):
     """
     Custom AutoHive implementation
@@ -3276,7 +3277,6 @@ class SendVehicleStatus(AtomicBehavior):
         try:
             # Send vehicle status
             message = {
-                "from": "client",
                 "timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")[:-3],
                 "vehicle_status": ChangeVehicleStatus.global_vehicle_status,
                 "time_data": ChangeVehicleStatus.global_timer

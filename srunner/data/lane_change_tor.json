@@ -17,7 +17,7 @@
                                     "model": "vehicle.ford.mustang",
                                     "lane": "same",
                                     "role": "relevant",
-                                    "vehicle_offset": "138.889",
+                                    "vehicle_offset": "133.889",
                                     "init_speed": "100",
                                     "final_speed": "0"
                                 },
@@ -33,7 +33,7 @@
                                     "model": "vehicle.ford.mustang",
                                     "lane": "right",
                                     "role": "notrelevant",
-                                    "vehicle_offset": "138.889",
+                                    "vehicle_offset": "145.889",
                                     "init_speed": "100",
                                     "final_speed": "0"
                                 }

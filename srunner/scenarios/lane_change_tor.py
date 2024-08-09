@@ -173,8 +173,7 @@ class LaneChangeTOR(BasicScenario):
         setup_take_over.add_child(change_to_prealert_status)
 
         # Adding Ideal behaviour for 30 seconds to show 30 second timer for the scheduled interruption behaviour (when configured)
-        # NOTE: Because of game/system time difference, 40 seconds is 30 seconds in real time. WARNING: Check again
-        idle_for_driver = Idle(duration=40)
+        idle_for_driver = Idle(duration=30)
         setup_take_over.add_child(idle_for_driver)
 
         # Setting a parallel composite to change the speed of all the vehicles and run WaypointFollower
@@ -221,15 +220,15 @@ class LaneChangeTOR(BasicScenario):
         ego_and_post_scenario_vehicle_behaviour.add_child(set_ego_dummy_agent)
 
         # Once the hero agent is changed, let the driver drive the vehicle for 20 seconds.
-        let_driver_drive = Idle(duration=30, name="Let the driver drive the ego vehicle")
+        let_driver_drive = Idle(duration=20, name="Let the driver drive the ego vehicle")
         ego_and_post_scenario_vehicle_behaviour.add_child(let_driver_drive)
 
-        # Now, set resume automated vehicle mode. TODO: Create a new signal for this "ResumedAutopilot"
+        # Now, set resume automated vehicle mode.
         send_resume_auto_pilot = ChangeVehicleStatus(vehicle_status="ResumedAutopilot", name="Change Vehicle Status to ResumedAutopilot")
         ego_and_post_scenario_vehicle_behaviour.add_child(send_resume_auto_pilot)
 
         # Idle for 2 second to let the vehicle status be sent to FordDReyeVR
-        idle_for_FordDReyeVR = Idle(duration=2, name="Idle for 1 second to let the vehicle status be sent to FordDReyeVR")
+        idle_for_FordDReyeVR = Idle(duration=1, name="Idle for 1 second to let the vehicle status be sent to FordDReyeVR")
         ego_and_post_scenario_vehicle_behaviour.add_child(idle_for_FordDReyeVR)
 
         # TODO: Force scenario failure so that route scenario fails and autopilot can be turned on.
