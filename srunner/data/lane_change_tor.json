@@ -48,21 +48,14 @@
                             "npc_actors": [
                                 {
                                     "model": "vehicle.audi.tt",
-                                    "lane": "left",
+                                    "lane": "same",
                                     "role": "notrelevant",
-                                    "vehicle_offset": "40",
+                                    "vehicle_offset": "70",
                                     "speed": "100"
                                 },
                                 {
-                                    "model": "vehicle.dodge.charger_2020",
-                                    "lane": "left",
-                                    "role": "notrelevant",
-                                    "vehicle_offset": "10",
-                                    "speed": "100"
-                                },
-                                {
-                                    "model": "vehicle.dodge.charger_police",
-                                    "lane": "right",
+                                    "model": "vehicle.audi.tt",
+                                    "lane": "same",
                                     "role": "notrelevant",
                                     "vehicle_offset": "30",
                                     "speed": "100"
@@ -71,10 +64,37 @@
                                     "model": "vehicle.dodge.charger_2020",
                                     "lane": "right",
                                     "role": "notrelevant",
-                                    "vehicle_offset": "5",
+                                    "vehicle_offset": "70",
+                                    "speed": "100"
+                                },
+                                {
+                                    "model": "vehicle.mercedes.coupe_2020",
+                                    "lane": "right",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "40",
+                                    "speed": "100"
+                                },
+                                {
+                                    "model": "vehicle.dodge.charger_2020",
+                                    "lane": "leftleft",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "80",
+                                    "speed": "100"
+                                },
+                                {
+                                    "model": "vehicle.tesla.model3",
+                                    "lane": "leftleft",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "30",
+                                    "speed": "100"
+                                },
+                                {
+                                    "model": "vehicle.toyota.prius",
+                                    "lane": "leftleft",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "20",
                                     "speed": "100"
                                 }
-
                             ]
                         }
                     ],

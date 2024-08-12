@@ -12,6 +12,7 @@ This module provides Challenge routes as standalone scenarios
 from __future__ import print_function
 
 import math
+import random
 import json
 import os
 import traceback
@@ -30,7 +31,7 @@ from examples.DReyeVR_utils import find_ego_vehicle
 from srunner.scenarioconfigs.scenario_configuration import ScenarioConfiguration, ActorConfigurationData
 # pylint: enable=line-too-long
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
-from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle, ScenarioTriggerer, SendVehicleStatus, ChangeVehicleStatus, WaypointFollower
+from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle, ScenarioTriggerer, SendVehicleStatus, ChangeVehicleStatus, WaypointFollower, SetAllTrafficLightsToGreen
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.route_parser import RouteParser, TRIGGER_THRESHOLD, TRIGGER_ANGLE_THRESHOLD
 from srunner.tools.route_manipulation import interpolate_trajectory
@@ -555,6 +556,35 @@ class RouteScenario(BasicScenario):
             
         return json_to_object(data)
     
+    @staticmethod
+    def generate_random_color():
+        # List of appealing car colors using RGB tuples
+        colors = [
+            (255, 0, 0),      # Bright Red
+            (220, 20, 60),    # Crimson
+            (139, 0, 0),      # Dark Red
+            (255, 69, 0),     # Red Orange
+            (255, 165, 0),    # Orange
+            (34, 139, 34),    # Forest Green
+            (70, 130, 180),   # Steel Blue
+            (0, 0, 255),      # Blue
+            (30, 144, 255),   # Dodger Blue
+            (0, 0, 139),      # Dark Blue
+            (75, 0, 130),     # Indigo
+            (128, 0, 128),    # Purple
+            (169, 169, 169),  # Dark Gray
+            (192, 192, 192),  # Silver
+            (128, 128, 128),  # Gray
+            (0, 0, 0),        # Black
+            (255, 255, 255),  # White
+        ]
+        
+        # Select a random color from the list
+        r, g, b = random.choice(colors)
+        # Return the color as a string in "R,G,B" format
+        return f"{r},{g},{b}"
+    
+    
     def _initialize_actors(self, config):
         """
         Set other_actors to the superset of all scenario actors
@@ -614,13 +644,15 @@ class RouteScenario(BasicScenario):
                 vehicle_transform = carla.Transform(
                     carla.Location(float(vehicle_waypoint.transform.location.x),
                                 float(vehicle_waypoint.transform.location.y),
-                                float(vehicle_waypoint.transform.location.z) + 0.2),
+                                float(vehicle_waypoint.transform.location.z)),
                     vehicle_waypoint.transform.rotation)
                 
                 rolename_dict = {"type": "npc_actor", "lane": actor.lane}
 
-                spawned_actor = CarlaDataProvider.request_new_actor(
-                    model=actor.model, spawn_point=vehicle_transform, rolename=json.dumps(rolename_dict))
+                spawned_actor = CarlaDataProvider.request_new_actor(model=actor.model,
+                                                                    spawn_point=vehicle_transform,
+                                                                    color=RouteScenario.generate_random_color(),
+                                                                    rolename=json.dumps(rolename_dict))
                 
                 # Add the spawned npc vehicle to the list of spawned actors
                 self._spawned_npc_actors.append(spawned_actor)
@@ -679,31 +711,26 @@ class RouteScenario(BasicScenario):
         
         behavior.add_child(subbehavior)
 
-        # Spawn the npc vehicles for realistic effect and enable waypoint follower
+        # Enable waypoint follower for the npc vehicles
         # Note: the following atomic behaviours are added to the behaviour node instead of the subbehaviour
         # since behaviour is uses SUCCESS_ON_ONE policy.
 
-        # npc_behaviour = py_trees.composites.Sequence(f"Spawning npc vehicles around the ego vehicle.")
-
-        # # WARNING: Terrible terrible method to read npc actors config
-        # spawn_vehicle = SpawnNPCsAtTransform(config_file_name='lane_change_tor')
-        # npc_behaviour.add_child(spawn_vehicle)
+        npc_behaviour = py_trees.composites.Parallel(name="Enabling",
+                                            policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ALL)
         
-        # # WARNING: The following can only be done after calling (SpawnNPCsAtTransform)
-        # enable_autonomous_npc = py_trees.composites.Parallel(name="Enabling",
-        #                                            policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ALL)
-        
-        # for vehicle in SpawnNPCsAtTransform.spawned_npc_actors:
-        #     print(vehicle.id)
-        #     npc_wf = WaypointFollower(actor=vehicle, target_speed=27.7778, name=f"NPC Waypoint Follower for {vehicle.id}")
-        #     enable_autonomous_npc.add_child(npc_wf)
+        for vehicle in self._spawned_npc_actors:
+            npc_wf = WaypointFollower(actor=vehicle, target_speed=27.7778, avoid_collision=True, name=f"NPC Waypoint Follower for {vehicle.id}")
+            npc_behaviour.add_child(npc_wf)
 
-        # # Just for saftey, add Idle() behaviour in case that WaypointFollower exits    
-        # # enable_autonomous_npc.add_child(Idle())
+        # Also set all traffic lights to green as WaypointFollower does not support obeying traffic laws
+        all_traffic_lights_green = SetAllTrafficLightsToGreen()
+        npc_behaviour.add_child(all_traffic_lights_green)
 
-        # npc_behaviour.add_child(enable_autonomous_npc)
+        # Just for safety, add Idle() behaviour in case that WaypointFollower exits and SUCCESS is returned.
+        # This allows for scenario to keep running
+        npc_behaviour.add_child(Idle())
 
-        # behavior.add_child(npc_behaviour)
+        behavior.add_child(npc_behaviour)
             
         return behavior
 

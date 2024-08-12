@@ -47,7 +47,6 @@ from srunner.scenariomanager.actorcontrols.actor_control import ActorControl
 from srunner.scenariomanager.timer import GameTime
 from srunner.tools.scenario_helper import detect_lane_obstacle
 from srunner.tools.scenario_helper import generate_target_waypoint_list_multilane
-from srunner.tools.scenario_helper import get_waypoint_in_distance
 
 import srunner.tools as sr_tools
 
@@ -2049,9 +2048,11 @@ class WaypointFollower(AtomicBehavior):
                 # Check if the actor is a vehicle/bike
                 if not isinstance(actor, carla.Walker):
                     control = local_planner.run_step(debug=False)
-                    if self._avoid_collision and detect_lane_obstacle(actor):
+                    if self._avoid_collision and detect_lane_obstacle(actor, extension_factor=2.5):
                         control.throttle = 0.0
                         control.brake = 1.0
+                        control.hand_brake = True
+                        actor.set_target_velocity(carla.Vector3D(0, 0, 0)) # Very unrealistic behaviour. But needed for take-over scenarios
                     actor.apply_control(control)
                     # Check if the actor reached the end of the plan
                     # @TODO replace access to private _waypoints_queue with public getter
@@ -2354,6 +2355,38 @@ class ActorTransformSetter(AtomicBehavior):
 
         return new_status
 
+
+class SetAllTrafficLightsToGreen(AtomicBehavior):
+
+    """
+    This class contains an atomic behavior to set the state of all traffic lights to green
+
+    The behavior terminates after trying to set the new state
+    """
+
+    def __init__(self, name="TrafficLightStateSetter"):
+        """
+        Init
+        """
+        super(SetAllTrafficLightsToGreen, self).__init__(name)
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+        self._world = CarlaDataProvider.get_world()
+
+    def update(self):
+        """
+        Change the state of all the traffic lights to green
+        """
+        try:
+            all_actors = self._world.get_actors()
+            for actor_ in all_actors:
+                if isinstance(actor_, carla.TrafficLight):
+                    actor_.set_state(carla.TrafficLightState.Green) 
+                    actor_.set_green_time(240.0) # Enough for the simulation to end
+        except Exception as e:
+            print("Unable to set green state for all traffic lights", e)
+            return py_trees.common.Status.FAILURE
+        
+        return py_trees.common.Status.SUCCESS
 
 class TrafficLightStateSetter(AtomicBehavior):
 

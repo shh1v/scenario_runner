@@ -214,8 +214,12 @@ def get_waypoint_in_distance(waypoint, distance, stop_at_junction=True, on_lane=
 
     if on_lane == "left":
         waypoint = waypoint.get_left_lane()
+    elif on_lane == "leftleft":
+        waypoint = waypoint.get_left_lane().get_left_lane()
     elif on_lane == "right":
         waypoint = waypoint.get_right_lane()
+    elif on_lane == "rightright":
+        waypoint = waypoint.get_right_lane().get_right_lane()
 
     traveled_distance = 0
     while not (waypoint.is_intersection and stop_at_junction) and traveled_distance < abs(distance):

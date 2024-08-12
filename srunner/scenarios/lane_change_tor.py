@@ -119,7 +119,7 @@ class LaneChangeTOR(BasicScenario):
             rolename_dict = {"is_lead": is_lead_vehicle, "init_speed": actor.init_speed*5/18, "final_speed": actor.final_speed*5/18}
 
             # Spawn the vehicle at the underground location
-            vehicle = CarlaDataProvider.request_new_actor(model=actor.model, spawn_point=vehicle_init_transform, rolename=json.dumps(rolename_dict))
+            vehicle = CarlaDataProvider.request_new_actor(model=actor.model, spawn_point=vehicle_init_transform, color="128,128,128", rolename=json.dumps(rolename_dict))
             vehicle.set_simulate_physics(enabled=False)
             
             # Add the vehicle to the other actor list
@@ -159,7 +159,7 @@ class LaneChangeTOR(BasicScenario):
             vehicle_params_setter.add_child(set_transform_and_speed)
 
             # Now, set the auto agent for the vehicles so they can drive by themselves
-            set_agent = WaypointFollower(actor=vehicle, target_speed=vehicle_speed, name=f"Initial Waypoint Follower for {vehicle.id}")
+            set_agent = WaypointFollower(actor=vehicle, target_speed=vehicle_speed, avoid_collision=True, name=f"Initial Waypoint Follower for {vehicle.id}")
             vehicle_params_setter.add_child(set_agent)
 
             # Lastly, add the vehicle params setter to the root
@@ -186,7 +186,7 @@ class LaneChangeTOR(BasicScenario):
         change_lead_speed.add_child(SetInitSpeed(self._lead_vehicle, 0))
 
         # Now, change the current agent's target speed by cleverly using WaypointFollower
-        change_lead_speed.add_child(WaypointFollower(actor=self._lead_vehicle, target_speed=0, name=f"Scenario Waypoint Follower for lead vehicle"))
+        change_lead_speed.add_child(WaypointFollower(actor=self._lead_vehicle, target_speed=0, avoid_collision=True, name=f"Scenario Waypoint Follower for lead vehicle"))
 
         run_take_over.add_child(change_lead_speed)
 
@@ -200,7 +200,7 @@ class LaneChangeTOR(BasicScenario):
         change_rand_adj_speed.add_child(SetInitSpeed(self._other_actors[random_adj_vehicle_idx], 0))
 
         # Now, change the current agent's target speed by cleverly using WaypointFollower
-        change_rand_adj_speed.add_child(WaypointFollower(actor=self._other_actors[random_adj_vehicle_idx], target_speed=0, name=f"Scenario Waypoint Follower for adj vehicle"))
+        change_rand_adj_speed.add_child(WaypointFollower(actor=self._other_actors[random_adj_vehicle_idx], target_speed=0, avoid_collision=True, name=f"Scenario Waypoint Follower for adj vehicle"))
 
         run_take_over.add_child(change_rand_adj_speed)
 
