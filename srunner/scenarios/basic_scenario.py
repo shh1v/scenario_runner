@@ -204,6 +204,7 @@ class BasicScenario(object):
             if self.other_actors[i] is not None:
                 if CarlaDataProvider.actor_id_exists(self.other_actors[i].id):
                     CarlaDataProvider.remove_actor_by_id(self.other_actors[i].id)
+                    print("removing actors")
                 self.other_actors[i] = None
         self.other_actors = []
 

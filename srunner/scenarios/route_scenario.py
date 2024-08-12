@@ -30,11 +30,12 @@ from examples.DReyeVR_utils import find_ego_vehicle
 from srunner.scenarioconfigs.scenario_configuration import ScenarioConfiguration, ActorConfigurationData
 # pylint: enable=line-too-long
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
-from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle, ScenarioTriggerer, SendVehicleStatus, ChangeVehicleStatus, SpawnNPCsAtTransform
+from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle, ScenarioTriggerer, SendVehicleStatus, ChangeVehicleStatus, WaypointFollower
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.route_parser import RouteParser, TRIGGER_THRESHOLD, TRIGGER_ANGLE_THRESHOLD
 from srunner.tools.route_manipulation import interpolate_trajectory
 from srunner.tools.py_trees_port import oneshot_behavior
+from srunner.tools.scenario_helper import get_waypoint_in_distance
 
 from srunner.scenarios.control_loss import ControlLoss
 from srunner.scenarios.follow_leading_vehicle import FollowLeadingVehicleRoute
@@ -200,7 +201,8 @@ class RouteScenario(BasicScenario):
         """
         Setup all relevant parameters and create scenarios along route
         """
-
+        self._world = world
+        self._map = self._world.get_map()
         self.config = config
         self.route = None
         self.sampled_scenarios_definitions = None
@@ -529,7 +531,30 @@ class RouteScenario(BasicScenario):
         return list_of_actors
 
     # pylint: enable=no-self-use
+    @staticmethod
+    def _load_config(filename):
+        directory_path = os.path.join(os.getcwd(), 'srunner', 'data')
+        full_path = os.path.join(directory_path, f'{filename}.json')
 
+        def json_to_object(data):
+            if isinstance(data, dict):
+                # Create a new object with dynamic attributes
+                obj = type('JSONConfigObject', (object,), {})()
+                for key, value in data.items():
+                    setattr(obj, key, json_to_object(value))
+                return obj
+            elif isinstance(data, list):
+                # Recursively process list elements
+                return [json_to_object(item) for item in data]
+            else:
+                # Return the value directly if it is not a list or dict
+                return data
+
+        with open(full_path, 'r') as file:
+            data = json.load(file)
+            
+        return json_to_object(data)
+    
     def _initialize_actors(self, config):
         """
         Set other_actors to the superset of all scenario actors
@@ -571,6 +596,37 @@ class RouteScenario(BasicScenario):
         # Add all the actors of the specific scenarios to self.other_actors
         for scenario in self.list_scenarios:
             self.other_actors.extend(scenario.other_actors)
+
+        # Custom FordDreyeVR implementation 
+        if config.town == "Town04":
+            # WARNING: Hard coded JSON configuration file for the experiment
+            npc_config = RouteScenario._load_config('lane_change_tor').available_scenarios[0].Town04[0].available_event_configurations[0]
+            
+            ego_vehicle_location = carla.Location(float(npc_config.ego_spawn_point.x),
+                                                  float(npc_config.ego_spawn_point.y),
+                                                  float(npc_config.ego_spawn_point.z))
+            
+            self._spawned_npc_actors = []
+            for actor in npc_config.npc_actors:
+                vehicle_waypoint, _ = get_waypoint_in_distance(self._map.get_waypoint(ego_vehicle_location),
+                                                            float(actor.vehicle_offset), False, actor.lane)
+
+                vehicle_transform = carla.Transform(
+                    carla.Location(float(vehicle_waypoint.transform.location.x),
+                                float(vehicle_waypoint.transform.location.y),
+                                float(vehicle_waypoint.transform.location.z) + 0.2),
+                    vehicle_waypoint.transform.rotation)
+                
+                rolename_dict = {"type": "npc_actor", "lane": actor.lane}
+
+                spawned_actor = CarlaDataProvider.request_new_actor(
+                    model=actor.model, spawn_point=vehicle_transform, rolename=json.dumps(rolename_dict))
+                
+                # Add the spawned npc vehicle to the list of spawned actors
+                self._spawned_npc_actors.append(spawned_actor)
+
+            pass
+        
 
     def _create_behavior(self):
         """
@@ -627,20 +683,28 @@ class RouteScenario(BasicScenario):
         # Note: the following atomic behaviours are added to the behaviour node instead of the subbehaviour
         # since behaviour is uses SUCCESS_ON_ONE policy.
 
-        npc_behaviour = 
+        # npc_behaviour = py_trees.composites.Sequence(f"Spawning npc vehicles around the ego vehicle.")
 
-        for actor_config in self.config.npc_actors:
+        # # WARNING: Terrible terrible method to read npc actors config
+        # spawn_vehicle = SpawnNPCsAtTransform(config_file_name='lane_change_tor')
+        # npc_behaviour.add_child(spawn_vehicle)
+        
+        # # WARNING: The following can only be done after calling (SpawnNPCsAtTransform)
+        # enable_autonomous_npc = py_trees.composites.Parallel(name="Enabling",
+        #                                            policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ALL)
+        
+        # for vehicle in SpawnNPCsAtTransform.spawned_npc_actors:
+        #     print(vehicle.id)
+        #     npc_wf = WaypointFollower(actor=vehicle, target_speed=27.7778, name=f"NPC Waypoint Follower for {vehicle.id}")
+        #     enable_autonomous_npc.add_child(npc_wf)
+
+        # # Just for saftey, add Idle() behaviour in case that WaypointFollower exits    
+        # # enable_autonomous_npc.add_child(Idle())
+
+        # npc_behaviour.add_child(enable_autonomous_npc)
+
+        # behavior.add_child(npc_behaviour)
             
-            npc_behaviour = py_trees.composites.Sequence(f"Vehicle Parameters Setter: for npc vehicle id: {actor_config.model}")
-
-            # Spawn the npc vehicle
-            spawn_vehicle = SpawnNPCsAtTransform(relative_vehicle=self.config.ego_spawn_point, actor_config=actor_config)
-            npc_behaviour.add_child(spawn_vehicle)
-
-            # Enable waypoint follower (to have autopilot effect)
-
-            # Lastly, add to the behaviour node
-            behavior.add_child(spawn_vehicle)
         return behavior
 
     def _create_test_criteria(self):
@@ -688,9 +752,10 @@ class RouteScenario(BasicScenario):
         Override this method to add post scenario behaviour to the actors
         """
         pass
-    # NOTE: This method is not overridden to avoid removing the actors
-    # def remove_all_actors(self):
-    #     """
-    #     Overriding this method to not remove all the actors.
-    #     """
-    #     pass
+
+    # NOTE: This method is overridden to avoid removing the actors
+    def remove_all_actors(self):
+        """
+        Overriding this method to not remove all the actors.
+        """
+        pass
