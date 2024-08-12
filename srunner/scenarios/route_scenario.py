@@ -12,6 +12,8 @@ This module provides Challenge routes as standalone scenarios
 from __future__ import print_function
 
 import math
+import json
+import os
 import traceback
 import xml.etree.ElementTree as ET
 
@@ -28,7 +30,7 @@ from examples.DReyeVR_utils import find_ego_vehicle
 from srunner.scenarioconfigs.scenario_configuration import ScenarioConfiguration, ActorConfigurationData
 # pylint: enable=line-too-long
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
-from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle, ScenarioTriggerer, SendVehicleStatus, ChangeVehicleStatus
+from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle, ScenarioTriggerer, SendVehicleStatus, ChangeVehicleStatus, SpawnNPCsAtTransform
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.route_parser import RouteParser, TRIGGER_THRESHOLD, TRIGGER_ANGLE_THRESHOLD
 from srunner.tools.route_manipulation import interpolate_trajectory
@@ -620,6 +622,25 @@ class RouteScenario(BasicScenario):
         subbehavior.add_child(change_to_autopilot_status)
         
         behavior.add_child(subbehavior)
+
+        # Spawn the npc vehicles for realistic effect and enable waypoint follower
+        # Note: the following atomic behaviours are added to the behaviour node instead of the subbehaviour
+        # since behaviour is uses SUCCESS_ON_ONE policy.
+
+        npc_behaviour = 
+
+        for actor_config in self.config.npc_actors:
+            
+            npc_behaviour = py_trees.composites.Sequence(f"Vehicle Parameters Setter: for npc vehicle id: {actor_config.model}")
+
+            # Spawn the npc vehicle
+            spawn_vehicle = SpawnNPCsAtTransform(relative_vehicle=self.config.ego_spawn_point, actor_config=actor_config)
+            npc_behaviour.add_child(spawn_vehicle)
+
+            # Enable waypoint follower (to have autopilot effect)
+
+            # Lastly, add to the behaviour node
+            behavior.add_child(spawn_vehicle)
         return behavior
 
     def _create_test_criteria(self):

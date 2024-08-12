@@ -37,6 +37,44 @@
                                     "init_speed": "100",
                                     "final_speed": "0"
                                 }
+                            ],
+                            "ego_spawn_point": {
+                                "pitch": "0.0",
+                                "x": "-473.246826",
+                                "y": "25.609121",
+                                "yaw": "144.396851",
+                                "z": "0.0"
+                            },
+                            "npc_actors": [
+                                {
+                                    "model": "vehicle.audi.tt",
+                                    "lane": "left",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "40",
+                                    "speed": "100"
+                                },
+                                {
+                                    "model": "vehicle.dodge.charger_2020",
+                                    "lane": "left",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "10",
+                                    "speed": "100"
+                                },
+                                {
+                                    "model": "vehicle.dodge.charger_police",
+                                    "lane": "right",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "30",
+                                    "speed": "100"
+                                },
+                                {
+                                    "model": "vehicle.dodge.charger_2020",
+                                    "lane": "right",
+                                    "role": "notrelevant",
+                                    "vehicle_offset": "5",
+                                    "speed": "100"
+                                }
+
                             ]
                         }
                     ],
