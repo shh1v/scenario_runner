@@ -44,27 +44,13 @@ def main(**kargs):
     world = client.load_world("Town05")
     
     try:
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-
->>>>>>> Stashed changes
         # Setting actors starting position to the start of the route
         DReyeVR_vehicle = find_ego_vehicle(world)
         
         new_transform = None
         last_logged_transform = None
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
+
         with open("routegenerator/route_data/raw_waypoints/study_route_1_town05.txt", "w") as file:
-=======
-        with open("routegenerator/raw_waypoints/ego_start_transform_tor.txt", "w") as file:
->>>>>>> Stashed changes
-=======
-        with open("routegenerator/raw_waypoints/ego_start_transform_tor.txt", "w") as file:
->>>>>>> Stashed changes
             while True:
                 new_transform = DReyeVR_vehicle.get_transform()
                 if last_logged_transform is not None and last_logged_transform.location.distance(new_transform.location) < 20:
@@ -81,16 +67,9 @@ def main(**kargs):
                 last_logged_transform = new_transform
                 world.tick()
     finally:
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         # Ensure world is again in stand alone
         set_simulation_mode(client, synchronous_mode=False, tm_synchronous_mode=False)
-=======
         pass
->>>>>>> Stashed changes
-=======
-        pass
->>>>>>> Stashed changes
 
 
 if __name__ == '__main__':
