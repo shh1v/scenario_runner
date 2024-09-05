@@ -325,19 +325,25 @@ class FollowLeadingVehicleRoute(BasicScenario):
 
     def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, criteria_enable=True,
                  timeout=60):
-        """
-        Setup all relevant parameters and create scenario
-        """
+        self._map = CarlaDataProvider.get_map()
+        self._first_vehicle_location = 25
+        self._first_vehicle_speed = 10
+        self._reference_waypoint = self._map.get_waypoint(config.trigger_points[0].location)
+        self._other_actor_max_brake = 1.0
+        self._other_actor_stop_in_front_intersection = 20
+        self._other_actor_transform = None
+        # Timeout of scenario in seconds
         self.timeout = timeout
-        self._stop_duration = 15
-        self._end_time_condition = 30
 
         super(FollowLeadingVehicleRoute, self).__init__("FollowLeadingVehicleRoute",
-                                                        ego_vehicles,
-                                                        config,
-                                                        world,
-                                                        debug_mode,
-                                                        criteria_enable=criteria_enable)
+                                                   ego_vehicles,
+                                                   config,
+                                                   world,
+                                                   debug_mode,
+                                                   criteria_enable=criteria_enable)
+
+        if randomize:
+            self._ego_other_distance_start = random.randint(4, 8)
 
     def _initialize_actors(self, config):
         """
@@ -381,25 +387,16 @@ class FollowLeadingVehicleRoute(BasicScenario):
         self.other_actors.append(second_actor)
 
     def _create_behavior(self):
-        """
-        The scenario defined after is a "follow leading vehicle" scenario. Finally, the user-controlled vehicle has to be close
-        enough to the other actor to end the scenario.
-        If this does not happen within 60 seconds, a timeout stops the scenario
-        """
-
+         # let the other actor drive until next intersection
         driving_to_next_intersection = py_trees.composites.Parallel(
-            "Driving towards Intersection",
+            "DrivingTowardsIntersection",
             policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
-        stop_near_intersection = py_trees.composites.Parallel(
-            "Waiting for end position near Intersection",
-            policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
-        stop_near_intersection.add_child(WaypointFollower(self.other_actors[0], 10))
-        stop_near_intersection.add_child(InTriggerDistanceToNextIntersection(self.other_actors[0], 20))
+        driving_to_next_intersection.add_child(WaypointFollower(self.other_actors[0], self._first_vehicle_speed))
+        driving_to_next_intersection.add_child(InTriggerDistanceToNextIntersection(
+            self.other_actors[0], self._other_actor_stop_in_front_intersection))
 
-        driving_to_next_intersection.add_child(WaypointFollower(self.other_actors[0], self._first_actor_speed))
-        driving_to_next_intersection.add_child(InTriggerDistanceToVehicle(self.other_actors[1],
-                                                                          self.other_actors[0], 15))
+        # stop vehicle
 
         # end condition
         endcondition = py_trees.composites.Parallel("Waiting for end position",
@@ -408,22 +405,16 @@ class FollowLeadingVehicleRoute(BasicScenario):
                                                         self.ego_vehicles[0],
                                                         distance=20,
                                                         name="FinalDistance")
-        endcondition_part2 = StandStill(self.ego_vehicles[0], name="FinalSpeed", duration=1)
+        endcondition_part2 = StandStill(self.ego_vehicles[0], name="StandStill", duration=1)
         endcondition.add_child(endcondition_part1)
         endcondition.add_child(endcondition_part2)
 
         # Build behavior tree
         sequence = py_trees.composites.Sequence("Sequence Behavior")
-        sequence.add_child(ActorTransformSetter(self.other_actors[0], self._first_actor_transform))
-        sequence.add_child(ActorTransformSetter(self.other_actors[1], self._second_actor_transform))
         sequence.add_child(driving_to_next_intersection)
-        sequence.add_child(StopVehicle(self.other_actors[0], self._other_actor_max_brake))
-        sequence.add_child(TimeOut(3))
-        sequence.add_child(stop_near_intersection)
-        sequence.add_child(StopVehicle(self.other_actors[0], self._other_actor_max_brake))
+        sequence.add_child(stop)
         sequence.add_child(endcondition)
         sequence.add_child(ActorDestroy(self.other_actors[0]))
-        sequence.add_child(ActorDestroy(self.other_actors[1]))
 
         return sequence
 

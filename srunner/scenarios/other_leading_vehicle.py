@@ -41,7 +41,7 @@ class OtherLeadingVehicle(BasicScenario):
     """
 
     def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, criteria_enable=True,
-                 timeout=80):
+                 timeout=120):
         """
         Setup all relevant parameters and create scenario
         """
@@ -104,32 +104,49 @@ class OtherLeadingVehicle(BasicScenario):
         leading_actor_sequence_behavior = py_trees.composites.Sequence("Decelerating actor sequence behavior")
 
         # both actors moving in same direction
-        keep_velocity = py_trees.composites.Parallel("Trigger condition for deceleration",
+       # Start the first vehicle at a slower speed and let it gradually adjust
+        keep_velocity = py_trees.composites.Parallel("First actor moving at manageable speed",
                                                      policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
-        keep_velocity.add_child(WaypointFollower(self.other_actors[0], self._first_vehicle_speed, avoid_collision=True))
-        keep_velocity.add_child(InTriggerDistanceToVehicle(self.other_actors[0], self.ego_vehicles[0], 55))
 
-        # Decelerating actor sequence behavior
-        decelerate = self._first_vehicle_speed / 3.2
+        # Start the first vehicle at a low speed to give ego vehicle time to catch up
+        initial_speed = 15  # Adjust to a slower speed initially
+
+        # First vehicle starts moving immediately
+        keep_velocity.add_child(WaypointFollower(self.other_actors[0], initial_speed, avoid_collision=True))
+
+        # Use a condition to dynamically adjust the speed as the ego vehicle approaches
+        adjust_speed = py_trees.composites.Sequence("Dynamic speed adjustment")
+
+        # Monitor the distance between ego vehicle and the first vehicle
+        ego_distance_condition = InTriggerDistanceToVehicle(self.other_actors[0], self.ego_vehicles[0], 30)
+
+        # Adjust the speed of the first vehicle when the ego vehicle gets closer
+        dynamic_speed_adjustment = WaypointFollower(self.other_actors[0], self._first_vehicle_speed, avoid_collision=True)
+
+        adjust_speed.add_child(ego_distance_condition)
+        adjust_speed.add_child(dynamic_speed_adjustment)
+
+        # Combine both behaviors
+        leading_actor_sequence_behavior = py_trees.composites.Sequence("Leading vehicle behavior")
         leading_actor_sequence_behavior.add_child(keep_velocity)
-        leading_actor_sequence_behavior.add_child(WaypointFollower(self.other_actors[0], decelerate,
-                                                                   avoid_collision=True))
+        leading_actor_sequence_behavior.add_child(adjust_speed)
         # end condition
-        ego_drive_distance = DriveDistance(self.ego_vehicles[0], self._ego_vehicle_drive_distance)
+        #ego_drive_distance = DriveDistance(self.ego_vehicles[0], self._ego_vehicle_drive_distance)
 
         # Build behavior tree
         sequence = py_trees.composites.Sequence("Scenario behavior")
+        
         parallel_root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
+        sequence.add_child(driving_in_same_direction)
 
-        parallel_root.add_child(ego_drive_distance)
+        #parallel_root.add_child(ego_drive_distance)
         parallel_root.add_child(driving_in_same_direction)
         driving_in_same_direction.add_child(leading_actor_sequence_behavior)
         driving_in_same_direction.add_child(WaypointFollower(self.other_actors[1], self._second_vehicle_speed,
                                                              avoid_collision=True))
-
         sequence.add_child(ActorTransformSetter(self.other_actors[0], self._first_actor_transform))
         sequence.add_child(ActorTransformSetter(self.other_actors[1], self._second_actor_transform))
-        sequence.add_child(parallel_root)
+        #sequence.add_child(parallel_root)
         sequence.add_child(ActorDestroy(self.other_actors[0]))
         sequence.add_child(ActorDestroy(self.other_actors[1]))
 
