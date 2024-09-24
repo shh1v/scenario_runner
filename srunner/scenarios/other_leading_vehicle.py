@@ -10,8 +10,8 @@ Other Leading Vehicle scenario:
 The scenario realizes a common driving behavior, in which the
 user-controlled ego vehicle follows a leading car driving down
 a given road. At some point the leading car has to decelerate.
-The ego vehicle has to react accordingly by changing lane to avoid a
-collision and follow the leading car in other lane. The scenario ends
+The ego vehicle has to react accordingly by changing lanes to avoid a
+collision and follow the leading car in another lane. The scenario ends
 either via a timeout, or if the ego vehicle drives some distance.
 """
 
@@ -24,8 +24,7 @@ from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (ActorTrans
                                                                       WaypointFollower,
                                                                       ActorDestroy)
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import CollisionTest
-from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import (InTriggerDistanceToVehicle,
-                                                                               DriveDistance)
+from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import (DriveDistance)
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.scenario_helper import get_waypoint_in_distance
 
@@ -34,7 +33,7 @@ class OtherLeadingVehicle(BasicScenario):
 
     """
     This class holds everything required for a simple "Other Leading Vehicle"
-    scenario involving a user controlled vehicle and two other actors.
+    scenario involving a user-controlled vehicle and two other actors.
     Traffic Scenario 05
 
     This is a single ego vehicle scenario
@@ -88,50 +87,29 @@ class OtherLeadingVehicle(BasicScenario):
         self._first_actor_transform = first_vehicle_transform
         self._second_actor_transform = second_vehicle_transform
 
+        # Set both actors to start moving immediately after spawn
+        first_vehicle.set_autopilot(True)
+        second_vehicle.set_autopilot(True)
+
     def _create_behavior(self):
         """
-        The scenario defined after is a "other leading vehicle" scenario. After
-        invoking this scenario, the user controlled vehicle has to drive towards the
-        moving other actors, then make the leading actor to decelerate when user controlled
-        vehicle is at some close distance. Finally, the user-controlled vehicle has to change
-        lane to avoid collision and follow other leading actor in other lane to end the scenario.
-        If this does not happen within 90 seconds, a timeout stops the scenario or the ego vehicle
-        drives certain distance and stops the scenario.
+        The scenario defined is a "other leading vehicle" scenario. The leading vehicles start moving as soon as the scenario begins, without waiting for the ego vehicle to reach a specific position or parallel lane. The ego vehicle will need to react to these vehicles, potentially changing lanes to avoid a collision.
         """
         # start condition
-        driving_in_same_direction = py_trees.composites.Parallel("All actors driving in same direction",
+        driving_in_same_direction = py_trees.composites.Parallel("DrivingTowardsIntersection",
                                                                  policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
         leading_actor_sequence_behavior = py_trees.composites.Sequence("Decelerating actor sequence behavior")
 
-        # both actors moving in same direction
-       # Start the first vehicle at a slower speed and let it gradually adjust
-        keep_velocity = py_trees.composites.Parallel("First actor moving at manageable speed",
-                                                     policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
+        # Start both vehicles moving at their respective speeds immediately, without waiting for the ego vehicle
+        first_vehicle_behavior = WaypointFollower(self.other_actors[0], self._first_vehicle_speed, avoid_collision=True)
+        second_vehicle_behavior = WaypointFollower(self.other_actors[1], self._second_vehicle_speed, avoid_collision=True)
 
-        # Start the first vehicle at a low speed to give ego vehicle time to catch up
-        initial_speed = 15  # Adjust to a slower speed initially
+        # Add these behaviors to the leading actor sequence
+        leading_actor_sequence_behavior.add_child(first_vehicle_behavior)
+        leading_actor_sequence_behavior.add_child(second_vehicle_behavior)
 
-        # First vehicle starts moving immediately
-        keep_velocity.add_child(WaypointFollower(self.other_actors[0], initial_speed, avoid_collision=True))
-
-        # Use a condition to dynamically adjust the speed as the ego vehicle approaches
-        adjust_speed = py_trees.composites.Sequence("Dynamic speed adjustment")
-
-        # Monitor the distance between ego vehicle and the first vehicle
-        ego_distance_condition = InTriggerDistanceToVehicle(self.other_actors[0], self.ego_vehicles[0], 30)
-
-        # Adjust the speed of the first vehicle when the ego vehicle gets closer
-        dynamic_speed_adjustment = WaypointFollower(self.other_actors[0], self._first_vehicle_speed, avoid_collision=True)
-
-        adjust_speed.add_child(ego_distance_condition)
-        adjust_speed.add_child(dynamic_speed_adjustment)
-
-        # Combine both behaviors
-        leading_actor_sequence_behavior = py_trees.composites.Sequence("Leading vehicle behavior")
-        leading_actor_sequence_behavior.add_child(keep_velocity)
-        leading_actor_sequence_behavior.add_child(adjust_speed)
         # end condition
-        #ego_drive_distance = DriveDistance(self.ego_vehicles[0], self._ego_vehicle_drive_distance)
+        ego_drive_distance = DriveDistance(self.ego_vehicles[0], self._ego_vehicle_drive_distance)
 
         # Build behavior tree
         sequence = py_trees.composites.Sequence("Scenario behavior")
@@ -139,14 +117,13 @@ class OtherLeadingVehicle(BasicScenario):
         parallel_root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
         sequence.add_child(driving_in_same_direction)
 
-        #parallel_root.add_child(ego_drive_distance)
+        parallel_root.add_child(ego_drive_distance)
         parallel_root.add_child(driving_in_same_direction)
         driving_in_same_direction.add_child(leading_actor_sequence_behavior)
-        driving_in_same_direction.add_child(WaypointFollower(self.other_actors[1], self._second_vehicle_speed,
-                                                             avoid_collision=True))
+
         sequence.add_child(ActorTransformSetter(self.other_actors[0], self._first_actor_transform))
         sequence.add_child(ActorTransformSetter(self.other_actors[1], self._second_actor_transform))
-        #sequence.add_child(parallel_root)
+        sequence.add_child(parallel_root)
         sequence.add_child(ActorDestroy(self.other_actors[0]))
         sequence.add_child(ActorDestroy(self.other_actors[1]))
 
