@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-#
-# This work is licensed under the terms of the MIT license.
-# For a copy, see <https://opensource.org/licenses/MIT>.
-
-"""
-Other Leading Vehicle scenario:
-
-This scenario defines a situation where the ego vehicle follows a leading car
-and at some point, the leading car decelerates, requiring the ego vehicle
-to react accordingly.
-"""
-
 import py_trees
 import carla
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
