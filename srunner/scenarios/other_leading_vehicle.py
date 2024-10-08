@@ -5,7 +5,7 @@ from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (ActorTrans
                                                                       WaypointFollower,
                                                                       ActorDestroy)
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import CollisionTest
-from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import (DriveDistance)
+from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import DriveDistance
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.scenario_helper import get_waypoint_in_distance
 
@@ -19,9 +19,6 @@ class OtherLeadingVehicle(BasicScenario):
 
     def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, criteria_enable=True,
                  timeout=120):
-        """
-        Setup all relevant parameters and create scenario
-        """
         self._world = world
         self._map = CarlaDataProvider.get_map()
         self._first_vehicle_location = 35
@@ -30,7 +27,6 @@ class OtherLeadingVehicle(BasicScenario):
         self._reference_waypoint = self._map.get_waypoint(config.trigger_points[0].location)
         self._other_actor_max_brake = 1.0
         self._first_actor_transform = None
-        # Timeout of scenario in seconds
         self.timeout = timeout
 
         super(OtherLeadingVehicle, self).__init__("VehicleDeceleratingInMultiLaneSetUp",
@@ -41,41 +37,27 @@ class OtherLeadingVehicle(BasicScenario):
                                                   criteria_enable=criteria_enable)
 
     def _initialize_actors(self, config):
-        """
-        Custom initialization with one vehicle
-        """
         first_vehicle_waypoint, _ = get_waypoint_in_distance(self._reference_waypoint, self._first_vehicle_location)
-
         first_vehicle_transform = carla.Transform(first_vehicle_waypoint.transform.location,
                                                   first_vehicle_waypoint.transform.rotation)
 
         first_vehicle = CarlaDataProvider.request_new_actor('vehicle.nissan.patrol', first_vehicle_transform)
-
         self.other_actors.append(first_vehicle)
         self._first_actor_transform = first_vehicle_transform
 
-        # Set the actor to start moving immediately after spawn
         first_vehicle.set_autopilot(True)
 
     def _create_behavior(self):
-        """
-        The scenario defined is a "other leading vehicle" scenario. The leading vehicle starts moving as soon as the scenario begins, without waiting for the ego vehicle to reach a specific position.
-        """
-        # start condition
         driving_in_same_direction = py_trees.composites.Parallel("DrivingTowardsIntersection",
                                                                  policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
-        # Start the vehicle moving at its speed immediately, without waiting for the ego vehicle
         first_vehicle_behavior = WaypointFollower(self.other_actors[0], self._first_vehicle_speed, avoid_collision=True)
 
-        # Add the behavior to the sequence
         leading_actor_sequence_behavior = py_trees.composites.Sequence("Decelerating actor sequence behavior")
         leading_actor_sequence_behavior.add_child(first_vehicle_behavior)
 
-        # end condition
         ego_drive_distance = DriveDistance(self.ego_vehicles[0], self._ego_vehicle_drive_distance)
 
-        # Build behavior tree
         sequence = py_trees.composites.Sequence("Scenario behavior")
         
         parallel_root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
@@ -92,15 +74,9 @@ class OtherLeadingVehicle(BasicScenario):
         return sequence
 
     def _create_test_criteria(self):
-        """
-        A list of all test criteria will be created that is later used
-        in parallel behavior tree.
-        """
         criteria = []
-
         collision_criterion = CollisionTest(self.ego_vehicles[0])
         criteria.append(collision_criterion)
-
         return criteria
 
     def __del__(self):
