@@ -50,7 +50,7 @@ def main(**kargs):
         new_transform = None
         last_logged_transform = None
 
-        with open("route_data/raw_waypoints/study_route_2_town05.txt", "w+") as file:
+        with open("route_data/raw_waypoints/study_route_3_town05.txt", "w+") as file:
             while True:
                 new_transform = DReyeVR_vehicle.get_transform()
                 if last_logged_transform is not None and last_logged_transform.location.distance(new_transform.location) < 20:
