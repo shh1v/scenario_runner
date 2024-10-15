@@ -20,7 +20,6 @@ class OtherLeadingVehicle(BasicScenario):
         super(OtherLeadingVehicle, self).__init__("VehicleLeadingScenario", ego_vehicles, config, world, debug_mode, criteria_enable=criteria_enable)
 
     def _initialize_actors(self, config):
-        # Calculate the spawn point for the leading vehicle
         leading_vehicle_waypoint, _ = get_waypoint_in_distance(self._reference_waypoint, self._spawn_offset)
         leading_vehicle_transform = carla.Transform(leading_vehicle_waypoint.transform.location, leading_vehicle_waypoint.transform.rotation)
         

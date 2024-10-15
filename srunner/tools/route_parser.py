@@ -91,7 +91,7 @@ class RouteParser(object):
         route_weather = route.find("weather")
         if route_weather is None:
 
-            weather = carla.WeatherParameters(sun_altitude_angle=70)
+            weather = carla.WeatherParameters(sun_altitude_angle=-70)
 
         else:
             weather = carla.WeatherParameters()
@@ -108,7 +108,7 @@ class RouteParser(object):
                 if 'sun_azimuth_angle' in weather_attrib.attrib:
                     weather.sun_azimuth_angle = float(weather_attrib.attrib['sun_azimuth_angle'])
                 if 'sun_altitude_angle' in weather_attrib.attrib:
-                    weather.sun_altitude_angle = float(weather_attrib.attrib['sun_altitude_angle'])
+                    weather.sun_altitude_angle = -70
                 if 'wetness' in weather_attrib.attrib:
                     weather.wetness = float(weather_attrib.attrib['wetness'])
                 if 'fog_distance' in weather_attrib.attrib:
