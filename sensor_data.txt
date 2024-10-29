@@ -1,0 +1,38 @@
+brake_input: 0.0
+camera_location: [55.69892120361328, 44.252647399902344, -62.85675811767578]
+camera_rotation: [5.2994818687438965, -1.4964430332183838, 0.8816593289375305]
+current_gear_input: False
+focus_actor_dist: 4226.4560546875
+focus_actor_name: Road_Marking_Town05_152
+focus_actor_pt: [-25460.984375, -8982.5419921875, 815.24169921875]
+frame: 2456
+frame_number: 2456
+framesequence: 1433741213
+gaze_dir: [1.0, 0.0, 0.0]
+gaze_origin: [0.0, 0.0, 0.0]
+gaze_valid: False
+gaze_vergence: 0.0
+handbrake_input: False
+left_eye_openness: 2.1019476964872256e-44
+left_eye_openness_valid: True
+left_gaze_dir: [1.0, 0.0, 0.0]
+left_gaze_origin: [0.0, 0.0, 0.0]
+left_gaze_valid: False
+left_pupil_diam: 1.0285530728144157e-42
+left_pupil_posn: [-1.0, 1.0]
+left_pupil_posn_valid: True
+right_eye_openness: 0.0
+right_eye_openness_valid: True
+right_gaze_dir: [1.0, 0.0, 0.0]
+right_gaze_origin: [0.0, 0.0, 0.0]
+right_gaze_valid: False
+right_pupil_diam: 1.0285530728144157e-42
+right_pupil_posn: [-1.0, 1.0]
+right_pupil_posn_valid: True
+steering_input: -0.013124979101121426
+throttle_input: 0.012500000186264515
+timestamp: 132.0563139244914
+timestamp_carla: 132059
+timestamp_device: 876287953
+timestamp_stream: 132.0563139244914
+transform: [array([-42.22589874,  -8.93001938,  -0.29676169]), array([ 7.03509431e-04, -3.67808604e+00,  2.12565545e-04])]

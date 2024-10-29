@@ -5,20 +5,46 @@ from srunner.scenariomanager.scenarioatomics.atomic_behaviors import ActorDestro
 from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import DriveDistance
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.scenario_helper import get_waypoint_in_distance
+from DReyeVR_utils import DReyeVRSensor
+import json
+import numpy as np
+
+import numpy as np
+
+class EgoVehicleSensorHandler:
+    def __init__(self, world):
+        self.world = world
+        self.sensor = DReyeVRSensor(world)  # Assuming DReyeVRSensor is already set up
+
+    def publish_and_print(self, data):
+        self.sensor.update(data)
+        
+        # Prepare data for text file output
+        with open("sensor_data.txt", "w+") as f:
+            for key, value in self.sensor.data.items():
+                # Convert numpy arrays to lists for better readability
+                if isinstance(value, np.ndarray):
+                    value = value.tolist()
+                f.write(f"{key}: {value}\n")
+
+    def listen_to_sensor(self):
+        self.sensor.ego_sensor.listen(self.publish_and_print)
+
+
 
 class OtherLeadingVehicle(BasicScenario):
     def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, criteria_enable=True, timeout=300):
         self._world = world
         self._map = CarlaDataProvider.get_map()
         self._reference_waypoint = self._map.get_waypoint(config.trigger_points[0].location)
+        self._spawn_offset = 20
+        self.timeout = timeout
         
-        self._spawn_offset = 20  # Distance in meters
-
-        # Store the timeout value
-        self.timeout = timeout  # Set to 300 seconds (5 minutes)
+        # Initialize the EgoVehicleSensorHandler
+        self.sensor_handler = EgoVehicleSensorHandler(world)
+        self.sensor_handler.listen_to_sensor()  # Start listening
 
         super(OtherLeadingVehicle, self).__init__("VehicleLeadingScenario", ego_vehicles, config, world, debug_mode, criteria_enable=criteria_enable)
-
     def _initialize_actors(self, config):
         leading_vehicle_waypoint, _ = get_waypoint_in_distance(self._reference_waypoint, self._spawn_offset)
         leading_vehicle_transform = carla.Transform(leading_vehicle_waypoint.transform.location, leading_vehicle_waypoint.transform.rotation)
