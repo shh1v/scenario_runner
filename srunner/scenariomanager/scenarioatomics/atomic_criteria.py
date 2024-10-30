@@ -1431,6 +1431,8 @@ class InRadiusRegionTest(Criterion):
         location = CarlaDataProvider.get_location(self._actor)
         if location is None:
             return new_status
+        
+        #print(f"Actor position: ({location.x}, {location.y}), Target: ({self._x}, {self._y}")
 
         if self.test_status != "SUCCESS":
             in_radius = math.sqrt(((location.x - self._x)**2) + ((location.y - self._y)**2)) < self._radius
