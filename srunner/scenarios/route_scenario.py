@@ -54,7 +54,8 @@ from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTe
                                                                      OutsideRouteLanesTest,
                                                                      RunningRedLightTest,
                                                                      RunningStopTest,
-                                                                     ActorSpeedAboveThresholdTest)
+                                                                     ActorSpeedAboveThresholdTest,
+                                                                     DrivenDistanceTest)
 
 SECONDS_GIVEN_PER_METERS = 0.4
 
@@ -649,6 +650,8 @@ class RouteScenario(BasicScenario):
                                                          speed_threshold=0.1,
                                                          below_threshold_max_time=90.0,
                                                          terminate_on_failure=True)
+        
+        #driven_criterion = DrivenDistanceTest(self.ego_vehicles[0], 20)
 
         criteria.append(completion_criterion)
         criteria.append(collision_criterion)
@@ -657,8 +660,10 @@ class RouteScenario(BasicScenario):
         criteria.append(red_light_criterion)
         criteria.append(stop_criterion)
         criteria.append(blocked_criterion)
+        #criteria.append(driven_criterion)
 
         return criteria
+
 
     def post_scenario_behaviour(self):
         """

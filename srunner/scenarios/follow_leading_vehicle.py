@@ -29,7 +29,7 @@ from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (ActorTrans
                                                                       StopVehicle,
                                                                       WaypointFollower,
                                                                       Idle)
-from srunner.scenariomanager.scenarioatomics.atomic_criteria import CollisionTest
+from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTest, DrivenDistanceTest)
 from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import (InTriggerDistanceToVehicle,
                                                                                InTriggerDistanceToNextIntersection,
                                                                                DriveDistance,
