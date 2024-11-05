@@ -8,8 +8,8 @@ from srunner.tools.scenario_helper import get_waypoint_in_distance
 from DReyeVR_utils import DReyeVRSensor
 import json
 import numpy as np
-
-import numpy as np
+import csv
+from datetime import datetime
 
 class EgoVehicleSensorHandler:
     def __init__(self, world):
@@ -18,14 +18,28 @@ class EgoVehicleSensorHandler:
 
     def publish_and_print(self, data):
         self.sensor.update(data)
+
+        # Prepare data for CSV output
+        with open("sensor_data.csv", "a", newline='') as f:  # Use "a" to append data
+            writer = csv.writer(f)
         
-        # Prepare data for text file output
-        with open("sensor_data.txt", "w+") as f:
-            for key, value in self.sensor.data.items():
+            # Write the header if the file is empty
+            if f.tell() == 0:
+                writer.writerow(["Timestamp"] + list(self.sensor.data.keys()))  # Add header
+        
+            # Prepare row with timestamp and sensor data
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            row = [timestamp]
+        
+            for key in self.sensor.data.keys():
+                value = self.sensor.data[key]
                 # Convert numpy arrays to lists for better readability
                 if isinstance(value, np.ndarray):
                     value = value.tolist()
-                f.write(f"{key}: {value}\n")
+                row.append(value)
+        
+            writer.writerow(row)  # Write the row to the CSV file
+
 
     def listen_to_sensor(self):
         self.sensor.ego_sensor.listen(self.publish_and_print)
