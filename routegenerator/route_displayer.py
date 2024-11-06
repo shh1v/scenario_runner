@@ -35,7 +35,7 @@ def main(**kargs):
     client.set_timeout(10.0)
     
     # Change this to the route xml file you want to display
-    file_name = 'route_data/study_route_1.xml'
+    file_name = 'route_data/study_route_traffic_lights_l.xml'
 
     try:
         world = client.get_world()

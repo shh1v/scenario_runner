@@ -639,7 +639,7 @@ class RouteScenario(BasicScenario):
                                       offroad_max=100,
                                       terminate_on_failure=False)
 
-        #completion_criterion = RouteCompletionTest(self.ego_vehicles[0], route=route)
+        completion_criterion = RouteCompletionTest(self.ego_vehicles[0], route=route)
 
         outsidelane_criterion = OutsideRouteLanesTest(self.ego_vehicles[0], route=route)
 
@@ -653,9 +653,10 @@ class RouteScenario(BasicScenario):
                                                          terminate_on_failure=True)
         
         #driven_criterion = DrivenDistanceTest(self.ego_vehicles[0], 20)
-        region_criterion = InRadiusRegionTest(actor=self.ego_vehicles[0], x=-264, y=-62, radius=4)
+        #region_criterion = InRadiusRegionTest(actor=self.ego_vehicles[0], x=-264, y=-62, radius=4)
+        
 
-        #criteria.append(completion_criterion)
+        criteria.append(completion_criterion)
         criteria.append(collision_criterion)
         criteria.append(route_criterion)
         criteria.append(outsidelane_criterion)
@@ -663,7 +664,7 @@ class RouteScenario(BasicScenario):
         criteria.append(stop_criterion)
         criteria.append(blocked_criterion)
         #criteria.append(driven_criterion)
-        criteria.append(region_criterion)
+        #criteria.append(region_criterion)
 
         return criteria
 

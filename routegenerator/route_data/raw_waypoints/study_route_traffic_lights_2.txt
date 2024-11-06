@@ -1,0 +1,4 @@
+Transform(Location(x=-53.980679, y=-46.006634, z=0.057129), Rotation(pitch=-0.000915, yaw=90.906815, roll=0.000250))
+Transform(Location(x=-53.522606, y=-25.748547, z=0.057504), Rotation(pitch=-0.036412, yaw=87.762520, roll=0.001456))
+Transform(Location(x=-56.880775, y=-5.945430, z=0.028415), Rotation(pitch=-0.171445, yaw=134.207916, roll=-0.120911))
+Transform(Location(x=-77.013390, y=-4.080448, z=0.001493), Rotation(pitch=0.059266, yaw=-177.188492, roll=0.001109))

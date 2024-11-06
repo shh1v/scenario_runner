@@ -12,8 +12,8 @@ import re
 from lxml.etree import Element, SubElement, tostring, ElementTree
 
 # Change the parameters appropriately for your use case
-input_file = 'route_data/raw_waypoints/study_route_1.txt'
-output_file = 'route_data/study_route_1.xml'
+input_file = 'route_data/raw_waypoints/study_route_stop.txt'
+output_file = 'route_data/study_route_stop.xml'
 route_id = 1
 town = "Town05"
 
