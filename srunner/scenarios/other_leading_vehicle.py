@@ -28,7 +28,7 @@ class EgoVehicleSensorHandler:
                 writer.writerow(["Timestamp"] + list(self.sensor.data.keys()))  # Add header
         
             # Prepare row with timestamp and sensor data
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            timestamp = int(datetime.now().timestamp())
             row = [timestamp]
         
             for key in self.sensor.data.keys():
