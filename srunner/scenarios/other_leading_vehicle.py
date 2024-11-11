@@ -10,6 +10,7 @@ import json
 import numpy as np
 import csv
 from datetime import datetime
+import numpy as np
 
 class EgoVehicleSensorHandler:
     def __init__(self, world):
@@ -17,74 +18,77 @@ class EgoVehicleSensorHandler:
         self.sensor = DReyeVRSensor(world)  # Assuming DReyeVRSensor is already set up
 
     def publish_and_print(self, data):
-    self.sensor.update(data)
+        self.sensor.update(data)
 
-    # Prepare data for CSV output
-    with open("sensor_data.csv", "a", newline='') as f:  # Use "a" to append data
-        writer = csv.writer(f)
-        desired_header = [
-            "brake_input", "camera_location", "camera_rotation", "current_gear_input", 
-            "focus_actor_dist", "focus_actor_name", "focus_actor_pt", "frame", "frame_number", 
-            "framesequence", "combinedEyeLocalForward_X", "combinedEyeLocalForward_Y", 
-            "combinedEyeLocalForward_Z", "combinedEyeLocalOrigin_X", "combinedEyeLocalOrigin_Y", 
-            "combinedEyeLocalOrigin_Z", "leftEyeLocalForward_X", "leftEyeLocalForward_Y", "leftEyeLocalForward_Z",  # Split left_gaze_dir into X, Y, Z
-            "leftEyeLocalOrigin_X", "leftEyeLocalOrigin_Y", "leftEyeLocalOrigin_Z",  # Split left_gaze_origin into X, Y, Z
-            "isLeftEyeGazeRayValid", "gaze_vergence", "handbrake_input", 
-            "leftEyeOpenness", "leftEyeOpennessReadSuccess", # Split right_gaze_dir and origin
-            "leftEyePupilDiameter", "leftEyePupilPosition_X", "leftEyePupilPosition_Y","left_pupil_posn_valid", 
-            "rightEyeOpenness", "rightEyeOpennessReadSuccess", "rightEyeLocalForward_X", "rightEyeLocalForward_Y", 
-            "rightEyeLocalForward_Z", "rightEyeLocalOrigin_X", "rightEyeLocalOrigin_Y", "rightEyeLocalOrigin_Z", 
-            "isRightEyeGazeRayValid", "rightEyePupilDiameter", "rightEyePupilPosition_X", 
-            "rightEyePupilPosition_Y", "right_pupil_posn_valid ", "steering_input", "throttle_input", 
-            "systemTimestamp(ms)", "timestamp_carla", "deviceTimestamp(ms)", "timestamp_stream", "transform"
-        ]
+        # Header mapping to map data keys to specific headers in the CSV
+        header_mapping = {
+            "left_gaze_dir": ["leftEyeLocalForward_X", "leftEyeLocalForward_Y", "leftEyeLocalForward_Z"],
+            "left_gaze_origin": ["leftEyeLocalOrigin_X", "leftEyeLocalOrigin_Y", "leftEyeLocalOrigin_Z"],
+            "right_gaze_dir": ["rightEyeLocalForward_X", "rightEyeLocalForward_Y", "rightEyeLocalForward_Z"],
+            "right_gaze_origin": ["rightEyeLocalOrigin_X", "rightEyeLocalOrigin_Y", "rightEyeLocalOrigin_Z"],
+            "right_pupil_posn": ["rightEyePupilPosition_X", "rightEyePupilPosition_Y"],
+            "left_pupil_posn": ["leftEyePupilPosition_X", "leftEyePupilPosition_Y"],
+            "gaze_dir": ["combinedEyeLocalForward_X", "combinedEyeLocalForward_Y", "combinedEyeLocalForward_Z"],
+            "gaze_origin": ["combinedEyeLocalOrigin_X", "combinedEyeLocalOrigin_Y", "combinedEyeLocalOrigin_Z"],
+            "framesequence": ["frameSequence"],
+            "gaze_valid": ["isCombinedEyeGazeRayValid"],
+            "left_eye_openness": ["leftEyeOpenness"],
+            "left_eye_openness_valid": ["leftEyeOpennessReadSuccess"],    
+            "left_gaze_valid": ["isLeftEyeGazeRayValid"],
+            "left_pupil_diam": ["leftEyePupilDiameter"],
+            "right_eye_openness": ["rightEyeOpenness"],
+            "right_eye_openness_valid": ["rightEyeOpennessReadSuccess"],
+            "right_gaze_valid": ["isRightEyeGazeRayValid"],
+            "right_pupil_diam": ["rightEyePupilDiameter"],
+            "timestamp": ["systemTimestamp(ms)"],
+            "timestamp_device": ["deviceTimestamp(ms)"],
+        }
 
-        # Write the header if the file is empty
-        if f.tell() == 0:
-            writer.writerow(["Timestamp"] + desired_header)  # Add header with the desired columns
-        
-        # Prepare row with timestamp and sensor data
-        timestamp = int(datetime.now().timestamp())
-        row = [timestamp]
-        
-        for key in self.sensor.data.keys():
-            value = self.sensor.data[key]
+        # Open the CSV file in append mode
+        with open("sensor_data.csv", "a+", newline='') as f:
+            writer = csv.writer(f)
 
-            # If the value is a 3D vector (like left_gaze_dir, right_gaze_dir, left_gaze_origin, or right_gaze_origin), split it
-            if isinstance(value, str) and value.startswith('[') and value.endswith(']'):
-                # Parse the string into a list of floats
-                value = [float(v) for v in value[1:-1].split(',')]
-                
-                if key == "left_gaze_dir":
-                    row.extend(value)  # Adding left_gaze_dir_X, left_gaze_dir_Y, left_gaze_dir_Z to the row
-                elif key == "left_gaze_origin":
-                    row.extend(value)  # Adding left_gaze_origin_X, left_gaze_origin_Y, left_gaze_origin_Z to the row
-                elif key == "right_gaze_dir":
-                    row.extend(value)  # Adding right_gaze_dir_X, right_gaze_dir_Y, right_gaze_dir_Z to the row
-                elif key == "right_gaze_origin":
-                    row.extend(value)  # Adding right_gaze_origin_X, right_gaze_origin_Y, right_gaze_origin_Z to the row
-                elif key == "left_pupil_posn":
-                    # Split the 2 elements for left_pupil_posn into the correct components
-                    row.extend(value) 
-                elif key == "right_pupil_posn":
-                    # Split the 2 elements for left_pupil_posn into the correct components
-                    row.extend(value) 
-                elif key == "gaze_dir":
-                    # Split the 2 elements for left_pupil_posn into the correct components
-                    row.extend(value) 
-                elif key == "gaze_origin":
-                    # Split the 2 elements for left_pupil_posn into the correct components
-                    row.extend(value) 
-                else:
-                    row.append(value)  # For other fields that aren't gaze-related
+            # Move to the start of the file and check if it's empty
+            f.seek(0)
+            if f.read(1):
+                # If file is not empty, read the header
+                f.seek(0)
+                reader = csv.reader(f)
+                header_row = next(reader)
             else:
-                # Convert numpy arrays to lists for better readability
-                if isinstance(value, np.ndarray):
-                    value = value.tolist()
-                row.append(value)
+                # If file is empty, dynamically create the header row
+                header_row = ["Timestamp"]
+                for key in self.sensor.data.keys():
+                    if key in header_mapping:
+                        header_row.extend(header_mapping[key])  # Use mapped headers
+                    else:
+                        header_row.append(key)  # Use original key as header if no mapping
+                writer.writerow(header_row)  # Write the header row to the file
 
-        # Write the row to the CSV file
-        writer.writerow(row)
+            # Initialize a dictionary to store values for each header
+            row_dict = {header: "" for header in header_row}
+            row_dict["Timestamp"] = int(datetime.now().timestamp())  # Set the timestamp
+
+            # Populate the row dictionary with data from self.sensor.data
+            for key, value in self.sensor.data.items():
+                if key in header_mapping:
+                    # If the key has mapped headers, assign values accordingly
+                    headers = header_mapping[key]
+                    if isinstance(value, (list, np.ndarray)) and len(value) == len(headers):
+                        for h, v in zip(headers, value):
+                            row_dict[h] = v
+                    else:
+                        # Handle single value cases by repeating if necessary
+                        row_dict[headers[0]] = value
+                else:
+                    # If no mapping, store the value under its original key
+                    row_dict[key] = value
+
+            # Ensure values are in the correct order according to the header row
+            row = [row_dict[header] for header in header_row]
+
+            # Write the row to the CSV file
+            writer.writerow(row)
 
 
     def listen_to_sensor(self):
