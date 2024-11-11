@@ -67,8 +67,10 @@ class EgoVehicleSensorHandler:
 
             # Initialize a dictionary to store values for each header
             row_dict = {header: "" for header in header_row}
-            row_dict["Timestamp"] = int(datetime.now().timestamp())  # Set the timestamp
+            timestamp_ms = int(datetime.now().timestamp() * 1000)
 
+            # Set the timestamp in your row dictionary
+            row_dict["Timestamp"] = timestamp_ms
             # Populate the row dictionary with data from self.sensor.data
             for key, value in self.sensor.data.items():
                 if key in header_mapping:
