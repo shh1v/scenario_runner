@@ -1,0 +1,6 @@
+Transform(Location(x=-249.692337, y=93.159111, z=0.001679), Rotation(pitch=-0.001680, yaw=7.312686, roll=-0.000397))
+Transform(Location(x=-229.292648, y=94.682281, z=0.001382), Rotation(pitch=0.076881, yaw=-0.093933, roll=0.123290))
+Transform(Location(x=-209.176712, y=94.247330, z=0.002169), Rotation(pitch=-0.057100, yaw=-1.535156, roll=0.002751))
+Transform(Location(x=-195.503342, y=109.268173, z=0.056791), Rotation(pitch=0.084080, yaw=86.557320, roll=-0.016968))
+Transform(Location(x=-192.455490, y=129.760040, z=0.056969), Rotation(pitch=0.053692, yaw=62.783157, roll=0.503927))
+Transform(Location(x=-180.135681, y=146.038422, z=0.057805), Rotation(pitch=-0.089141, yaw=36.034954, roll=0.324529))
