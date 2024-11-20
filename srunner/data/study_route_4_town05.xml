@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<routes>
+  <route id="1" town="Town05">
+    <!-- Start near Town05 -->
+    <waypoint x="-164.732162" y="-95.141876" z="0.094200" pitch="0.000000" yaw="-179.913696" roll="0.000000"/>
+    <waypoint x="-185.008896" y="-94.778999" z="0.017058" pitch="0.262730" yaw="177.607086" roll="0.005449"/>
+    <waypoint x="-205.301086" y="-93.643379" z="-0.001307" pitch="-0.026549" yaw="176.394867" roll="0.006708"/>
+    <waypoint x="-225.684723" y="-92.359413" z="0.002123" pitch="-0.047511" yaw="176.403244" roll="-0.000092"/>
+    <waypoint x="-250.0" y="-85.0" z="0.1" pitch="0.0" yaw="150.0" roll="0.0"/> <!-- New waypoint -->
+    
+    <!-- Continue with a variety of new points -->
+    <waypoint x="-275.0" y="-70.0" z="0.1" pitch="0.0" yaw="130.0" roll="0.0"/> <!-- New waypoint -->
+    <waypoint x="-300.0" y="-55.0" z="0.1" pitch="0.0" yaw="110.0" roll="0.0"/> <!-- New waypoint -->
+    <waypoint x="-325.0" y="-40.0" z="0.1" pitch="0.0" yaw="90.0" roll="0.0"/> <!-- New waypoint -->
+    <waypoint x="-350.0" y="-25.0" z="0.1" pitch="0.0" yaw="70.0" roll="0.0"/> <!-- New waypoint -->
+    <waypoint x="-375.0" y="-10.0" z="0.1" pitch="0.0" yaw="50.0" roll="0.0"/> <!-- Destination waypoint -->
+    
+    <!-- Add more turns for variation -->
+    <waypoint x="-400.0" y="5.0" z="0.1" pitch="0.0" yaw="30.0" roll="0.0"/> <!-- Destination waypoint -->
+    
+    <!-- Final stretch near the Town05 -->
+    <waypoint x="-218.533691" y="90.513260" z="0.001414" pitch="0.073370" yaw="4.338948" roll="0.162054"/>
+    <waypoint x="-198.528702" y="93.824646" z="0.023405" pitch="0.631253" yaw="47.501984" roll="-0.609192"/>
+    <waypoint x="-190.389511" y="112.188866" z="0.057308" pitch="0.000266" yaw="93.357941" roll="0.296547"/>
+    <waypoint x="-182.591949" y="130.804642" z="0.056821" pitch="0.080801" yaw="64.598198" roll="0.002204"/>
+    <waypoint x="-168.067307" y="144.653564" z="0.057421" pitch="-0.022608" yaw="-3.365052" roll="0.823205"/>
+    
+    <!-- A quick zigzag to finish off -->
+    <waypoint x="-147.874039" y="144.567581" z="0.057424" pitch="-0.022157" yaw="-5.616917" roll="0.111566"/>
+    <waypoint x="-127.588882" y="145.166824" z="0.021830" pitch="0.110649" yaw="2.894227" roll="-0.159088"/>
+    <waypoint x="-107.220428" y="146.189316" z="0.058570" pitch="0.064286" yaw="2.903022" roll="0.008698"/>
+  </route>
+</routes>
