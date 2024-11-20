@@ -178,9 +178,9 @@ class StopSignRightTurn(BasicScenario):
         self._world = world
         self._map = CarlaDataProvider.get_map()
         self._source_dist = 40
-        self._sink_dist = 10
+        self._sink_dist = 50
         self._source_dist_interval = [25, 50]
-        self._opposite_speed = 35 / 3.6
+        self._opposite_speed = 45 / 3.6
         self._direction = 'left'
         self.timeout = timeout
         super(StopSignRightTurn, self).__init__("StopSignRightTurn",
@@ -252,7 +252,7 @@ class StopSignRightTurn(BasicScenario):
         root.add_child(WaitEndIntersection(self.ego_vehicles[0]))
 
         root.add_child(ActorFlow(
-            self._source_wp, self._sink_wp, self._source_dist_interval, 2, self._opposite_speed))
+            self._source_wp, self._sink_wp, self._source_dist_interval, 0.5, self._opposite_speed))
         
         # Todo
 

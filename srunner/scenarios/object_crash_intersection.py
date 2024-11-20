@@ -76,7 +76,7 @@ class BaseVehicleTurning(BasicScenario):
         self._reference_waypoint = self._wmap.get_waypoint(self._trigger_location)
         self._ego_route = CarlaDataProvider.get_ego_vehicle_route()
 
-        self._start_distance = 10
+        self._start_distance = 13
         self._spawn_dist = self._start_distance
         self._number_of_attempts = 6
         self._retry_dist = 0.4
@@ -179,8 +179,9 @@ class BaseVehicleTurning(BasicScenario):
         sequence.add_child(HandBrakeVehicle(self.other_actors[0], False))
 
         # Move the adversary.
-        speed_duration = 2.0 * collision_duration
-        speed_distance = 2.0 * collision_distance
+        speed_duration = 4.0 * collision_duration
+        speed_distance = 4.0 * collision_distance
+        print(speed_distance)
         sequence.add_child(KeepVelocity(
             self.other_actors[0],
             self._adversary_speed,

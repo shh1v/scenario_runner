@@ -147,7 +147,7 @@ class DynamicObjectCrossing(BasicScenario):
         self._reference_waypoint = self._wmap.get_waypoint(self._trigger_location)
         self._num_lane_changes = 0
 
-        self._start_distance = 12
+        self._start_distance = 20
         self._blocker_shift = 0.9
         self._retry_dist = 0.4
 
@@ -158,9 +158,9 @@ class DynamicObjectCrossing(BasicScenario):
         self._collision_wp = None
 
         self._adversary_speed = 4.0  # Speed of the adversary [m/s]
-        self._reaction_time = 0.8  # Time the agent has to react to avoid the collision [s]
+        self._reaction_time = 1  # Time the agent has to react to avoid the collision [s]
         self._reaction_ratio = 0.12  # The higehr the number of lane changes, the smaller the reaction time
-        self._min_trigger_dist = 6.0  # Min distance to the collision location that triggers the adversary [m]
+        self._min_trigger_dist = 8.0  # Min distance to the collision location that triggers the adversary [m]
         self._ego_end_distance = 40
         self.timeout = timeout
 
@@ -274,8 +274,8 @@ class DynamicObjectCrossing(BasicScenario):
         sequence.add_child(trigger_adversary)
 
         # Move the adversary
-        speed_duration = 2.0 * collision_duration
-        speed_distance = 2.0 * collision_distance
+        speed_duration = 5.0 * collision_duration
+        speed_distance = 5.0 * collision_distance
         sequence.add_child(KeepVelocity(
             self.other_actors[0], self._adversary_speed,
             duration=speed_duration, distance=speed_distance, name="AdversaryCrossing"))

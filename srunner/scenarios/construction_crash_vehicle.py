@@ -57,7 +57,7 @@ class ConstructionSetupCrossing(StationaryObjectCrossing):
         """
         Custom initialization
         """
-        _start_distance = 40
+        _start_distance = 120
         lane_width = self._reference_waypoint.lane_width
         location, _ = get_location_in_distance_from_wp(
             self._reference_waypoint, _start_distance)
@@ -146,7 +146,7 @@ class ConstructionSetupCrossing(StationaryObjectCrossing):
         Only behavior here is to wait
         """
         # leaf nodes
-        actor_stand = Idle(15)
+        actor_stand = Idle(40)
 
         end_condition = DriveDistance(
             self.ego_vehicles[0],

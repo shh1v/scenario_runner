@@ -6,11 +6,11 @@
                     "available_event_configurations": [
                         {
                             "transform": {
-                                "pitch": "-0.0",
-                                "x": "-53.98",
-                                "y": "-46.01",
-                                "yaw": "90.91",
-                                "z": "0.06"
+                                "pitch": "0.0",
+                                "x": "-69.28",
+                                "y": "-5.05",
+                                "yaw": "-178.11",
+                                "z": "0.00"
                             },
                             "other_actors": [
                                 {

@@ -1,0 +1,59 @@
+## Commands to call different scenarios
+
+### Route for traffic light right turn scenario; Condition: daytime, sunny
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/0_traffic_lights_r.json 00 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output
+
+-----
+
+### Route for traffic light right turn scenario; Condition: nighttime, clear
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/0_traffic_lights_r.json 01 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output
+
+-------
+
+### Route for traffic light left turn scenario; Condition: daytime, sunny
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/1_traffic_lights_l.json 10 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output
+
+-----
+
+### Route for traffic light left turn scenario; Condition: nighttime, clear
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/1_traffic_lights_l.json 11 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output
+
+-------
+
+### Route for stop sign right turn scenario; Condition: daytime, sunny
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/2_stop_sign.json 20 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output
+
+-----
+
+### Route for stop sign right turn scenario; Condition: nighttime, clear
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/2_stop_sign.json 21 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output
+
+-------
+
+### Route for bicycle crash scenario; Condition: daytime, sunny
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/3_bicycle.json 30 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output
+
+-----
+
+### Route for bicycle crash scenario; Condition: nighttime, clear
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/3_bicycle.json 31 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output
+
+-------
+
+### Route for pedestrian crash scenario; Condition: daytime, sunny
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/4_pedestrian.json 40 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output
+
+-----
+
+### Route for pedestrian crash scenario; Condition: nighttime, clear
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/4_pedestrian.json 41 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output
+
+-------
+
+### Route for construction lane change scenario; Condition: daytime, sunny
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/5_construction.json 50 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output
+
+-----
+
+### Route for construction lane change scenario; Condition: nighttime, clear
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/5_construction.json 51 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output

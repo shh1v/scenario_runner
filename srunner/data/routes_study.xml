@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<routes>
+  <!--Route for traffic light right turn scenario; Condition: daytime, sunny-->
+  <route id="00" town="Town05">
+    <weather 
+      cloudiness="0"
+      precipitation="0"
+      precipitation_deposits="0"
+      wind_intensity="0"
+      sun_azimuth_angle="0"
+      sun_altitude_angle="70"
+      fog_density="0"
+      fog_distance="0"
+      wetness="0"
+    />
+    <waypoint x="-69.275398" y="-5.049337" z="0.001678" pitch="0.001045" yaw="-178.107193" roll="0.000139"/>
+    <waypoint x="-89.552040" y="-4.023304" z="0.001999" pitch="-0.025852" yaw="176.774002" roll="-0.028625"/>
+    <waypoint x="-109.611473" y="-3.835589" z="0.002004" pitch="-0.026795" yaw="-174.645844" roll="0.000175"/>
+    <waypoint x="-120.115967" y="-21.032196" z="0.001848" pitch="-0.002780" yaw="-94.651398" roll="-0.004089"/>
+    <waypoint x="-120.913559" y="-41.114098" z="0.001765" pitch="0.011202" yaw="-88.315399" roll="-0.001495"/>
+  </route>
+  <!--Route for traffic light right turn scenario; Condition: nighttime, clear-->
+  <route id="01" town="Town05">
+    <weather 
+      cloudiness="0"
+      precipitation="0"
+      precipitation_deposits="0"
+      wind_intensity="0"
+      sun_azimuth_angle="0"
+      sun_altitude_angle="-70"
+      fog_density="0"
+      fog_distance="0"
+      wetness="0"
+    />
+    <waypoint x="-69.275398" y="-5.049337" z="0.001678" pitch="0.001045" yaw="-178.107193" roll="0.000139"/>
+    <waypoint x="-89.552040" y="-4.023304" z="0.001999" pitch="-0.025852" yaw="176.774002" roll="-0.028625"/>
+    <waypoint x="-109.611473" y="-3.835589" z="0.002004" pitch="-0.026795" yaw="-174.645844" roll="0.000175"/>
+    <waypoint x="-120.115967" y="-21.032196" z="0.001848" pitch="-0.002780" yaw="-94.651398" roll="-0.004089"/>
+    <waypoint x="-120.913559" y="-41.114098" z="0.001765" pitch="0.011202" yaw="-88.315399" roll="-0.001495"/>
+  </route>
+  <!--Route for traffic light left turn scenario; Condition: daytime, sunny-->
+  <route id="10" town="Town05">
+    <weather 
+      cloudiness="0"
+      precipitation="0"
+      precipitation_deposits="0"
+      wind_intensity="0"
+      sun_azimuth_angle="0"
+      sun_altitude_angle="70"
+      fog_density="0"
+      fog_distance="0"
+      wetness="0"
+    />
+    <waypoint x="-24.047709" y="91.372940" z="0.001687" pitch="-0.000581" yaw="1.153681" roll="-0.000122"/>
+    <waypoint x="-3.910292" y="91.241837" z="0.001907" pitch="-0.012089" yaw="-0.663940" roll="0.000000"/>
+    <waypoint x="16.205547" y="91.009483" z="0.001338" pitch="0.084722" yaw="-0.663605" roll="0.000012"/>
+    <waypoint x="29.925817" y="76.321541" z="0.001599" pitch="0.043269" yaw="-77.149261" roll="0.254630"/>
+    <waypoint x="34.234444" y="56.731113" z="0.002062" pitch="-0.036043" yaw="-82.957016" roll="0.032390"/>
+    <waypoint x="35.167080" y="36.610493" z="0.002026" pitch="-0.029937" yaw="-87.988029" roll="0.018795"/>
+  </route>
+  <!--Route for traffic light left turn scenario; Condition: nighttime, clear-->
+  <route id="11" town="Town05">
+    <weather 
+      cloudiness="0"
+      precipitation="0"
+      precipitation_deposits="0"
+      wind_intensity="0"
+      sun_azimuth_angle="0"
+      sun_altitude_angle="-70"
+      fog_density="0"
+      fog_distance="0"
+      wetness="0"
+    />
+    <waypoint x="-24.047709" y="91.372940" z="0.001687" pitch="-0.000581" yaw="1.153681" roll="-0.000122"/>
+    <waypoint x="-3.910292" y="91.241837" z="0.001907" pitch="-0.012089" yaw="-0.663940" roll="0.000000"/>
+    <waypoint x="16.205547" y="91.009483" z="0.001338" pitch="0.084722" yaw="-0.663605" roll="0.000012"/>
+    <waypoint x="29.925817" y="76.321541" z="0.001599" pitch="0.043269" yaw="-77.149261" roll="0.254630"/>
+    <waypoint x="34.234444" y="56.731113" z="0.002062" pitch="-0.036043" yaw="-82.957016" roll="0.032390"/>
+    <waypoint x="35.167080" y="36.610493" z="0.002026" pitch="-0.029937" yaw="-87.988029" roll="0.018795"/>
+  </route>
+  <!--Route for stop sign right turn scenario; Condition: daytime, sunny-->
+  <route id="20" town="Town05">
+    <weather 
+      cloudiness="0"
+      precipitation="0"
+      precipitation_deposits="0"
+      wind_intensity="0"
+      sun_azimuth_angle="0"
+      sun_altitude_angle="70"
+      fog_density="0"
+      fog_distance="0"
+      wetness="0"
+    />
+    <waypoint x="50.052017" y="5.554579" z="0.001753" pitch="-0.000458" yaw="-6.403875" roll="0.000071"/>
+    <waypoint x="70.288376" y="4.746545" z="0.002100" pitch="-0.043945" yaw="0.521341" roll="-0.016113"/>
+    <waypoint x="90.404083" y="5.653306" z="0.001835" pitch="0.010095" yaw="7.359256" roll="-0.241760"/>
+    <waypoint x="96.846512" y="24.691174" z="0.001367" pitch="0.080801" yaw="90.032249" roll="-0.061920"/>
+    <waypoint x="95.712334" y="44.796562" z="0.001939" pitch="-0.016659" yaw="96.767815" roll="-0.010040"/>
+    <waypoint x="90.192741" y="64.148857" z="0.002107" pitch="-0.045195" yaw="122.555237" roll="-0.026978"/>
+    <waypoint x="76.914253" y="79.160378" z="0.002090" pitch="-0.042299" yaw="147.456406" roll="-0.017548"/>
+  </route>
+  <!--Route for stop sign right turn scenario; Condition: nighttime, clear-->
+  <route id="21" town="Town05">
+    <weather 
+      cloudiness="0"
+      precipitation="0"
+      precipitation_deposits="0"
+      wind_intensity="0"
+      sun_azimuth_angle="0"
+      sun_altitude_angle="-70"
+      fog_density="0"
+      fog_distance="0"
+      wetness="0"
+    />
+    <waypoint x="50.052017" y="5.554579" z="0.001753" pitch="-0.000458" yaw="-6.403875" roll="0.000071"/>
+    <waypoint x="70.288376" y="4.746545" z="0.002100" pitch="-0.043945" yaw="0.521341" roll="-0.016113"/>
+    <waypoint x="90.404083" y="5.653306" z="0.001835" pitch="0.010095" yaw="7.359256" roll="-0.241760"/>
+    <waypoint x="96.846512" y="24.691174" z="0.001367" pitch="0.080801" yaw="90.032249" roll="-0.061920"/>
+    <waypoint x="95.712334" y="44.796562" z="0.001939" pitch="-0.016659" yaw="96.767815" roll="-0.010040"/>
+    <waypoint x="90.192741" y="64.148857" z="0.002107" pitch="-0.045195" yaw="122.555237" roll="-0.026978"/>
+    <waypoint x="76.914253" y="79.160378" z="0.002090" pitch="-0.042299" yaw="147.456406" roll="-0.017548"/>
+  </route>
+  <!--Route for bicycle crash scenario; Condition: daytime, sunny-->
+  <route id="30" town="Town05">
+    <weather 
+      cloudiness="0"
+      precipitation="0"
+      precipitation_deposits="0"
+      wind_intensity="0"
+      sun_azimuth_angle="0"
+      sun_altitude_angle="70"
+      fog_density="0"
+      fog_distance="0"
+      wetness="0"
+    />
+    <waypoint x="-27.441092" y="5.000824" z="0.001679" pitch="-0.000034" yaw="-1.963012" roll="-0.000061"/>
+    <waypoint x="-7.306732" y="5.042729" z="0.002076" pitch="-0.039519" yaw="3.771559" roll="-0.009033"/>
+    <waypoint x="12.916910" y="5.944946" z="0.001809" pitch="0.006140" yaw="1.657211" roll="0.000032"/>
+    <waypoint x="24.780937" y="22.375177" z="0.002697" pitch="-0.074490" yaw="76.476997" roll="-0.101532"/>
+    <waypoint x="25.392847" y="42.562260" z="0.001991" pitch="-0.022526" yaw="90.299713" roll="-0.000214"/>
+    <waypoint x="25.286404" y="62.728230" z="0.002081" pitch="-0.037962" yaw="90.299416" roll="-0.000214"/>
+  </route>
+  <!--Route for bicycle crash scenario; Condition: nighttime, clear-->
+  <route id="31" town="Town05">
+    <weather 
+      cloudiness="0"
+      precipitation="0"
+      precipitation_deposits="0"
+      wind_intensity="0"
+      sun_azimuth_angle="0"
+      sun_altitude_angle="-70"
+      fog_density="0"
+      fog_distance="0"
+      wetness="0"
+    />
+    <waypoint x="-27.441092" y="5.000824" z="0.001679" pitch="-0.000034" yaw="-1.963012" roll="-0.000061"/>
+    <waypoint x="-7.306732" y="5.042729" z="0.002076" pitch="-0.039519" yaw="3.771559" roll="-0.009033"/>
+    <waypoint x="12.916910" y="5.944946" z="0.001809" pitch="0.006140" yaw="1.657211" roll="0.000032"/>
+    <waypoint x="24.780937" y="22.375177" z="0.002697" pitch="-0.074490" yaw="76.476997" roll="-0.101532"/>
+    <waypoint x="25.392847" y="42.562260" z="0.001991" pitch="-0.022526" yaw="90.299713" roll="-0.000214"/>
+    <waypoint x="25.286404" y="62.728230" z="0.002081" pitch="-0.037962" yaw="90.299416" roll="-0.000214"/>
+  </route>
+  <!--Route for pedestrian crash scenario; Condition: daytime, sunny-->
+  <route id="40" town="Town05">
+    <weather 
+      cloudiness="0"
+      precipitation="0"
+      precipitation_deposits="0"
+      wind_intensity="0"
+      sun_azimuth_angle="0"
+      sun_altitude_angle="70"
+      fog_density="0"
+      fog_distance="0"
+      wetness="0"
+    />
+    <waypoint x="43.672699" y="95.303207" z="0.001678" pitch="-0.000157" yaw="2.055289" roll="0.000168"/>
+    <waypoint x="63.972313" y="93.908951" z="0.001444" pitch="0.067653" yaw="-16.671309" roll="0.157775"/>
+    <waypoint x="82.427711" y="86.173561" z="0.001373" pitch="0.079859" yaw="-30.118721" roll="0.137335"/>
+    <waypoint x="97.531044" y="72.802383" z="0.001416" pitch="0.072673" yaw="-52.559673" roll="0.372269"/>
+  </route>
+  <!--Route for pedestrian crash scenario; Condition: nighttime, clear-->
+  <route id="41" town="Town05">
+    <weather 
+      cloudiness="0"
+      precipitation="0"
+      precipitation_deposits="0"
+      wind_intensity="0"
+      sun_azimuth_angle="0"
+      sun_altitude_angle="-70"
+      fog_density="0"
+      fog_distance="0"
+      wetness="0"
+    />
+    <waypoint x="43.672699" y="95.303207" z="0.001678" pitch="-0.000157" yaw="2.055289" roll="0.000168"/>
+    <waypoint x="63.972313" y="93.908951" z="0.001444" pitch="0.067653" yaw="-16.671309" roll="0.157775"/>
+    <waypoint x="82.427711" y="86.173561" z="0.001373" pitch="0.079859" yaw="-30.118721" roll="0.137335"/>
+    <waypoint x="97.531044" y="72.802383" z="0.001416" pitch="0.072673" yaw="-52.559673" roll="0.372269"/>
+  </route>
+  <!--Route for construction lane change scenario; Condition: daytime, sunny-->
+  <route id="50" town="Town05">
+    <weather 
+      cloudiness="0"
+      precipitation="0"
+      precipitation_deposits="0"
+      wind_intensity="0"
+      sun_azimuth_angle="0"
+      sun_altitude_angle="70"
+      fog_density="0"
+      fog_distance="0"
+      wetness="0"
+    />
+    <waypoint x="10.765376" y="187.678467" z="0.001677" pitch="-0.000458" yaw="-176.581085" roll="0.000214"/>
+    <waypoint x="-9.330843" y="187.884079" z="0.040478" pitch="1.078699" yaw="176.640457" roll="0.064040"/>
+    <waypoint x="-29.598976" y="189.330185" z="1.183351" pitch="5.589929" yaw="-179.467056" roll="-0.093536"/>
+    <waypoint x="-49.981537" y="189.278625" z="3.509200" pitch="6.574412" yaw="179.606781" roll="-0.016327"/>
+    <waypoint x="-70.112015" y="189.451981" z="5.843285" pitch="6.618221" yaw="-177.746887" roll="0.173333"/>
+    <waypoint x="-90.280434" y="188.826462" z="7.741948" pitch="3.258287" yaw="-179.334564" roll="0.067358"/>
+    <waypoint x="-110.296158" y="189.035217" z="8.231406" pitch="0.643588" yaw="176.983948" roll="0.032617"/>
+    <waypoint x="-130.725739" y="188.315323" z="8.445375" pitch="0.534640" yaw="-176.444275" roll="0.012838"/>
+    <waypoint x="-151.172577" y="187.482971" z="8.674386" pitch="0.748035" yaw="-177.631088" roll="-0.177155"/>
+    <waypoint x="-170.666306" y="181.875412" z="8.920001" pitch="0.755569" yaw="-159.908386" roll="-0.015106"/>
+    <waypoint x="-189.241013" y="173.441910" z="9.167809" pitch="0.660746" yaw="-146.727585" roll="-0.215027"/>
+  </route>
+  <!--Route for construction lane change scenario; Condition: nighttime, clear-->
+  <route id="51" town="Town05">
+    <weather 
+      cloudiness="0"
+      precipitation="0"
+      precipitation_deposits="0"
+      wind_intensity="0"
+      sun_azimuth_angle="0"
+      sun_altitude_angle="-70"
+      fog_density="0"
+      fog_distance="0"
+      wetness="0"
+    />
+    <waypoint x="10.765376" y="187.678467" z="0.001677" pitch="-0.000458" yaw="-176.581085" roll="0.000214"/>
+    <waypoint x="-9.330843" y="187.884079" z="0.040478" pitch="1.078699" yaw="176.640457" roll="0.064040"/>
+    <waypoint x="-29.598976" y="189.330185" z="1.183351" pitch="5.589929" yaw="-179.467056" roll="-0.093536"/>
+    <waypoint x="-49.981537" y="189.278625" z="3.509200" pitch="6.574412" yaw="179.606781" roll="-0.016327"/>
+    <waypoint x="-70.112015" y="189.451981" z="5.843285" pitch="6.618221" yaw="-177.746887" roll="0.173333"/>
+    <waypoint x="-90.280434" y="188.826462" z="7.741948" pitch="3.258287" yaw="-179.334564" roll="0.067358"/>
+    <waypoint x="-110.296158" y="189.035217" z="8.231406" pitch="0.643588" yaw="176.983948" roll="0.032617"/>
+    <waypoint x="-130.725739" y="188.315323" z="8.445375" pitch="0.534640" yaw="-176.444275" roll="0.012838"/>
+    <waypoint x="-151.172577" y="187.482971" z="8.674386" pitch="0.748035" yaw="-177.631088" roll="-0.177155"/>
+    <waypoint x="-170.666306" y="181.875412" z="8.920001" pitch="0.755569" yaw="-159.908386" roll="-0.015106"/>
+    <waypoint x="-189.241013" y="173.441910" z="9.167809" pitch="0.660746" yaw="-146.727585" roll="-0.215027"/>
+  </route>
+</routes>
