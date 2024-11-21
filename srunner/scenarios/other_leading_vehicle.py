@@ -11,6 +11,7 @@ import numpy as np
 import csv
 from datetime import datetime
 import numpy as np
+import logging
 
 class EgoVehicleSensorHandler:
     def __init__(self, world):
@@ -97,20 +98,20 @@ class EgoVehicleSensorHandler:
         self.sensor.ego_sensor.listen(self.publish_and_print)
 
 
-
 class OtherLeadingVehicle(BasicScenario):
-    def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, criteria_enable=True, timeout=300):
+    def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, criteria_enable=True, timeout=600):
         self._world = world
         self._map = CarlaDataProvider.get_map()
         self._reference_waypoint = self._map.get_waypoint(config.trigger_points[0].location)
         self._spawn_offset = 20
         self.timeout = timeout
-        
+        self.LOG_insert("file.log", "Starting scenario with severity", logging.INFO)
         # Initialize the EgoVehicleSensorHandler
         self.sensor_handler = EgoVehicleSensorHandler(world)
         self.sensor_handler.listen_to_sensor()  # Start listening
 
         super(OtherLeadingVehicle, self).__init__("VehicleLeadingScenario", ego_vehicles, config, world, debug_mode, criteria_enable=criteria_enable)
+
     def _initialize_actors(self, config):
         leading_vehicle_waypoint, _ = get_waypoint_in_distance(self._reference_waypoint, self._spawn_offset)
         leading_vehicle_transform = carla.Transform(leading_vehicle_waypoint.transform.location, leading_vehicle_waypoint.transform.rotation)
@@ -122,16 +123,35 @@ class OtherLeadingVehicle(BasicScenario):
         # Set the leading vehicle to autopilot mode
         leading_vehicle.set_autopilot(True)
 
+    def LOG_insert(self, file, text, level):
+        infoLog = logging.FileHandler(file)
+        infoLog.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+        logger = logging.getLogger(file)
+        logger.setLevel(level)
+        if not logger.handlers:
+           logger.addHandler(infoLog)
+           if (level == logging.INFO):
+               logger.info(text)
+           if (level == logging.ERROR):
+               logger.error(text)
+           if (level == logging.WARNING):
+                logger.warning(text)
+    
+        infoLog.close()
+        logger.removeHandler(infoLog)
+    
+        return
+
     def _create_behavior(self):
         # Create the behavior tree
         sequence = py_trees.composites.Sequence("Scenario behavior")
 
         # Drive the ego vehicle a distance for 5 minutes (300 seconds)
-        ego_drive_distance = DriveDistance(self.ego_vehicles[0], 3750)  # Adjusted distance for 5 minutes
+        ego_drive_distance = DriveDistance(self.ego_vehicles[0], 5000)  # Adjusted distance for 5 minutes
         sequence.add_child(ego_drive_distance)
 
         # After driving, destroy the leading vehicle
-        sequence.add_child(ActorDestroy(self.other_actors[0]))
+        #sequence.add_child(ActorDestroy(self.other_actors[0]))
 
         return sequence
 
@@ -140,4 +160,5 @@ class OtherLeadingVehicle(BasicScenario):
         pass
 
     def __del__(self):
+        self.LOG_insert("file.log", "Finishing scenario", logging.INFO)
         self.remove_all_actors()

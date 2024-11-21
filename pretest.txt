@@ -1,0 +1,6 @@
+5 min
+
+2 lighting (day night)
+4 severities (none, 0.8/3, (0.8/3)*2, 0.8)
+
+starttime, endtime, name, severities, etc

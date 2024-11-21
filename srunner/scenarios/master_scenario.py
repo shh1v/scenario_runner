@@ -33,7 +33,7 @@ class MasterScenario(BasicScenario):
     radius = 10.0           # meters
 
     def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, criteria_enable=True,
-                 timeout=300):
+                 timeout=600):
         """
         Setup all relevant parameters and create scenario
         """
