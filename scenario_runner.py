@@ -32,6 +32,8 @@ import pkg_resources
 
 import carla
 
+import csv
+
 from srunner.tools.route_parser import RouteParser
 from srunner.tools.scenario_parser import ScenarioConfigurationParser
 from srunner.scenarios.route_scenario import RouteScenario
@@ -43,6 +45,21 @@ from srunner.scenarioconfigs.openscenario_configuration import OpenScenarioConfi
 # Version of scenario_runner
 VERSION = '0.9.13'
 
+logList = []
+file_path = 'data.csv'
+header = ['ID', 'Town', 'Start time', 'End time']
+
+def ensure_csv_with_header(file_path, header):
+    if not os.path.exists(file_path):
+        with open(file_path, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(header)
+
+def add_line_to_csv(file_path, data):
+    ensure_csv_with_header(file_path, header)
+    with open(file_path, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(data)
 
 class ScenarioRunner(object):
 
@@ -112,12 +129,14 @@ class ScenarioRunner(object):
         signal.signal(signal.SIGTERM, self._signal_handler)
 
         self._start_wall_time = datetime.now()
+        
 
     def destroy(self):
         """
         Cleanup and delete actors, ScenarioManager and CARLA world
         """
 
+        logList.append(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
         self._cleanup()
         if self.manager is not None:
             del self.manager
@@ -302,7 +321,6 @@ class ScenarioRunner(object):
         """
         Load a new CARLA world and provide data to CarlaDataProvider
         """
-
         if self._args.reloadWorld:
             self.world = self.client.load_world(town)
         else:
@@ -343,6 +361,8 @@ class ScenarioRunner(object):
             self.world.wait_for_tick()
 
         map_name = CarlaDataProvider.get_map().name.split('/')[-1]
+
+        logList.append(str(CarlaDataProvider.get_map().name.split('/')[-1]))
         if map_name not in (town, "OpenDriveMap"):
             print("The CARLA server uses the wrong map: {}".format(map_name))
             print("This scenario requires to use map: {}".format(town))
@@ -408,6 +428,8 @@ class ScenarioRunner(object):
             print(exception)
             self._cleanup()
             return False
+
+        logList.append(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
         try:
             if self._args.record:
@@ -615,6 +637,8 @@ def main():
     if arguments.agent:
         arguments.sync = True
 
+    logList.append(str(arguments.route[2])) # also possible to get via config.town
+
     scenario_runner = None
     result = True
     try:
@@ -623,10 +647,13 @@ def main():
     except Exception:   # pylint: disable=broad-except
         traceback.print_exc()
 
+
     finally:
         if scenario_runner is not None:
             scenario_runner.destroy()
             del scenario_runner
+            
+    add_line_to_csv(file_path, logList)
     return not result
 
 
