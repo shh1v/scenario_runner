@@ -205,7 +205,7 @@ class OtherLeadingVehicle(BasicScenario):
         pass
 
     def __del__(self):
-        self._remove_all_actors()
+        self.remove_all_actors()
 
     def _get_waypoint_in_distance(self, waypoint, distance):
         """
