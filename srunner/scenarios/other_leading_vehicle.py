@@ -121,7 +121,29 @@ class OtherLeadingVehicle(BasicScenario):
             debug_mode,
             criteria_enable=criteria_enable,
         )
+        self.LOG_insert("file.log", "Starting scenario with Sebastian severity 0.80", logging.INFO)
+        # Initialize the EgoVehicleSensorHandler
+        self.sensor_handler = EgoVehicleSensorHandler(world)
+        self.sensor_handler.listen_to_sensor()  # Start listening
 
+    def LOG_insert(self, file, text, level):
+        infoLog = logging.FileHandler(file)
+        infoLog.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+        logger = logging.getLogger(file)
+        logger.setLevel(level)
+        if not logger.handlers:
+           logger.addHandler(infoLog)
+           if (level == logging.INFO):
+               logger.info(text)
+           if (level == logging.ERROR):
+               logger.error(text)
+           if (level == logging.WARNING):
+                logger.warning(text)
+    
+        infoLog.close()
+        logger.removeHandler(infoLog)
+    
+        return
     def _initialize_actors(self, config):
         leading_vehicle_waypoint, _ = self._get_waypoint_in_distance(self._reference_waypoint, self._spawn_offset)
         leading_vehicle_transform = carla.Transform(
@@ -205,6 +227,7 @@ class OtherLeadingVehicle(BasicScenario):
         pass
 
     def __del__(self):
+        self.LOG_insert("file.log", "Finishing scenario", logging.INFO)
         self.remove_all_actors()
 
     def _get_waypoint_in_distance(self, waypoint, distance):
