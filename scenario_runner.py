@@ -46,7 +46,7 @@ from srunner.scenarioconfigs.openscenario_configuration import OpenScenarioConfi
 VERSION = '0.9.13'
 
 #logList = []
-log_dict = {"StartTime" : "", "EndTime" : "", "ID" : "", "Scenario" : "", "TimeOfDay" : "", "Town" : ""}
+log_dict = {"StartTime" : "", "EndTime" : "", "StartTimeUnix" : "", "EndTimeUnix" : "", "ID" : "", "Scenario" : "", "TimeOfDay" : "", "Town" : ""}
 file_path = 'study_data/data.csv'
 #header = ['ID', 'Town', 'Start time', 'End time']
 
@@ -156,7 +156,9 @@ class ScenarioRunner(object):
         """
 
         #logList.append(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-        log_dict["EndTime"] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        current_time = datetime.now()
+        log_dict["EndTime"] = str(current_time.strftime('%Y-%m-%d %H:%M:%S'))
+        log_dict["EndTimeUnix"] = int(current_time.timestamp())
         self._cleanup()
         if self.manager is not None:
             del self.manager
@@ -453,7 +455,9 @@ class ScenarioRunner(object):
             return False
 
         #logList.append(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-        log_dict["StartTime"] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        current_time = datetime.now()
+        log_dict["StartTime"] = str(current_time.strftime('%Y-%m-%d %H:%M:%S'))
+        log_dict["StartTimeUnix"] = int(current_time.timestamp())
         #log_dict["Town"] = config.town
 
         #print("config.name" + config.name)

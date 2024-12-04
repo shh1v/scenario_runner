@@ -1,45 +1,45 @@
 
- ======= Results of Scenario: RouteScenario_20 ---- FAILURE =======
+ ======= Results of Scenario: RouteScenario_20 ---- SUCCESS =======
 
  > Ego vehicles:
-Actor(id=3665, type=harplab.dreyevr_vehicle.teslam3); 
+Actor(id=4841, type=harplab.dreyevr_vehicle.teslam3); 
 
  > Other actors:
 
 
  > Simulation Information
 ╒═════════════════════════════════╤═════════════════════╕
-│ Start Time                      │ 2024-12-04 14:54:12 │
+│ Start Time                      │ 2024-12-04 16:10:05 │
 ├─────────────────────────────────┼─────────────────────┤
-│ End Time                        │ 2024-12-04 14:54:31 │
+│ End Time                        │ 2024-12-04 16:10:35 │
 ├─────────────────────────────────┼─────────────────────┤
-│ Duration (System Time)          │ 18.87s              │
+│ Duration (System Time)          │ 29.99s              │
 ├─────────────────────────────────┼─────────────────────┤
-│ Duration (Game Time)            │ 20.9s               │
+│ Duration (Game Time)            │ 27.2s               │
 ├─────────────────────────────────┼─────────────────────┤
-│ Ratio (System Time / Game Time) │ 1.108s              │
+│ Ratio (System Time / Game Time) │ 0.907s              │
 ╘═════════════════════════════════╧═════════════════════╛
 
  > Criteria Information
 ╒═══════════════════════════════════╤═════════════════════════════════════╤═════════╤══════════════╤════════════════╕
 │ Actor                             │ Criterion                           │ Result  │ Actual Value │ Expected Value │
 ├───────────────────────────────────┼─────────────────────────────────────┼─────────┼──────────────┼────────────────┤
-│ dreyevr_vehicle.teslam3 (id=3665) │ RouteCompletionTest (Req.)          │ SUCCESS │ 100          │ 100            │
+│ dreyevr_vehicle.teslam3 (id=4841) │ RouteCompletionTest (Req.)          │ SUCCESS │ 100          │ 100            │
 ├───────────────────────────────────┼─────────────────────────────────────┼─────────┼──────────────┼────────────────┤
-│ dreyevr_vehicle.teslam3 (id=3665) │ CollisionTest (Req.)                │ SUCCESS │ 0            │ 0              │
+│ dreyevr_vehicle.teslam3 (id=4841) │ CollisionTest (Req.)                │ SUCCESS │ 0            │ 0              │
 ├───────────────────────────────────┼─────────────────────────────────────┼─────────┼──────────────┼────────────────┤
-│ dreyevr_vehicle.teslam3 (id=3665) │ InRouteTest (Req.)                  │ SUCCESS │ 0            │ 0              │
+│ dreyevr_vehicle.teslam3 (id=4841) │ InRouteTest (Req.)                  │ SUCCESS │ 0            │ 0              │
 ├───────────────────────────────────┼─────────────────────────────────────┼─────────┼──────────────┼────────────────┤
-│ dreyevr_vehicle.teslam3 (id=3665) │ OutsideRouteLanesTest (Req.)        │ SUCCESS │ 0            │ 0              │
+│ dreyevr_vehicle.teslam3 (id=4841) │ OutsideRouteLanesTest (Req.)        │ SUCCESS │ 0            │ 0              │
 ├───────────────────────────────────┼─────────────────────────────────────┼─────────┼──────────────┼────────────────┤
-│ dreyevr_vehicle.teslam3 (id=3665) │ RunningRedLightTest (Req.)          │ SUCCESS │ 0            │ 0              │
+│ dreyevr_vehicle.teslam3 (id=4841) │ RunningRedLightTest (Req.)          │ SUCCESS │ 0            │ 0              │
 ├───────────────────────────────────┼─────────────────────────────────────┼─────────┼──────────────┼────────────────┤
-│ dreyevr_vehicle.teslam3 (id=3665) │ RunningStopTest (Req.)              │ FAILURE │ 1            │ 0              │
+│ dreyevr_vehicle.teslam3 (id=4841) │ RunningStopTest (Req.)              │ SUCCESS │ 0            │ 0              │
 ├───────────────────────────────────┼─────────────────────────────────────┼─────────┼──────────────┼────────────────┤
-│ dreyevr_vehicle.teslam3 (id=3665) │ ActorSpeedAboveThresholdTest (Req.) │ SUCCESS │ 0            │ 0              │
+│ dreyevr_vehicle.teslam3 (id=4841) │ ActorSpeedAboveThresholdTest (Req.) │ SUCCESS │ 0            │ 0              │
 ├───────────────────────────────────┼─────────────────────────────────────┼─────────┼──────────────┼────────────────┤
-│                                   │ Timeout (Req.)                      │ SUCCESS │ 20.9         │ 48             │
+│                                   │ Timeout (Req.)                      │ SUCCESS │ 27.2         │ 48             │
 ├───────────────────────────────────┼─────────────────────────────────────┼─────────┼──────────────┼────────────────┤
-│                                   │ GLOBAL RESULT                       │ FAILURE │              │                │
+│                                   │ GLOBAL RESULT                       │ SUCCESS │              │                │
 ╘═══════════════════════════════════╧═════════════════════════════════════╧═════════╧══════════════╧════════════════╛
  ==================================================================
