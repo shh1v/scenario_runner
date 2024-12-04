@@ -46,7 +46,7 @@ from srunner.scenarioconfigs.openscenario_configuration import OpenScenarioConfi
 VERSION = '0.9.13'
 
 logList = []
-file_path = 'data.csv'
+file_path = 'study_data/data.csv'
 header = ['ID', 'Town', 'Start time', 'End time']
 
 def ensure_csv_with_header(file_path, header):
