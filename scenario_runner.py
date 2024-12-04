@@ -45,10 +45,12 @@ from srunner.scenarioconfigs.openscenario_configuration import OpenScenarioConfi
 # Version of scenario_runner
 VERSION = '0.9.13'
 
-logList = []
+#logList = []
+log_dict = {"StartTime" : "", "EndTime" : "", "ID" : "", "Scenario" : "", "TimeOfDay" : "", "Town" : ""}
 file_path = 'study_data/data.csv'
-header = ['ID', 'Town', 'Start time', 'End time']
+#header = ['ID', 'Town', 'Start time', 'End time']
 
+"""
 def ensure_csv_with_header(file_path, header):
     if not os.path.exists(file_path):
         with open(file_path, mode='w', newline='') as file:
@@ -59,7 +61,24 @@ def add_line_to_csv(file_path, data):
     ensure_csv_with_header(file_path, header)
     with open(file_path, mode='a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(data)
+        writer.writerow(data)\
+"""
+
+def replace_empty(log_dict):
+    return {key : (value if value else "-") for key, value in log_dict.items()}
+
+def write_to_csv(file_path, log_dict):
+    file_exists = os.path.exists(file_path)
+
+    with open(file_path, mode='a' if file_exists else 'w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=log_dict.keys())
+
+        log_dict = replace_empty(log_dict)
+
+        if not file_exists:
+            writer.writeheader()
+
+        writer.writerow(log_dict)
 
 class ScenarioRunner(object):
 
@@ -136,7 +155,8 @@ class ScenarioRunner(object):
         Cleanup and delete actors, ScenarioManager and CARLA world
         """
 
-        logList.append(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        #logList.append(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        log_dict["EndTime"] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         self._cleanup()
         if self.manager is not None:
             del self.manager
@@ -321,6 +341,8 @@ class ScenarioRunner(object):
         """
         Load a new CARLA world and provide data to CarlaDataProvider
         """
+        log_dict["Town"] = town
+
         if self._args.reloadWorld:
             self.world = self.client.load_world(town)
         else:
@@ -362,7 +384,8 @@ class ScenarioRunner(object):
 
         map_name = CarlaDataProvider.get_map().name.split('/')[-1]
 
-        logList.append(str(CarlaDataProvider.get_map().name.split('/')[-1]))
+        #logList.append(str(CarlaDataProvider.get_map().name.split('/')[-1]))
+        
         if map_name not in (town, "OpenDriveMap"):
             print("The CARLA server uses the wrong map: {}".format(map_name))
             print("This scenario requires to use map: {}".format(town))
@@ -429,7 +452,13 @@ class ScenarioRunner(object):
             self._cleanup()
             return False
 
-        logList.append(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        #logList.append(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        log_dict["StartTime"] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        #log_dict["Town"] = config.town
+
+        #print("config.name" + config.name)
+        #print("config.town" + config.town)
+        print("config.weather: " + str(config.weather))
 
         try:
             if self._args.record:
@@ -637,7 +666,11 @@ def main():
     if arguments.agent:
         arguments.sync = True
 
-    logList.append(str(arguments.route[2])) # also possible to get via config.town
+    #logList.append(str(arguments.route[2]))
+    id = str(arguments.route[2])
+    log_dict["ID"] = id  # also possible via config.name
+    log_dict['Scenario'] = str(arguments.route[1]).split("_", 1)[1].replace(".json", "")
+    log_dict['TimeOfDay'] = 'day' if id[1] == '0' else 'night'
 
     scenario_runner = None
     result = True
@@ -653,7 +686,8 @@ def main():
             scenario_runner.destroy()
             del scenario_runner
             
-    add_line_to_csv(file_path, logList)
+    #add_line_to_csv(file_path, logList)
+    write_to_csv(file_path, log_dict)
     return not result
 
 

@@ -1,3 +1,8 @@
-ID,Town,Start time,End time
-10,2024-12-04 13:17:16
-10,Town05,2024-12-04 13:17:41,2024-12-04 13:18:00
+StartTime,EndTime,ID,Scenario,TimeOfDay,Town
+-,2024-12-04 14:53:38,20,stop_sign,day,-
+2024-12-04 14:54:12,2024-12-04 14:54:31,20,stop_sign,day,Town05
+-,2024-12-04 14:55:28,21,stop_sign,night,-
+2024-12-04 14:56:03,2024-12-04 14:56:24,21,stop_sign,night,Town05
+-,2024-12-04 15:00:40,21,stop_sign,night,-
+2024-12-04 15:02:01,2024-12-04 15:02:24,21,stop_sign,night,Town05
+-,2024-12-04 15:03:12,20,stop_sign,day,Town05
