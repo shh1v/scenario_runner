@@ -100,7 +100,7 @@ class EgoVehicleSensorHandler:
 import carla
 import py_trees
 import logging
-
+import time
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 
