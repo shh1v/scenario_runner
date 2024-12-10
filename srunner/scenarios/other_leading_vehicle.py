@@ -100,15 +100,14 @@ class EgoVehicleSensorHandler:
 import carla
 import py_trees
 import logging
-import time
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
+import time
 
 class UnixTimeFormatter(logging.Formatter):
-    def format(self, record):
-        # Get the current Unix timestamp
-        record.asctime = str(int(time.time()))  # Unix timestamp in seconds
-        return super().format(record)
+    def formatTime(self, record, datefmt=None):
+        # Return Unix time (epoch time)
+        return str(int(time.time()))
 
 class OtherLeadingVehicle(BasicScenario):
     def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, criteria_enable=True, timeout=600):
@@ -126,28 +125,29 @@ class OtherLeadingVehicle(BasicScenario):
             debug_mode,
             criteria_enable=criteria_enable,
         )
-        self.LOG_insert("file.log", "Starting scenario with Sebastian severity 0.80", logging.INFO)
-        # Initialize the EgoVehicleSensorHandler
+        self.LOG_insert("file.log", "Starting scenario with Sebastian severity 0.80", logging.INFO)        # Initialize the EgoVehicleSensorHandler
         self.sensor_handler = EgoVehicleSensorHandler(world)
         self.sensor_handler.listen_to_sensor()  # Start listening
 
     def LOG_insert(self, file, text, level):
-        infoLog = logging.FileHandler(file)
-        infoLog.setFormatter(UnixTimeFormatter('%(asctime)s %(levelname)s %(message)s'))  # Custom format with Unix timestamp
         logger = logging.getLogger(file)
-        logger.setLevel(level)
         if not logger.handlers:
-           logger.addHandler(infoLog)
-           if (level == logging.INFO):
-               logger.info(text)
-           if (level == logging.ERROR):
-               logger.error(text)
-           if (level == logging.WARNING):
-                logger.warning(text)
-    
+            # Add a file handler if no handlers exist
+            infoLog = logging.FileHandler(file)
+            infoLog.setFormatter(UnixTimeFormatter('%(asctime)s %(levelname)s %(message)s'))
+            logger.addHandler(infoLog)
+            logger.setLevel(logging.DEBUG)  # Set the logger level to DEBUG or INFO
+
+        # Log the message at the specified level
+        if level == logging.INFO:
+            logger.info(text)
+        elif level == logging.ERROR:
+            logger.error(text)
+        elif level == logging.WARNING:
+            logger.warning(text)
         infoLog.close()
         logger.removeHandler(infoLog)
-    
+        
         return
     def _initialize_actors(self, config):
         leading_vehicle_waypoint, _ = self._get_waypoint_in_distance(self._reference_waypoint, self._spawn_offset)
