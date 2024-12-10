@@ -104,6 +104,11 @@ import logging
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 
+class UnixTimeFormatter(logging.Formatter):
+    def format(self, record):
+        # Get the current Unix timestamp
+        record.asctime = str(int(time.time()))  # Unix timestamp in seconds
+        return super().format(record)
 
 class OtherLeadingVehicle(BasicScenario):
     def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, criteria_enable=True, timeout=600):
@@ -128,7 +133,7 @@ class OtherLeadingVehicle(BasicScenario):
 
     def LOG_insert(self, file, text, level):
         infoLog = logging.FileHandler(file)
-        infoLog.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+        infoLog.setFormatter(UnixTimeFormatter('%(asctime)s %(levelname)s %(message)s'))  # Custom format with Unix timestamp
         logger = logging.getLogger(file)
         logger.setLevel(level)
         if not logger.handlers:
