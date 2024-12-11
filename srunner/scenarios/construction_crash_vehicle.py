@@ -20,6 +20,7 @@ from srunner.scenariomanager.scenarioatomics.atomic_behaviors import Idle
 from srunner.tools.scenario_helper import get_location_in_distance_from_wp
 from srunner.scenarios.object_crash_vehicle import StationaryObjectCrossing
 
+from srunner.scenarios.EgoVehicleSensorHandler import EgoVehicleSensorHandler
 
 class ConstructionSetupCrossing(StationaryObjectCrossing):
 
@@ -52,6 +53,10 @@ class ConstructionSetupCrossing(StationaryObjectCrossing):
             randomize=randomize,
             debug_mode=debug_mode,
             criteria_enable=criteria_enable)
+        
+        # Initialize the EgoVehicleSensorHandler
+        self.sensor_handler = EgoVehicleSensorHandler(world)
+        self.sensor_handler.listen_to_sensor()  # Start listening
 
     def _initialize_actors(self, config):
         """

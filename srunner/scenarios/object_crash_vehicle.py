@@ -25,6 +25,8 @@ from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import (I
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.scenario_helper import get_location_in_distance_from_wp
 
+from srunner.scenarios.EgoVehicleSensorHandler import EgoVehicleSensorHandler
+
 
 class StationaryObjectCrossing(BasicScenario):
 
@@ -172,6 +174,10 @@ class DynamicObjectCrossing(BasicScenario):
                                                     world,
                                                     debug_mode,
                                                     criteria_enable=criteria_enable)
+        
+        # Initialize the EgoVehicleSensorHandler
+        self.sensor_handler = EgoVehicleSensorHandler(world)
+        self.sensor_handler.listen_to_sensor()  # Start listening
 
     def _get_sidewalk_transform(self, waypoint, offset):
         """

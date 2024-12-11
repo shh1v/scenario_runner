@@ -46,7 +46,7 @@ from srunner.scenarioconfigs.openscenario_configuration import OpenScenarioConfi
 VERSION = '0.9.13'
 
 #logList = []
-log_dict = {"StartTime" : "", "EndTime" : "", "StartTimeUnix" : "", "EndTimeUnix" : "", "ID" : "", "Scenario" : "", "TimeOfDay" : "", "Town" : ""}
+log_dict = {"StartTime" : "", "EndTime" : "", "StartTimeUnix" : "", "EndTimeUnix" : "", "ParticipantID" : "", "Severity" : "", "ID" : "", "Scenario" : "", "TimeOfDay" : "", "Town" : ""}
 file_path = 'study_data/data.csv'
 #header = ['ID', 'Town', 'Start time', 'End time']
 
@@ -158,7 +158,7 @@ class ScenarioRunner(object):
         #logList.append(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
         current_time = datetime.now()
         log_dict["EndTime"] = str(current_time.strftime('%Y-%m-%d %H:%M:%S'))
-        log_dict["EndTimeUnix"] = int(current_time.timestamp())
+        log_dict["EndTimeUnix"] = int(current_time.timestamp() * 1000) # use ms
         self._cleanup()
         if self.manager is not None:
             del self.manager
@@ -457,7 +457,7 @@ class ScenarioRunner(object):
         #logList.append(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
         current_time = datetime.now()
         log_dict["StartTime"] = str(current_time.strftime('%Y-%m-%d %H:%M:%S'))
-        log_dict["StartTimeUnix"] = int(current_time.timestamp())
+        log_dict["StartTimeUnix"] = int(current_time.timestamp() * 1000) # use ms
         #log_dict["Town"] = config.town
 
         #print("config.name" + config.name)
@@ -675,6 +675,8 @@ def main():
     log_dict["ID"] = id  # also possible via config.name
     log_dict['Scenario'] = str(arguments.route[1]).split("_", 1)[1].replace(".json", "")
     log_dict['TimeOfDay'] = 'day' if id[1] == '0' else 'night'
+    log_dict['ParticipantID'] = '0' # Enter current participant id -> alternatively use folder setup once working
+    log_dict['Severity'] = '0' # Enter current participant id -> alternatively use folder setup once working
 
     scenario_runner = None
     result = True

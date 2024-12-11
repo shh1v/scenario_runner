@@ -29,6 +29,8 @@ from srunner.tools.scenario_helper import generate_target_waypoint, generate_tar
 
 from srunner.tools.background_manager import Scenario4Manager
 
+from srunner.scenarios.EgoVehicleSensorHandler import EgoVehicleSensorHandler
+
 
 def get_sidewalk_transform(waypoint):
     """
@@ -261,3 +263,7 @@ class VehicleTurningRoute(BaseVehicleTurning):
         self._subtype = 'route'
         super(VehicleTurningRoute, self).__init__(
             world, ego_vehicles, config, randomize, debug_mode, criteria_enable, timeout, "VehicleTurningRoute")
+        
+        # Initialize the EgoVehicleSensorHandler
+        self.sensor_handler = EgoVehicleSensorHandler(world)
+        self.sensor_handler.listen_to_sensor()  # Start listening

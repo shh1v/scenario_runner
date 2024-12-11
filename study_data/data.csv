@@ -1,8 +1,2 @@
-StartTime,EndTime,StartTimeUnix,EndTimeUnix,ID,Scenario,TimeOfDay,Town
--,2024-12-04 16:07:44,-,1733324864.136718,20,stop_sign,day,Town05
--,2024-12-04 16:08:21,-,1733324901.367816,20,stop_sign,day,Town05
--,2024-12-04 16:09:35,-,1733324975,20,stop_sign,day,Town05
-2024-12-04 16:10:05,2024-12-04 16:10:35,1733325005,1733325035,20,stop_sign,day,Town05
-2024-12-11 13:28:38,2024-12-11 13:28:54,1733920118,1733920134,00,traffic_lights_r,day,Town05
-2024-12-11 13:34:57,2024-12-11 13:35:13,1733920497,1733920513,00,traffic_lights_r,day,Town05
-2024-12-11 13:35:51,2024-12-11 13:36:08,1733920551,1733920568,00,traffic_lights_r,day,Town05
+StartTime,EndTime,StartTimeUnix,EndTimeUnix,ParticipantID,Severity,ID,Scenario,TimeOfDay,Town
+2024-12-11 14:49:49,2024-12-11 14:50:13,1733924989409,1733925013386,0,0,10,traffic_lights_l,day,Town05

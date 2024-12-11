@@ -28,6 +28,8 @@ from srunner.tools.scenario_helper import (generate_target_waypoint,
 
 from srunner.tools.background_manager import Scenario9Manager
 
+from srunner.scenarios.EgoVehicleSensorHandler import EgoVehicleSensorHandler
+
 
 class SignalizedJunctionRightTurn(BasicScenario):
 
@@ -189,6 +191,10 @@ class StopSignRightTurn(BasicScenario):
                                                           world,
                                                           debug_mode,
                                                           criteria_enable=criteria_enable)
+        
+        # Initialize the EgoVehicleSensorHandler
+        self.sensor_handler = EgoVehicleSensorHandler(world)
+        self.sensor_handler.listen_to_sensor()  # Start listening
 
     def _initialize_actors(self, config):
         """
