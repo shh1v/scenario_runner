@@ -1,7 +1,7 @@
 ## Commands to call different scenarios
 
 ### Route for traffic light right turn scenario; Condition: daytime, sunny
-python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/0_traffic_lights_r.json 00 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output
+python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/0_traffic_lights_r.json 00 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output -- file --outputDir study_data/ScenarioFiles/ --record study_data/
 
 -----
 
