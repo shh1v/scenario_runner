@@ -149,7 +149,7 @@
         "_offroad_max": 100,
         "_offroad_min": 50.0,
         "_route_length": 99,
-        "_current_index": 97,
+        "_current_index": 98,
         "_out_route_distance": 0,
         "_in_safe_route": true,
         "_accum_meters": [
@@ -263,7 +263,7 @@
         "test_status": "FAILURE",
         "expected_value_success": 0,
         "expected_value_acceptable": null,
-        "actual_value": 7.75,
+        "actual_value": 1.78,
         "optional": false,
         "_current_index": 97,
         "_route_length": 99,
@@ -319,7 +319,7 @@
         "list_traffic_events": [],
         "_speed_threshold": 0.1,
         "_below_threshold_max_time": 90.0,
-        "_time_last_valid_state": 13.000000193715096,
+        "_time_last_valid_state": 12.850000191479921,
         "terminate_on_failure": false
     }
 }
