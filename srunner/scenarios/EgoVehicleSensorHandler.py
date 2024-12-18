@@ -36,7 +36,7 @@ class EgoVehicleSensorHandler:
         }
 
         # Open the CSV file in append mode
-        with open("study_data/sensor_data.csv", "a+", newline='') as f:
+        with open("study/sensor_data.csv", "a+", newline='') as f:
             writer = csv.writer(f)
 
             # Move to the start of the file and check if it's empty
