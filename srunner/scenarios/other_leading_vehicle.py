@@ -46,7 +46,7 @@ class EgoVehicleSensorHandler:
         }
 
         # Open the CSV file in append mode
-        with open("sensor_data.csv", "a+", newline='') as f:
+        with open("sensordata_9.csv", "a+", newline='') as f:
             writer = csv.writer(f)
 
             # Move to the start of the file and check if it's empty
@@ -125,7 +125,8 @@ class OtherLeadingVehicle(BasicScenario):
             debug_mode,
             criteria_enable=criteria_enable,
         )
-        self.LOG_insert("file.log", "Starting scenario with Sebastian severity 0.80", logging.INFO)        # Initialize the EgoVehicleSensorHandler
+        #26,66 53,33 80
+        self.LOG_insert("file.log", "Starting scenario with PID 9 severity 0 daylight", logging.INFO)        # Initialize the EgoVehicleSensorHandler
         self.sensor_handler = EgoVehicleSensorHandler(world)
         self.sensor_handler.listen_to_sensor()  # Start listening
 
@@ -184,20 +185,20 @@ class OtherLeadingVehicle(BasicScenario):
                 # Move the leading vehicle closer by applying throttle
                 self.other_actors[0].set_autopilot(True)
                 self.other_actors[0].apply_control(carla.VehicleControl(throttle=0.5, brake=0.0))  # Apply throttle to move closer
-                print(f"Leading vehicle is moving closer. Distance: {distance:.2f}")
+                #print(f"Leading vehicle is moving closer. Distance: {distance:.2f}")
                 return py_trees.common.Status.RUNNING  # Keep moving until the distance is within range
 
             elif distance > move_threshold:
                 # Stop the leading vehicle if the ego vehicle is close enough
                 self.other_actors[0].apply_control(carla.VehicleControl(throttle=0.0, brake=5.0))  # Stop the vehicle
                 self.other_actors[0].set_autopilot(False)
-                print(f"Leading vehicle stopped. Distance: {distance:.2f}")
+                #print(f"Leading vehicle stopped. Distance: {distance:.2f}")
                 return py_trees.common.Status.RUNNING  # Keep the vehicle stopped until ego car gets closer
 
             else:
                 # Resume autopilot when within the desired range
                 self.other_actors[0].set_autopilot(True)
-                print(f"Leading vehicle resumes. Distance: {distance:.2f}")
+                #print(f"Leading vehicle resumes. Distance: {distance:.2f}")
                 return py_trees.common.Status.SUCCESS
 
         # Wrap the logic in a py_trees behavior
