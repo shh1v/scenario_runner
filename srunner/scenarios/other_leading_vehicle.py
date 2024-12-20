@@ -126,7 +126,7 @@ class OtherLeadingVehicle(BasicScenario):
             criteria_enable=criteria_enable,
         )
         #26,66 53,33 80
-        self.LOG_insert("file.log", "Starting scenario with PID 9 severity 0 daylight", logging.INFO)        # Initialize the EgoVehicleSensorHandler
+        self.LOG_insert("file.log", "Starting scenario with PID 9 severity 80 nighlight", logging.INFO)        # Initialize the EgoVehicleSensorHandler
         self.sensor_handler = EgoVehicleSensorHandler(world)
         self.sensor_handler.listen_to_sensor()  # Start listening
 
