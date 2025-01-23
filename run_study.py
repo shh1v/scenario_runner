@@ -44,10 +44,10 @@ commands = {
     "Route: 51, Level: (0.1, 0.15)" : "python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/5_construction.json 51 --agent srunner/autoagents/dummy_agent.py --timeout 20 --sync --output --file --outputDir study/000/51/3 --record study/000/51/3"
 }
 # Random order instead of sorted
-shuffled_commands = list(commands.items())
-random.shuffle(shuffled_commands)
+#shuffled_commands = list(commands.items())
+#random.shuffle(shuffled_commands)
 
-for route, command in shuffled_commands:
+for route, command in commands.items():
     print(f"Upcoming: {route}")
     print(f"Enter Level and press enter to start route")
     input()
