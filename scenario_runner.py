@@ -46,7 +46,7 @@ from srunner.scenarioconfigs.openscenario_configuration import OpenScenarioConfi
 VERSION = '0.9.13'
 
 #logList = []
-log_dict = {"StartTime" : "", "EndTime" : "", "StartTimeUnix" : "", "EndTimeUnix" : "", "ParticipantID" : "", "Severity" : "", "ID" : "", "Scenario" : "", "TimeOfDay" : "", "Town" : ""}
+log_dict = {"StartTime" : "", "EndTime" : "", "StartTimeUnix" : "", "EndTimeUnix" : "", "ParticipantID" : "", "Level" : "", "ID" : "", "Scenario" : "", "TimeOfDay" : "", "Town" : ""}
 file_path = 'study/general_data.csv'
 #header = ['ID', 'Town', 'Start time', 'End time']
 
@@ -672,17 +672,17 @@ def main():
 
     #logList.append(str(arguments.route[2]))
     id = str(arguments.route[2])
-    severities = {
-        "0" : "0.0",
-        "1" : "0.27",
-        "2" : "0.53",
-        "3" : "0.8"
+    levels = {
+        "0" : "(0.0, 0.0)",
+        "1" : "(0.02, 0.03)",
+        "2" : "(0.05, 0.075)",
+        "3" : "(0.1, 0.15)"
     }
     log_dict["ID"] = id  # also possible via config.name
     log_dict['Scenario'] = str(arguments.route[1]).split("_", 1)[1].replace(".json", "")
     log_dict['TimeOfDay'] = 'day' if id[1] == '0' else 'night'
     log_dict['ParticipantID'] = str(arguments.outputDir).split("/")[1] # Enter current participant id -> alternatively use folder setup once working
-    log_dict['Severity'] = severities.get(str(arguments.outputDir).split("/")[3], None) # Enter current participant id -> alternatively use folder setup once working
+    log_dict['Level'] = levels.get(str(arguments.outputDir).split("/")[3], None) # Enter current participant id -> alternatively use folder setup once working
 
     scenario_runner = None
     result = True
