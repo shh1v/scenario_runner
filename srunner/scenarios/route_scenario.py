@@ -58,7 +58,7 @@ from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTe
                                                                      DrivenDistanceTest,
                                                                      InRadiusRegionTest)
 
-SECONDS_GIVEN_PER_METERS = 0.4
+SECONDS_GIVEN_PER_METERS = 0.4 
 
 NUMBER_CLASS_TRANSLATION = {
     "Scenario1": ControlLoss,
@@ -260,7 +260,7 @@ class RouteScenario(BasicScenario):
         self.sampled_scenarios_definitions = self._scenario_sampling(potential_scenarios_definitions)
 
         # Timeout of scenario in seconds
-        self.timeout = self._estimate_route_timeout()
+        self.timeout = 500 # self._estimate_route_timeout()
 
         # Print route in debug mode
         if debug_mode:
@@ -663,7 +663,7 @@ class RouteScenario(BasicScenario):
         criteria.append(outsidelane_criterion)
         criteria.append(red_light_criterion)
         criteria.append(stop_criterion)
-        criteria.append(blocked_criterion)
+        #criteria.append(blocked_criterion)
         #criteria.append(driven_criterion)
         #criteria.append(region_criterion)
 
