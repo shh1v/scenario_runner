@@ -57,9 +57,9 @@ class SignalizedJunctionLeftTurn(BasicScenario):
         self._world = world
         self._map = CarlaDataProvider.get_map()
         self._source_dist = 40
-        self._sink_dist = 20
-        self._source_dist_interval = [25, 50]
-        self._opposite_speed = 35 / 3.6
+        self._sink_dist = 10
+        self._source_dist_interval = [35, 50]
+        self._opposite_speed = 45 / 3.6
         self._rng = random.RandomState(2000)
         self._green_light_delay = 5  # Wait before the ego's lane traffic light turns green
         self._direction = 'opposite'
@@ -171,9 +171,8 @@ class SignalizedJunctionLeftTurn(BasicScenario):
         """
 
         root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
-        root.add_child(WaitEndIntersection(self.ego_vehicles[0]))
-        root.add_child(ActorFlow(
-            self._source_wp, self._sink_wp, self._source_dist_interval, 2, self._opposite_speed))
+        # root.add_child(WaitEndIntersection(self.ego_vehicles[0]))
+        root.add_child(ActorFlow(self._source_wp, self._sink_wp, self._source_dist_interval, 2, self._opposite_speed))
 
         tl_freezer_sequence = py_trees.composites.Sequence("Traffic Light Behavior")
         tl_freezer_sequence.add_child(TrafficLightFreezer(self._init_tl_dict, duration=self._green_light_delay))

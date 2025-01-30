@@ -78,7 +78,7 @@ class BaseVehicleTurning(BasicScenario):
         self._reference_waypoint = self._wmap.get_waypoint(self._trigger_location)
         self._ego_route = CarlaDataProvider.get_ego_vehicle_route()
 
-        self._start_distance = 13
+        self._start_distance = 30
         self._spawn_dist = self._start_distance
         self._number_of_attempts = 6
         self._retry_dist = 0.4
@@ -88,7 +88,7 @@ class BaseVehicleTurning(BasicScenario):
         self._collision_wp = None
         self._adversary_speed = 4.0  # Speed of the adversary [m/s]
         self._reaction_time = 0.5  # Time the agent has to react to avoid the collision [s]
-        self._min_trigger_dist = 8.0  # Min distance to the collision location that triggers the adversary [m]
+        self._min_trigger_dist = 20.0  # Min distance to the collision location that triggers the adversary [m]
         self._ego_end_distance = 40
 
         self.timeout = timeout
@@ -147,6 +147,7 @@ class BaseVehicleTurning(BasicScenario):
         if isinstance(adversary, carla.Vehicle):
             adversary.apply_control(carla.VehicleControl(hand_brake=True))
         self.other_actors.append(adversary)
+
 
     def _create_behavior(self):
         """

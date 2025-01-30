@@ -260,7 +260,7 @@ class RouteScenario(BasicScenario):
         self.sampled_scenarios_definitions = self._scenario_sampling(potential_scenarios_definitions)
 
         # Timeout of scenario in seconds
-        self.timeout = 500 # self._estimate_route_timeout()
+        self.timeout = 300 # self._estimate_route_timeout()
 
         # Print route in debug mode
         if debug_mode:

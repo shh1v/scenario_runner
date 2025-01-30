@@ -46,7 +46,7 @@ from srunner.scenarioconfigs.openscenario_configuration import OpenScenarioConfi
 VERSION = '0.9.13'
 
 #logList = []
-log_dict = {"StartTime" : "", "EndTime" : "", "StartTimeUnix" : "", "EndTimeUnix" : "", "ParticipantID" : "", "Level" : "", "ID" : "", "Scenario" : "", "TimeOfDay" : "", "Town" : ""}
+log_dict = {"StartTimeUnix" : "", "EndTimeUnix" : "", "StartTime" : "", "EndTime" : "", "ParticipantID" : "", "Level" : "", "ID" : "", "Scenario" : "", "TimeOfDay" : "", "Town" : ""}
 file_path = 'study/general_data.csv'
 #header = ['ID', 'Town', 'Start time', 'End time']
 
@@ -673,10 +673,10 @@ def main():
     #logList.append(str(arguments.route[2]))
     id = str(arguments.route[2])
     levels = {
-        "0" : "(0.0, 0.0)",
-        "1" : "(0.02, 0.03)",
-        "2" : "(0.05, 0.075)",
-        "3" : "(0.1, 0.15)"
+        "0" : "0: (0.0, 0.0)",
+        "1" : "1: (0.02, 0.03)",
+        "2" : "2: (0.05, 0.075)",
+        "3" : "3: (0.1, 0.15)"
     }
     log_dict["ID"] = id  # also possible via config.name
     log_dict['Scenario'] = str(arguments.route[1]).split("_", 1)[1].replace(".json", "")

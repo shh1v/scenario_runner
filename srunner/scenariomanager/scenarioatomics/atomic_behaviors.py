@@ -2530,12 +2530,13 @@ class ActorFlow(AtomicBehavior):
                 control = agent.run_step()
                 actor.apply_control(control)
 
+        distance = 0 # Added to disable else statement
         # Spawn new actors if needed
         if len(self._actor_agent_list) == 0:
             distance = self._spawn_dist + 1
-        else:
-            actor_location = CarlaDataProvider.get_location(self._actor_agent_list[-1][0])
-            distance = self._source_transform.location.distance(actor_location)
+        # else:
+        #     actor_location = CarlaDataProvider.get_location(self._actor_agent_list[-1][0])
+        #     distance = self._source_transform.location.distance(actor_location)
 
         if distance > self._spawn_dist:
             actor = CarlaDataProvider.request_new_actor(

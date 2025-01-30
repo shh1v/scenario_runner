@@ -180,8 +180,8 @@ class StopSignRightTurn(BasicScenario):
         self._world = world
         self._map = CarlaDataProvider.get_map()
         self._source_dist = 40
-        self._sink_dist = 50
-        self._source_dist_interval = [25, 50]
+        self._sink_dist = 10
+        self._source_dist_interval = [35, 50]
         self._opposite_speed = 45 / 3.6
         self._direction = 'left'
         self.timeout = timeout
@@ -255,12 +255,10 @@ class StopSignRightTurn(BasicScenario):
         """
         root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
-        root.add_child(WaitEndIntersection(self.ego_vehicles[0]))
+        #root.add_child(WaitEndIntersection(self.ego_vehicles[0]))
 
         root.add_child(ActorFlow(
             self._source_wp, self._sink_wp, self._source_dist_interval, 0.5, self._opposite_speed))
-        
-        # Todo
 
         sequence = py_trees.composites.Sequence("Sequence")
         if CarlaDataProvider.get_ego_vehicle_route():

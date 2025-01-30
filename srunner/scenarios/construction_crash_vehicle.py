@@ -151,7 +151,7 @@ class ConstructionSetupCrossing(StationaryObjectCrossing):
         Only behavior here is to wait
         """
         # leaf nodes
-        actor_stand = Idle(40)
+        actor_stand = Idle(80)
 
         end_condition = DriveDistance(
             self.ego_vehicles[0],
