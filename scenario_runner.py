@@ -46,7 +46,7 @@ from srunner.scenarioconfigs.openscenario_configuration import OpenScenarioConfi
 VERSION = '0.9.13'
 
 #logList = []
-log_dict = {"StartTimeUnix" : "", "EndTimeUnix" : "", "StartTime" : "", "EndTime" : "", "ParticipantID" : "", "Level" : "", "ID" : "", "Scenario" : "", "TimeOfDay" : "", "Town" : ""}
+log_dict = {"StartTimeUnix" : "", "EndTimeUnix" : "", "StartTime" : "", "EndTime" : "", "ParticipantID" : "", "Level" : "", "ID" : "", "Scenario" : "", "TimeOfDay" : "", "Town" : "", "Result" : ""}
 file_path = 'study/general_data.csv'
 #header = ['ID', 'Town', 'Start time', 'End time']
 
@@ -79,6 +79,38 @@ def write_to_csv(file_path, log_dict):
             writer.writeheader()
 
         writer.writerow(log_dict)
+
+def get_latest_result(participant_id, scenario, level):
+    directory = f"study/{participant_id}/{scenario}/{level}/"
+
+    if not os.path.exists(directory):
+        print(f"Directory {directory} does not extist.")
+        return "Unknown"
+    
+    text_files = [f for f in os.listdir(directory) if f.endswith(".txt")]
+
+    if not text_files:
+        print(f"No text files found in {directory}")
+        return "Unknown"
+    
+    latest_file = max(text_files, key=lambda f: os.path.getmtime(os.path.join(directory, f)))
+    latest_file_path = os.path.join(directory, latest_file)
+
+    try:
+        with open(latest_file_path, "r", encoding="utf-8", errors="replace") as file:
+            lines = file.readlines()
+            second_line = lines[1].strip()
+
+            if "FAILURE" in second_line:
+                return "Failure"
+            if "SUCCESS" in second_line:
+                return "Success"
+            else:
+                return "Unknown"
+            
+    except Exception as e:
+        print(f"Error reading {latest_file_path}: {e}")
+        return "Unkown"
 
 class ScenarioRunner(object):
 
@@ -698,6 +730,8 @@ def main():
             scenario_runner.destroy()
             del scenario_runner
             
+    log_dict['Result'] = get_latest_result(arguments.outputDir.split("/")[1], arguments.outputDir.split("/")[2], arguments.outputDir.split("/")[3])        
+
     #add_line_to_csv(file_path, logList)
     write_to_csv(file_path, log_dict)
     return not result

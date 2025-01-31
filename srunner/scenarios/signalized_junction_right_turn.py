@@ -46,7 +46,7 @@ class SignalizedJunctionRightTurn(BasicScenario):
         self._world = world
         self._map = CarlaDataProvider.get_map()
         self._source_dist = 40
-        self._sink_dist = 10
+        self._sink_dist = 20
         self._source_dist_interval = [25, 50]
         self._opposite_speed = 35 / 3.6
         self._green_light_delay = 5  # Wait before the ego's lane traffic light turns green

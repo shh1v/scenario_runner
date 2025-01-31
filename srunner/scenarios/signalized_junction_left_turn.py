@@ -57,7 +57,7 @@ class SignalizedJunctionLeftTurn(BasicScenario):
         self._world = world
         self._map = CarlaDataProvider.get_map()
         self._source_dist = 40
-        self._sink_dist = 10
+        self._sink_dist = 20
         self._source_dist_interval = [35, 50]
         self._opposite_speed = 45 / 3.6
         self._rng = random.RandomState(2000)
