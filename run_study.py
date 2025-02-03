@@ -2,6 +2,7 @@ import subprocess
 #import random
 
 commands = {
+    "00 0" : "python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/0_traffic_lights_r.json 00 --agent srunner/autoagents/dummy_agent.py --timeout 50 --sync --output --file --outputDir study/000/00/0 --record study/000/00/0",
     "10 0" : "python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/1_traffic_lights_l.json 10 --agent srunner/autoagents/dummy_agent.py --timeout 50 --sync --output --file --outputDir study/000/10/0 --record study/000/10/0",
     "10 1" : "python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/1_traffic_lights_l.json 10 --agent srunner/autoagents/dummy_agent.py --timeout 50 --sync --output --file --outputDir study/000/10/1 --record study/000/10/1",
     "10 2" : "python scenario_runner.py --route srunner/data/routes_study.xml srunner/data/1_traffic_lights_l.json 10 --agent srunner/autoagents/dummy_agent.py --timeout 50 --sync --output --file --outputDir study/000/10/2 --record study/000/10/2",
@@ -68,9 +69,18 @@ while True:
         confirm = input(f"You selected '{route_input}'. Press enter to start or type 'cancel' to abort: ").strip()
         if confirm.lower() != "cancel":
             print(f"Running: {commands[route_input]}")
-            process = subprocess.run(commands[route_input], shell=True)
-            if process.returncode != 0:
-                print(f"Route '{route_input}' failed with return code {process.returncode}")
-            print("\nRoute completed.")
+            try:
+                process = subprocess.run(commands[route_input], shell=True)
+                if process.returncode != 0:
+                    print(f"Route '{route_input}' failed with return code {process.returncode}")
+                print("\nRoute completed.")
+            except KeyboardInterrupt:
+                print("\nProcess interrupted. Returning to the menu.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
+            # process = subprocess.run(commands[route_input], shell=True)
+            # if process.returncode != 0:
+            #     print(f"Route '{route_input}' failed with return code {process.returncode}")
+            # print("\nRoute completed.")
     else:
         print("Invalid route. Please try again.")

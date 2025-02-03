@@ -123,8 +123,8 @@ class SignalizedJunctionRightTurn(BasicScenario):
                 self._flow_tl_dict[tl] = carla.TrafficLightState.Green
                 self._init_tl_dict[tl] = carla.TrafficLightState.Red
             elif tl == source_tl:
-                self._flow_tl_dict[tl] = carla.TrafficLightState.Green
-                self._init_tl_dict[tl] = carla.TrafficLightState.Green
+                self._flow_tl_dict[tl] = carla.TrafficLightState.Red
+                self._init_tl_dict[tl] = carla.TrafficLightState.Red
             else:
                 self._flow_tl_dict[tl] = carla.TrafficLightState.Red
                 self._init_tl_dict[tl] = carla.TrafficLightState.Red
@@ -136,8 +136,7 @@ class SignalizedJunctionRightTurn(BasicScenario):
         """
         root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
         root.add_child(WaitEndIntersection(self.ego_vehicles[0]))
-        root.add_child(ActorFlow(
-            self._source_wp, self._sink_wp, self._source_dist_interval, 2, self._opposite_speed))
+        #root.add_child(ActorFlow(self._source_wp, self._sink_wp, self._source_dist_interval, 2, self._opposite_speed))
 
         tl_freezer_sequence = py_trees.composites.Sequence("Traffic Light Behavior")
         tl_freezer_sequence.add_child(TrafficLightFreezer(self._init_tl_dict, duration=self._green_light_delay))
