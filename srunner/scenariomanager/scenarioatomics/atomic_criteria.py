@@ -646,6 +646,8 @@ class OffRoadTest(Criterion):
 
         self._map = CarlaDataProvider.get_map()
         self._offroad = False
+        self._offroad_active = False #
+        self._offroad_start_location = None #
 
         self._duration = duration
         self._prev_time = None
@@ -675,9 +677,22 @@ class OffRoadTest(Criterion):
             project_to_road=False,
             lane_type=carla.LaneType.Parking
         )
+
+        # Case 1: Actor is on a road
         if drive_waypoint or park_waypoint:
+            if self._offroad_active:
+                self.actual_value += 1
+            
             self._offroad = False
+            self._offroad_active = False
+            self._offroad_start_location = None
+
+        # Case 2: Actor is off-road    
         else:
+            if not self._offroad_active:
+                self._offroad_active = True
+                self._offroad_start_location = current_location
+                
             self._offroad = True
 
         # Counts the time offroad
@@ -1206,8 +1221,7 @@ class OutsideRouteLanesTest(Criterion):
         """
 
         if self._wrong_distance > 0:
-
-            percentage = self._wrong_distance / self._total_distance * 100
+            percentage = (self._wrong_distance / self._total_distance) * 100
 
             outside_lane = TrafficEvent(event_type=TrafficEventType.OUTSIDE_ROUTE_LANES_INFRACTION)
             outside_lane.set_message(
@@ -1576,7 +1590,7 @@ class InRouteTest(Criterion):
 
                 self.test_status = "FAILURE"
                 self.actual_value += 1
-                new_status = py_trees.common.Status.FAILURE
+                # new_status = py_trees.common.Status.FAILURE
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
 

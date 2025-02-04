@@ -56,7 +56,11 @@ from srunner.scenariomanager.scenarioatomics.atomic_criteria import (CollisionTe
                                                                      RunningStopTest,
                                                                      ActorSpeedAboveThresholdTest,
                                                                      DrivenDistanceTest,
-                                                                     InRadiusRegionTest)
+                                                                     InRadiusRegionTest,
+                                                                     WrongLaneTest,
+                                                                     OnSidewalkTest,
+                                                                     OffRoadTest,
+                                                                     KeepLaneTest)
 
 SECONDS_GIVEN_PER_METERS = 0.4 
 
@@ -260,7 +264,7 @@ class RouteScenario(BasicScenario):
         self.sampled_scenarios_definitions = self._scenario_sampling(potential_scenarios_definitions)
 
         # Timeout of scenario in seconds
-        self.timeout = 180 # self._estimate_route_timeout()
+        self.timeout = 300 # self._estimate_route_timeout()
 
         # Print route in debug mode
         if debug_mode:
@@ -633,36 +637,46 @@ class RouteScenario(BasicScenario):
 
         route = convert_transform_to_location(self.route)
 
-        collision_criterion = CollisionTest(self.ego_vehicles[0], terminate_on_failure=False)
+        collision_criterion = CollisionTest(self.ego_vehicles[0])
 
         route_criterion = InRouteTest(self.ego_vehicles[0],
                                       route=route,
-                                      offroad_max=100,
-                                      terminate_on_failure=False)
+                                      offroad_max=50)
 
         completion_criterion = RouteCompletionTest(self.ego_vehicles[0], route=route)
 
-        outsidelane_criterion = OutsideRouteLanesTest(self.ego_vehicles[0], route=route)
+        outsidelane_criterion = OutsideRouteLanesTest(self.ego_vehicles[0], route=route, optional=True)
 
         red_light_criterion = RunningRedLightTest(self.ego_vehicles[0])
 
         stop_criterion = RunningStopTest(self.ego_vehicles[0])
 
-        blocked_criterion = ActorSpeedAboveThresholdTest(self.ego_vehicles[0],
-                                                         speed_threshold=0.1,
-                                                         below_threshold_max_time=90.0,
-                                                         terminate_on_failure=True)
+        keep_lane = KeepLaneTest(self.ego_vehicles[0], optional=True)
+
+        off_road = OffRoadTest(self.ego_vehicles[0], optional=True)
+
+        on_side_walk = OnSidewalkTest(self.ego_vehicles[0])
+
+        wrong_lane = WrongLaneTest(self.ego_vehicles[0])
+
+        #blocked_criterion = ActorSpeedAboveThresholdTest(self.ego_vehicles[0], speed_threshold=0.1, below_threshold_max_time=90.0, terminate_on_failure=True)
         
         #driven_criterion = DrivenDistanceTest(self.ego_vehicles[0], 20)
         #region_criterion = InRadiusRegionTest(actor=self.ego_vehicles[0], x=-264, y=-62, radius=4)
         
 
         criteria.append(completion_criterion)
-        criteria.append(collision_criterion)
         criteria.append(route_criterion)
-        criteria.append(outsidelane_criterion)
+        criteria.append(collision_criterion)
         criteria.append(red_light_criterion)
         criteria.append(stop_criterion)
+        criteria.append(on_side_walk)
+        criteria.append(wrong_lane)
+
+        criteria.append(off_road)
+        criteria.append(outsidelane_criterion)
+        criteria.append(keep_lane)
+        
         #criteria.append(blocked_criterion)
         #criteria.append(driven_criterion)
         #criteria.append(region_criterion)
